@@ -24,8 +24,8 @@
 
 
 #include <stdlib.h>
-#include <stream.h>
 #include <string.h>
+#include <cstring>
 
 #include "parser.h"
 

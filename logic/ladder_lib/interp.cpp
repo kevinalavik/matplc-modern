@@ -46,13 +46,12 @@
 
 #include <plc.h>
 #include <module_library.h>
+
+#include "ladder.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
-
-#include "ladder.h"
 
 #include <unistd.h>
 #include <string.h>

@@ -23,7 +23,7 @@
 #include "global.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "../../lib/plc.h"
 

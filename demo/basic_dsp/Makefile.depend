@@ -1,9 +1,8 @@
-io.o Makefile.depend: io.c ../misc/string_util.h ../misc/../types.h io_private.h io.h \
- ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+kbd.o Makefile.depend: kbd.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
  ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
  ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
  ../../lib/gmm/../types.h ../../lib/synch/synch.h \
  ../../lib/synch/../types.h ../../lib/period/period.h \
  ../../lib/period/../types.h ../../lib/state/state.h \
- ../../lib/state/../types.h ../synch/synch.h ../../lib/rt/rt.h \
- ../../lib/rt/../types.h io_hw.h
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h

@@ -24,7 +24,7 @@
 
 	#include <stdio.h>
 	#include <stdlib.h>
-	#include <iostream.h>
+	#include <iostream>
 	#include <math.h>
 	#include <string.h>
 

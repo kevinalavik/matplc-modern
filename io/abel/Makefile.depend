@@ -1,0 +1,18 @@
+abel.o Makefile.depend: abel.c ../../lib/../lib/io/io_hw.h \
+ ../../lib/../lib/io/../../lib/plc.h \
+ ../../lib/../lib/io/../../lib/types.h \
+ ../../lib/../lib/io/../../lib/log/log.h \
+ ../../lib/../lib/io/../../lib/conffile/conffile.h \
+ ../../lib/../lib/io/../../lib/conffile/../types.h \
+ ../../lib/../lib/io/../../lib/cmm/cmm.h \
+ ../../lib/../lib/io/../../lib/cmm/../types.h \
+ ../../lib/../lib/io/../../lib/gmm/gmm.h \
+ ../../lib/../lib/io/../../lib/gmm/../types.h \
+ ../../lib/../lib/io/../../lib/synch/synch.h \
+ ../../lib/../lib/io/../../lib/synch/../types.h \
+ ../../lib/../lib/io/../../lib/period/period.h \
+ ../../lib/../lib/io/../../lib/period/../types.h \
+ ../../lib/../lib/io/../../lib/state/state.h \
+ ../../lib/../lib/io/../../lib/state/../types.h ../../lib/synch/synch.h \
+ ../../lib/../lib/io/../../lib/rt/rt.h \
+ ../../lib/../lib/io/../../lib/rt/../types.h libabplc5.h

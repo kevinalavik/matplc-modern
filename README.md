@@ -1,58 +1,75 @@
-# MatPLC - MATрица Programmable Logic Controller
+# MatPLC - Coruscant Release
 
-> **NOTE**: This is a historical version of the MatPLC project, updated to build on modern Linux systems. For the latest version, check [matplc/matplc](https://github.com/matplc/matplc).
+> **NOTE**: This is the **Coruscant release** of MatPLC (version 0.0.6), originally from https://mat.sourceforge.net/, updated to build on modern Linux systems.
 
 ## Overview
 
-MatPLC (Matrix PLC) is an open-source Programmable Logic Controller (PLC) software. It was originally developed around 2002-2007 and is based on the IEC 61131-3 standard for PLC programming languages.
+MatPLC (Matrix PLC) is an open-source Programmable Logic Controller (PLC) software developed around 2002-2007, based on the IEC 61131-3 standard for PLC programming languages.
 
-This is a **modernized fork** that compiles and runs on modern Linux systems (tested on Linux Mint 21+ with GCC 13).
+This is a **modernized fork** of the Coruscant release (May 2006) that compiles and runs on modern Linux systems (tested on Linux Mint 21+ with GCC 13).
 
 ## What is Working
 
 - **Core library**: `libmatplc.so` / `libmatplc.a`
 - **Main executable**: `tools/run/matplc`
 - **DSP logic module**: `logic/dsp/dsp`
-- **IEC 61131-3 compiler**: `logic/iec/iec2cc` (basic IL/ST compilation)
+- **IEC 61131-3 compiler**: `logic/iec/iec2cc` (IL/ST compilation)
+- **PLC5 emulator**: Basic compilation (logic/plc5)
 
-## What Needs Work
+## Prerequisites
 
-The following modules have build issues due to their age (~20 years old code):
+### Ubuntu/Debian/Linux Mint
 
-- **Ladder Logic**: Uses obsolete Borland `stream.h` headers
-- **Modbus I/O**: May have compatibility issues
-- **Various HMI modules**: GTK1/GTK2 dependencies no longer available
+```bash
+# Core build tools
+sudo apt-get install build-essential libtool autoconf automake
+
+# For GTK2 HMI support (optional)
+sudo apt-get install libgtk2.0-dev libglade2-dev
+
+# For additional features
+sudo apt-get install libmodbus-dev comedi-dev
+```
 
 ## Building
 
-### Prerequisites
+### Build All Available Modules
 
 ```bash
-# Ubuntu/Debian/Linux Mint
-sudo apt-get install build-essential libtool autoconf automake
+# Build core and main components
+make
 ```
 
-### Build
+### Build Individual Components
 
 ```bash
-# The main binaries
-make
-
-# Just the core library
+# Core library only
 make -C lib
 
-# Just the main executable
+# Main executable only
 make -C tools/run
+
+# DSP logic module
+make -C logic/dsp
+
+# IEC compiler
+make -C logic/iec
+
+# GTK2 HMI (requires libgtk2.0-dev)
+make -C mmi/hmi_gtk2
 ```
 
 ### Quick Test
 
 ```bash
-# The main PLC runtime
+# Main PLC runtime
 ./tools/run/matplc --help
 
 # DSP module
 ./logic/dsp/dsp --help
+
+# IEC compiler
+./logic/iec/iec2cc
 ```
 
 ## Project Structure
@@ -64,38 +81,48 @@ mat-coruscant/
 ├── logic/
 │   ├── dsp/         - DSP/filter logic module (WORKS)
 │   ├── iec/         - IEC 61131-3 compiler (WORKS)
-│   ├── ladder_lib/  - Ladder logic (needs work)
+│   ├── ladder_lib/  - Ladder logic (INCOMPLETE SOURCE)
+│   ├── plc5/        - PLC5 emulator
 │   └── il/          - IL compiler
 ├── io/               - I/O modules (modbus, parport, etc.)
 ├── mmi/              - Human-Machine Interface modules
+│   ├── hmi_gtk/     - GTK1 HMI (deprecated)
+│   ├── hmi_gtk2/    - GTK2 HMI (requires libgtk2.0-dev)
+│   └── curses/      - Curses-based HMI
 ├── comm/             - Communication libraries
 ├── service/          - Services (email, matd)
 └── demo/             - Example applications
 ```
 
+## Known Issues
+
+1. **Ladder Logic (ladder_lib)**: The `core.cpp` file is incomplete in this release - the core class implementation is missing from the source code. This appears to be a gap in the original Coruscant release.
+
+2. **GTK1**: The original GTK1 HMI is no longer supported on modern systems.
+
+3. **GTK2**: Requires `libgtk2.0-dev` and `libglade2-dev` packages.
+
+4. **Timer API**: POSIX timer API changed - some casting may be needed for `timer_t`.
+
 ## History
 
-This project was originally hosted on SourceForge and later on BerliOS. The original project page was at: http://mat.sourceforge.net/
+This code is based on the **Coruscant release** (version 0.0.6) from May 2006, originally hosted at:
+- http://mat.sourceforge.net/
+- Later moved to BerliOS
 
 The code is licensed under the GPL v2 (see COPYING file).
 
 ## Contributing
 
-This is a historical preservation project. If you'd like to contribute:
+This is a historical preservation project. To contribute:
 
-1. Fix remaining build issues (see issues)
-2. Update documentation
-3. Add modern build system support (CMake, etc.)
-
-## Known Issues
-
-1. **stream.h not found** - Ladder lib uses old Borland headers
-2. **iostream.h deprecated** - Many files use old C++ headers
-3. **extern "C" issues** - Some files mix C and C++ incorrectly
-4. **GTK1/GTK2 unavailable** - HMI modules need porting
-5. **timer_t type changes** - POSIX timer API changes require casting
+1. Fix remaining build issues
+2. Find/complete missing source code (especially ladder_lib/core.cpp)
+3. Update documentation
+4. Add modern build system support (CMake, etc.)
 
 ## Acknowledgments
 
-- Original authors: Mario de Sousa, Hugh Jack, and many contributors
+- Original authors: Mario de Sousa, Hugh Jack, Juan Carlos Orozco, and many contributors
 - The IEC compiler was based on the CANOPEN project's compiler
+- Named after planets from Star Wars (releases: Alderaan, Bespin, Coruscant, Dagobah, Endor)
