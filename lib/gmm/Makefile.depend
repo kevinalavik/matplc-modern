@@ -1,0 +1,45 @@
+gmm.o Makefile.depend: gmm.c ../plc.h ../types.h ../log/log.h ../conffile/conffile.h \
+ ../conffile/../types.h ../cmm/cmm.h ../cmm/../types.h ../gmm/gmm.h \
+ ../gmm/../types.h ../synch/synch.h ../synch/../types.h \
+ ../period/period.h ../period/../types.h ../state/state.h \
+ ../state/../types.h ../synch/synch.h ../rt/rt.h ../rt/../types.h \
+ ../misc/mutex_util.h gmm_private.h ../plc_private.h gmm_local.h gmm.h \
+ gmm_isolate.h gmm_shared.h ../cmm/cmm.h gmm_setup.h \
+ ../conffile/conffile.h ../log/log.h protocol.h ../types.h plcproxy.h \
+ ../misc/shmem_util.h ../misc/string_util.h ../misc/../types.h \
+ ../plc_private.h
+gmm_isolate.o Makefile.depend: gmm_isolate.c ../misc/mutex_util.h gmm_private.h \
+ ../plc_private.h ../gmm/gmm.h ../gmm/../types.h gmm_local.h gmm.h \
+ gmm_isolate.h gmm_shared.h ../cmm/cmm.h ../cmm/../types.h protocol.h \
+ ../types.h plcproxy.h ../misc/shmem_util.h ../misc/string_util.h \
+ ../misc/../types.h
+gmm_local.o Makefile.depend: gmm_local.c ../misc/mutex_util.h gmm_private.h \
+ ../plc_private.h ../gmm/gmm.h ../gmm/../types.h gmm_local.h gmm.h \
+ gmm_isolate.h gmm_shared.h ../cmm/cmm.h ../cmm/../types.h protocol.h \
+ ../types.h plcproxy.h ../misc/shmem_util.h ../misc/string_util.h \
+ ../misc/../types.h
+gmm_setup.o Makefile.depend: gmm_setup.c ../misc/mutex_util.h gmm_setup.h gmm.h \
+ ../types.h gmm_private.h ../plc_private.h ../gmm/gmm.h gmm_local.h \
+ gmm_isolate.h gmm_shared.h ../cmm/cmm.h ../cmm/../types.h \
+ ../misc/shmem_util.h ../misc/string_util.h ../misc/../types.h ../plc.h \
+ ../types.h ../log/log.h ../conffile/conffile.h ../conffile/../types.h \
+ ../cmm/cmm.h ../synch/synch.h ../synch/../types.h ../period/period.h \
+ ../period/../types.h ../state/state.h ../state/../types.h \
+ ../synch/synch.h ../rt/rt.h ../rt/../types.h
+gmm_shared.o Makefile.depend: gmm_shared.c ../misc/mutex_util.h gmm_private.h \
+ ../plc_private.h ../gmm/gmm.h ../gmm/../types.h gmm_local.h gmm.h \
+ gmm_isolate.h gmm_shared.h ../cmm/cmm.h ../cmm/../types.h protocol.h \
+ ../types.h plcproxy.h ../misc/shmem_util.h ../misc/string_util.h \
+ ../misc/../types.h
+plcproxy.o Makefile.depend: plcproxy.c ../plc.h ../types.h ../log/log.h \
+ ../conffile/conffile.h ../conffile/../types.h ../cmm/cmm.h \
+ ../cmm/../types.h ../gmm/gmm.h ../gmm/../types.h ../synch/synch.h \
+ ../synch/../types.h ../period/period.h ../period/../types.h \
+ ../state/state.h ../state/../types.h ../synch/synch.h ../rt/rt.h \
+ ../rt/../types.h ../misc/sin_util.h protocol.h ../types.h gmm_private.h \
+ ../plc_private.h gmm_local.h gmm.h gmm_isolate.h gmm_shared.h \
+ ../cmm/cmm.h ../misc/mutex_util.h plcproxy.h
+protocol.o Makefile.depend: protocol.c ../misc/sin_util.h protocol.h ../types.h \
+ gmm_private.h ../plc_private.h ../gmm/gmm.h ../gmm/../types.h \
+ gmm_local.h gmm.h gmm_isolate.h gmm_shared.h ../cmm/cmm.h \
+ ../cmm/../types.h ../misc/mutex_util.h

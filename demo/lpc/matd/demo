@@ -1,0 +1,6 @@
+#!/bin/sh
+../../../tools/run/matplc -g
+../../../tools/run/handler -c tcpip.cmd &
+../../../tools/run/handler -c matd.cmd
+../../../tools/run/matplc -s
+#../../lib/ipcclean > /dev/null

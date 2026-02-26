@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>MAT manual - custom modules - general functions reference</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/example.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/gmm.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Custom modules - general functions reference</h2>
+
+<p>This section describes general functions and so on - functions that
+don't belong in any of the subsequent sections.</p>
+
+<table border>
+<tr><th rowspan=2>plc_init()<br>plc_done()</th>
+
+<td colspan=2><code>plc_init()</code> is used to initialize a private
+memory map for a module. This should be called once at the beginning of the
+module.
+
+<p><code>plc_done()</code> is used to shut down the library and private
+memory map for the module. This should be done if the module exits for any
+reason.
+
+<p>Limitation: The <code>plc_done()</code> function is not particularly
+complete - it should shut down the module completely, deallocate everything
+and generally clean the slate enough so that <code>plc_init()</code> could
+be called again. This is not currently done, mostly through carelessness
+and because most of the examples are infinite loops, and the rest exit
+immediately after calling <code>plc_done()</code>. Please file a bug report
+or ask on the list if you need this fixed.</p>
+
+<p>Return values: <tt>plc_init()</tt> and <tt>plc_done()</tt> return
+returns 0 on success, -1 on failure.
+</td></tr>
+
+<tr><td valign="top"><pre>plc_init(module_name, argc, argv);
+
+plc_done();</pre></td>
+<td valign="top">non real-time</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_scan_beg()<br>plc_scan_end()</th>
+
+<td colspan=2>These functions should be called at the beginning and end of
+each scan. Their effect is to signal the other modules and sleep until it
+is time for the next scan to begin, as configured by the
+<code>scan_period</code> and <a
+href="../general/config/synch.html">synch</a> options.
+
+<p>Normal usage of these functions is described in the <a
+href="basic.html">basic custom module</a> chapter. In general terms,
+<code>plc_scan_beg()</code> should be the first thing in a scan, and
+<code>plc_scan_end()</code> the last.
+
+<p>Scans should not in general be nested; that is, make sure that these
+functions are called in alternation. For instance, if you have a
+long-running loop within your program, you might do the following in the
+middle: <pre>
+  plc_update() /* update outputs (may be omitted if nothing was plc_set()) */
+  plc_scan_end() /* end scan */
+  plc_scan_beg() /* begin new scan */
+  plc_update() /* update inputs */
+</pre>
+
+<p>If a module does not have discernible scans, these two functions can be
+omitted altogether. However, <a
+href="../general/config/synch.html">synch</a>, <code>scan_period</code> and
+similar functionality will not be available for modules that don't call
+these functions.</p>
+
+<p>Return values: FIXME
+
+</td></tr>
+
+<tr><td valign="top"><pre>
+int plc_scan_beg(void);
+int plc_scan_end(void);
+</pre></td>
+<td valign="top">real-time; may sleep on semaphore or timer (as
+configured)</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_module_name()</th>
+
+<td colspan=2>Returns the name of the module; memory must be de-allocated
+with free().</p>
+
+</td></tr>
+
+<tr><td valign="top"><pre>
+const char *plc_module_name(void);
+</pre></td>
+<td valign="top">non real-time</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_print_usage()</th>
+
+<td colspan=2>Prints a usage summary fragment; call this from your own
+usage function to print out the command line options handled by plc_init().
+<p>Note: this is only applicable if you pass the real argc and argv to
+plc_init(). If you don't pass argv in, it can't do much about it...</P>
+
+<p>Return values: FIXME
+
+</td></tr>
+
+<tr><td valign="top"><pre>
+int plc_print_usage(FILE *output);
+</pre></td>
+<td valign="top">non real-time</td></tr>
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_init_try()</th>
+
+<td colspan=2>This function is internal and should not be used by
+general-purpose modules. FIXME: why is it public?</P>
+
+</td></tr>
+
+<tr><td valign="top"><pre>
+int plc_init_try(char const *module_name, int argc, char **argv);
+</pre></td>
+<td valign="top">non real-time</td></tr>
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>CLO_xxx definitions</th>
+
+<td colspan=2>Names of command-line options.</P>
+
+</td></tr>
+
+<tr><td valign="top"><pre>
+#define CLO_LEADER "--PLC"
+
+#define CLO_plc_id             CLO_LEADER "plc_id="
+#define CLO_loc_local          CLO_LEADER "local"
+#define CLO_loc_isolate        CLO_LEADER "isolate"
+#define CLO_loc_shared         CLO_LEADER "shared"
+#define CLO_privmap_key        CLO_LEADER "local_map_key="
+#define CLO_log_level          CLO_LEADER "debug="
+#define CLO_log_file           CLO_LEADER "logfile="
+#define CLO_config_file        CLO_LEADER "conf="
+#define CLO_module_name        CLO_LEADER "module="
+#define CLO_force_init         CLO_LEADER "force-init"
+</pre></td>
+<td valign="top">n/a</td></tr>
+
+</table>
+<p>
+<!--autolink--><a href="../custom/example.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/gmm.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/05/16 12:46:13 $</small>
+</html>

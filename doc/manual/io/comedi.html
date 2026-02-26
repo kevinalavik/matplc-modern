@@ -1,0 +1,136 @@
+<html><head><title>MAT comedi IO manual</title></head>
+<body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../io/cif.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/modbus.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>comedi I/O</h1>
+
+<p>The comedi module uses the comedi library to interface with various I/O
+cards (almost 250 as of this writing, from various manufacturers). The
+library (but not the module) was written by <a
+href="http://www.comedi.org">the comedi project</a>.
+
+<h2>Example howto</h2>
+
+There is a <a href="../../hwcompat/pcl812pg">howto</a> in the hardware
+compatibility section of the webpage, outlining how to use the Advantech
+PCL-812PG card with this module.
+
+<h2>Introduction</h2>
+
+Setting up the hardware is described in <a
+href="http://www.comedi.org/doc/x62.html">Chapter 2</a> of the comedilib
+manual. Various comedi utilities and sample programs will let you install
+the device driver, verify that it was correctly detected, obtain
+information about the input and output ranges of the various devices, and
+so on.
+
+<p>In comedi, the inputs and outputs on each device (card) are grouped into
+subdevices. Each input or output is then referred to as a channel. All
+three of these (devices, subdevices and channels) are numbered, starting
+from 0. In addition, analogue channels can have multiple ranges and
+references, if the card supports these, and they can be obtained raw (as an
+integer) or converted to physical units (volts or milliamps).
+
+<h2>Addresses</h2>
+
+<p>In the mapping table, comedi addresses are specified as follows:
+
+<h3>Examples</h3>
+
+<dl>
+
+<dt><code>I2.3</code><dd>digital input, device 0, subdevice 2, channel 3.
+
+<dt><code>1:X7.3/2_DIFF</code><dd>converted analog input, device 1,
+subdevice 7, channel 3, range 2, reference AREF_DIFF.
+
+<dt><code>U.2</code><dd>analog output, device 0, subdevice 0, channel 2,
+default range and reference.
+
+</dl>
+
+<h3>Format</h3>
+
+<p>Each address has the form (some parts optional):
+
+	<br><code>device: type subdevice.channel options</code>
+
+<p>This diagram shows which parts are optional, which are mandatory, and
+the order in which they may be used. To make a valid address, start in the
+double circle labelled <strong>S</strong>, and follow the arrows until you
+get to <strong>E</strong>. Boxes denote actual letters and punctuation to
+use, ovals the various settings, as explained below. The small circles are
+simply junctions.
+
+<center>
+<img src="../../images/comedi_syntax.gif" alt="[raliroad diagram of the
+syntax]">
+</center>
+
+
+
+<h3>Details</h3>
+
+<dl>
+
+  <dt>device<code>:</code><dd>either the device filename, or the number of
+  the device ("<code>/dev/comedi</code>" will be prepended in the latter
+  case). The device specification may be omitted, including the colon, in
+  which case 0 will be used.
+
+  <dt>type<dd>denotes the direction, kind and conversion to physical units;
+  it is mandatory. Lowercase letters may also be used, which is probably a
+  good idea for <code>I</code> and <code>O</code> (so they don't get
+  mistaken for numbers). The floating-point format used by the
+  <code>X</code> and <code>Y</code> types is the same as used by the <a
+  href="../logic/dsp.html">DSP module</a>.
+  <table border>
+    <tr><th>type</th><th>meaning</th><th>bits</th><th>format</th></tr>
+
+    <tr><td><code>I</code></td><td>digital input</td> <td
+    align="right">1</td><td>on/off</td></tr>
+
+    <tr><td><code>O</code> or <code>Q</code></td><td>digital output</td><td
+    align="right">1</td><td>on/off</td></tr>
+
+    <tr><td><code>N</code></td><td>analog input (raw) (mnemonic:
+    iN)</td><td align="right">1-32</td><td>integer</td></tr>
+
+    <tr><td><code>U</code></td><td>analog output (raw) (mnemonic:
+    oUt)</td><td align="right">1-32</td><td>integer</td></tr>
+
+    <tr><td><code>X</code></td><td>analog input converted to physical
+    units</td><td align="right">32</td><td>float</td></tr>
+
+    <tr><td><code>Y</code></td><td>analog output converted from physical
+    units</td><td align="right">32</td><td>float</td></tr>
+
+  </table>
+
+
+  <dt>subdevice.channel<dd>the subdevice and channel to use on the device;
+  one or the other may be omitted, but not both; omitted parts default to
+  0.
+  <ul>
+      <li><code>1</code> is the same as <code>1.0</code>
+      <li><code>.1</code> is the same as <code>0.1</code>
+  </ul>
+
+<dt>options<dd>There are two options, either or both of which may be used
+for analog inputs and outputs; there are no options for digital I/O.  
+
+  <dl>
+
+    <dt><code>/</code>range<dd>specifies the range to be used, as a number.
+    Default 0.
+
+    <dt><code>_</code>ref<dd>specifies the reference to be used, either as
+    a number, or as a keyword (so <code>0</code>, <code>GROUND</code> and
+    <code>GND</code> are all equivalent). Default <code>GROUND</code>.
+    Mnemonic: the value at the low end; hence underscore.
+  </dl>
+</dl>
+
+<!--autolink--><a href="../io/cif.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/modbus.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:10 $</small>
+</body></html>

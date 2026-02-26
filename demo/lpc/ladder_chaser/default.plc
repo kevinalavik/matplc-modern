@@ -1,0 +1,76 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+
+	<memory>
+		<integer name="lights" value="4"/>
+		<bit name="L1"/>
+		<bit name="L2"/>
+		<bit name="L3"/>
+		<bit name="L4"/>
+		<bit name="left" value="0"/>
+		<bit name="right" value="0"/>
+		<bit name="quit" value="0"/>
+		<integer name="T4:0" value="0"/>
+		<real name="T4:0.ACC" value="0.0"/>
+		<real name="T4:0.PRE" value="0.5"/>
+	</memory>
+
+	<io>
+		<output local="L1" remote="L1"/>
+		<output local="L2" remote="L2"/>
+		<output local="L3" remote="L3"/>
+		<output local="L4" remote="L4"/>
+		<input local="left" remote="left"/>
+		<input local="right" remote="right"/>
+		<input local="quit" remote="quit"/>
+	</io>
+
+	<program>
+		<ladder location="main" comment="This the main program">
+			SOR
+				XIO BIT T4:0 DN
+				TON T4:0 T4:0.PRE T4:0.ACC
+			EOR
+			SOR
+				XIC BIT T4:0 DN
+				XIC left
+				XIO right
+				SUB lights 1 lights
+			EOR
+			SOR
+				XIC BIT T4:0 DN
+				XIO left
+				XIC right
+				ADD lights 1 lights
+			EOR
+			SOR
+				LT lights 1
+				MOV 4 lights
+			EOR
+			SOR
+				GT lights 4
+				MOV 1 lights
+			EOR
+			SOR
+				EQ lights 1
+				OTE L1
+			EOR
+			SOR
+				EQ lights 2
+				OTE L2
+			EOR
+			SOR
+				EQ lights 3
+				OTE L3
+			EOR
+			SOR
+				EQ lights 4
+				OTE L4
+			EOR
+			END
+		</ladder>
+	</program>
+
+</plc>

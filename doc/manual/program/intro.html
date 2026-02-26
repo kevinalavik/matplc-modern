@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>MAT manual - Program Engineering</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../demo/lpc.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/modularity.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Program Engineering</h1>
+
+<h2>Introduction</h2>
+
+<p>One of the more difficult areas of programming is the overall
+organization and planning of the program. Because of this, it is usually
+the most important part, the part that makes the difference between a
+project that's on-time and working and a project that's a protracted
+nightmare and never quite works right (if at all).
+
+<p>Faced with a large problem for the first time, the beginning programmer
+frequently attempts to attack it in the same way as a small problem -
+typically by sitting down and beginning to code. This is made worse by
+programming books and courses, which of necessity must use relatively short
+examples (a couple of pages at most) and exercises (perhaps a dozen
+man-hours for a major assignment). Unfortunately, using this approach for
+real-world-sized projects usually leads to programs which, if they work at
+all, work badly, and are difficult to maintain and modify in the future.
+
+<p>Large problems demand their own programming techniques.
+
+<p>In reality, it's probably a good idea to apply them always; after all,
+if it's a small project which really is very simple, it won't take long to
+document it. If the design and documentation take much time and effort,
+then it probably isn't such a simple project after all.
+
+<p>This chapter cannot hope to cover this area; it is much too wide. Also,
+programming as a discipline is still young and many of these techniques are
+poorly developed. However, we hope to provide at least a quick overview of
+some of the important and uncontroversial points.
+
+<p>First, though, a quote that perhaps best summarizes the ideal of all
+design:
+
+<blockquote>Perfection is attained not when there is no longer anything to
+add but when there is no longer anything to take away. <i>(Antoine de
+Saint-Exup&eacute;ry)</i></blockquote>
+
+<h3>Safety</h3>
+
+<p>A reminder that if there is any way in which the software could (through
+action or inaction) cause a hazardous situation or harm a human,
+safety-critical software specialists need to be brought in, or such
+situations eliminated by altering the design of the machine. After all, the
+computer is in many ways a single component, and thus a single point of
+failure; expecting it to be solely responsible for safety is unrealistic.
+Where at all possible, hardware interlocks should be provided to prevent
+dangerous combinations.
+
+<p>If it is not possible to entirely eliminate such situations, the
+reliability requirements on the software will be well beyond the scope of
+this short introduction, and indeed beyond the ability of most commercial
+software houses and general-purpose programmers and software engineers.
+Specialized techniques, procedures and methods will need to be applied.
+Neither MatPLC nor Linux itself have been put through this process.
+
+<p>
+<!--autolink--><a href="../demo/lpc.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/modularity.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:12 $</small>
+</html>

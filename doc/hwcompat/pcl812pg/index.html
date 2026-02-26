@@ -1,0 +1,134 @@
+<html><head>
+<title>MatPLC HW compatibility - sv203b</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF"
+link="#000088" alink="#880000" vlink="#660066"
+>
+<!-- navbar more-or-less like on the SourceForge page -->
+<hr SIZE="1" NoShade>
+<a href="https://sourceforge.net/projects/mat/">Summary</a> |
+<a href="https://sourceforge.net/project/admin/?group_id=29758">Admin</a> |
+<a href="http://mat.sourceforge.net">Home Page</a> |
+<a href="https://sourceforge.net/forum/?group_id=29758">Forums</a> |
+<a href="https://sourceforge.net/tracker/?group_id=29758">Tracker</a> |
+<a href="https://sourceforge.net/tracker/?group_id=29758&atid=397247">Bugs</a> |
+<a href="https://sourceforge.net/tracker/?group_id=29758&atid=397248">Support</a> |
+<a href="https://sourceforge.net/tracker/?group_id=29758&atid=397249">Patches</a> |
+<a href="https://sourceforge.net/mail/?group_id=29758">Lists</a> |
+<a href="https://sourceforge.net/pm/?group_id=29758">Tasks</a> |
+<a href="https://sourceforge.net/docman/?group_id=29758">Docs</a> |
+<a href="https://sourceforge.net/survey/?group_id=29758">Surveys</a> |
+<a href="https://sourceforge.net/news/?group_id=29758">News</a> |
+<a class=tabs href="https://sourceforge.net/cvs/?group_id=29758">CVS</a> |
+<a class=tabs
+href="https://sourceforge.net/project/showfiles.php?group_id=29758">Files</a><hr
+SIZE="1" NoShade>
+
+Back to <a href="..">compatibility list</a><hr SIZE="1" NoShade>
+
+<h2>Advantech PCL-812PG</h2>
+
+The next information will be specific to linux debian 3.0 and a PCL-812PG
+Advantech ISA I/O board, although it could be used as a starting point for
+a different configuration.
+
+<h3>Required Material</h3>
+<ul>
+
+<li>An old PC. Remember we need an ISA socket for this card. Besides that,
+it is a good idea to test IO with a cheap machine. For the demo we will
+need GTK and therefore XWindows so we will need some computation power IMO
+you will be OK with any Pentium type of machine. 64MRam, 4GB HD, CDROM.
+
+<li>Debian 3.0 (I used 3.0r1) CD's.
+
+<li>Advantech PCL-812PG card 20 wire ribbon connectors and the
+corresponding terminal boards. 
+
+<li>A multimeter.
+
+</ul>
+
+<h3>Steps</h3>
+
+<ol>
+<li>Using the Advantech card manual configure the board to the desired
+settings by moving the dip-switches and jumpers, then write down the
+settings. In my case Address 0x220, 0 to 10V DAC, -10 to 10V   ADC, no
+IRQ, no DMA. Place the board in the computer connect the ribbon cables
+to the terminal boards and close the computer.</p>
+
+<li>Install the debian OS in the machine. I used the first debian 3.0r1
+CDROM and configured an Internet connection trough Ethernet using the
+companies gateway connected through ADSL to the ISP. Adding a debian ftp
+site to the apt/sources.list. Having this it is possible to grab debian
+packages just by invoking the usual "apt-get install package_name". I
+did all this installation as root user.</p>
+
+<li>Download MatPLC from cvs (mat.sf.net) into a directory (in my case
+/usr/local/mat/matcvs/).</p>
+
+<li>Install the libgtkextra-dev package. This package is needed to compile
+the hmi_gtk module. We will also need to get glade and gnome developer
+packages. Install libncurses-dev package.</p>
+
+<li>Compile the new kernel using the new kernel-source. There should be
+plenty of documentation elsewhere on how to build a kernel, but briefly:
+<ol>
+	<li>Get the new kernel source using "apt-get install
+kernel-source-2.4.18"
+
+	<li>Inside /usr/src extract the kernel sources using "tar -xjf
+kernel-source-2.4.18.tar.bz2"
+
+	<li>From /usr/src/kernel-source-2.4.18/ use "make menuconfig" select
+the kernel options be sure to include the needed hardware compatibility 
+then do "make dep",  "make clean bzImage", "make modules", "make modules_install"
+
+	<li>cp /usr/src/linux-source-2.4.18/arch/i386/boot/bzImage
+/boot/bzImage2.4.18
+
+	<li>Add /boot/bzImage2.4.18 to /etc/lilo.conf and run lilo to
+update the boot record. Check lilo documentation for this step.
+
+	<li>Restart the machine, select the new kernel at the lilo prompt. We
+need the new kernel to be working before continuing.
+</ol></p>
+<li>Install comedi, comedi has two parts comedi and comedilib:
+<ol>
+	<li>Install comedilib using "apt-get install libcomedi-dev"
+
+	<li>Get comedi source, "apt-get install comedi-source"
+
+	<li>Inside /usr/src extract comedi using "tar -xzf comedi.tar.gz"
+
+	<li>Inside /usr/src/module/comedi execute configure, make, make
+install.
+
+	<li>If this is the first time you install comedi also do "make dev" to
+create /dev/comediN (where N = 0..3)
+</ol></p>
+<li>Load the modules using "modprobe comedi" and "modprobe pcl812"</p>
+
+<li>Based on the information taken from the board switches and jumper
+settings and following the configuration options described on the head
+of the pcl812.c program configure the port using: 
+<br><code>comedi_config /dev/comedi0 pcl812pg 0x220,0,0,0,1,1</code></p>
+
+<li>Set library path, "export
+LD_LIBARY_PATH=/usr/local/mat/matcvs/lib/.libs"</p>
+
+<li>Compile MatPLC. Change to /usr/local/mat/matcvs/demo/basic_comedi/ 
+type make and then ./demo. Remember that /usr/local/mat/matcvs/ is where
+I uploaded Mat but if you choose a diferent directory change this step
+and the previous one accordingly
+</ol>
+And that will be all.
+
+<p>Juan Carlos Orozco
+<address><a href="mailto:jorozco@ace-lab.com">jorozco@ace-lab.com</a>
+<br><a href="http://www.ace-lab.com">ACElab Industrial Automation</a>
+</address>
+<p><small>$Date: 2003/09/11 14:18:18 $</small>
+</body></html>
+

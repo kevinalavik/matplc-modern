@@ -1,0 +1,973 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% paper.tex = template for real-time Linux workshop papers
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[10pt,a4paper]{article}
+\usepackage[english]{babel}
+\usepackage{multicol}
+\usepackage{url}
+\usepackage{rotating} % rotate and turn text
+
+\setlength{\paperheight}{297mm}
+\setlength{\paperwidth}{210mm}
+\setlength{\voffset}{11mm}
+\setlength{\topmargin}{0mm}
+\setlength{\headsep}{0mm}
+\setlength{\headheight}{0mm}
+\setlength{\textheight}{235mm}
+\setlength{\hoffset}{-4mm}
+\setlength{\textwidth}{166mm}
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\marginparpush}{0mm}
+\setlength{\columnsep}{6mm}
+\setlength{\parindent}{0mm}
+
+%% insert eps pictures
+%% use as \epsin{epsfile}{width_in_mm}{label}{caption}
+\usepackage{epsfig}
+\newcounter{figcounter}
+\def\epsin #1#2#3#4{
+\refstepcounter{figcounter} \label{#3}
+\[
+\mbox{
+  \epsfxsize=#2mm
+  \epsffile{#1.eps}
+}
+\]
+%\vspace{0mm}
+\begin{center}
+  \parbox{7cm}{{\bf FIGURE \arabic{figcounter}:}\quad {\it #4 } } \\
+\end{center}
+}
+
+%% use instead of \caption in figures
+%% use as \figcaption{caption}{label}
+\def\figcaption #1#2{
+\refstepcounter{figcounter} \label{#2}
+%\vspace{0mm}
+\begin{center}
+  \parbox{7cm}{{\bf FIGURE \arabic{figcounter}:}\quad {\it #1 } } \\
+\end{center}
+}
+
+%% insert table
+%% use as \tabin{size_in_mm}{label}{caption}{table_data}
+\newcounter{tabcounter}
+\def\tabin #1#2#3#4{
+\refstepcounter{tabcounter} \label{#2}
+\[ \makebox[#1mm][c]{#4} \]
+%\vspace{0mm}
+\begin{center}
+  \parbox{7cm}{{\bf TABLE \arabic{tabcounter}:}\quad {\it #3 } } \\
+\end{center}
+}
+
+\newcommand{\fixme}[1]{{\bf FIXME:} {\it #1}}
+
+\begin{document}
+\pagestyle{empty}
+\begin{center} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE OF PAPER (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\Large \bf MatPLC: towards real-time performance\\}
+\vspace{10mm} 
+{\large 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% AUTHOR (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\bf M\'ario de Sousa }\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% AFFILIATION (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Faculdade de Engenharia \\ Universidade de Porto \\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% STREET ADDRESS (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Rua Dr. Roberto Frias, s/n\\
+4200-465 Porto, Portugal\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% E-MAIL (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+msousa$@$fe.up.pt \\
+\vspace{5mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% AUTHOR (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\bf Ji\v{r}\'{\i} Baum}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% AFFILIATION (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PMJ Enterprises Pty Ltd\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% STREET ADDRESS (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+P.O.\ Box 2364 \\ Rowville 3178, Australia\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% E-MAIL (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+jiri$@$baum.com.au \\
+\vspace{5mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% AUTHOR (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\bf Andrey Romanenko}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% AFFILIATION (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Departamento de Engenharia Qu\'\i mica \\
+Universidade de Coimbra \\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% STREET ADDRESS (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pinhal de Marrocos, P\'olo II \\
+3030-290 Coimbra, Portugal \\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% E-MAIL (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+andrew$@$eq.uc.pt \\
+}
+\end{center}
+
+\vspace{10mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ABSTRACT (REQUIRED)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+%
+
+% An effort to enable hard-realtime capabilities in MatPLC is presented.
+The MatPLC is an open-source control application, consisting of a core, a
+collection of modules and tools for creating custom modules (including an
+IEC 61131-3 IL and ST compiler). Since many control and monitoring systems
+are required to be hard-realtime, a feature not supported by the present
+implementation that relies on the standard Linux kernel and scheduler, the
+provision of MatPLC with hard-realtime capabilities is of great importance.
+
+We outline the MatPLC architecture, consider a number of real-time
+operating systems, and discuss the design changes required to add
+hard-realtime capabilities to the MatPLC framework. We also make a
+preliminary evaluation of the effort required to port the existing code
+base to the extended framework.
+
+We conclude that some parts of MatPLC will pose no porting problems while
+others will require significant work. We also pinpoint some inter-process synchronisation features used
+by the MatPLC that are currently missing in the existing RTOS, and propose
+ways to overcome this difficulty.
+
+\end{abstract}
+
+\vspace{10mm}
+
+\begin{multicols}{2}
+
+\section{Introduction}
+
+In the last decade computer technology has experienced a significant change
+towards more efficient interoperability thanks to open-source and free
+software \cite{lerner02}. Currently, one may encounter such software at
+home, in academia, research institutions and public organisations
+\cite{gifford00,spedding02,ghosh02}. However, few applications have been
+utilised in the industrial sector. This fact can be explained by the
+inherent features of industrial processes, such as the need to protect the
+underlying know-how and the warranty and liability concerns. Open source
+projects also suffer from the general misconception that they are of low
+quality \cite{jafrate01}.
+
+Nevertheless, several recent open control initiatives have been under
+active development (\cite{romanenko03a1} and references therein). Among
+them is MatPLC \cite{wurmsdobler01}, a free implementation of a soft PLC
+(programmable logic controller).
+Lately, significant efforts have taken place in order to integrate MatPLC
+project with similar projects such as OROCOS, EMC, ClassicLadder and VISUAL.
+
+% The MatPLC is implemented as a set of user-space processes under the
+% supervision of the Linux kernel.
+%
+It is well known that timing unpredictability may seriously affect
+controller performance even in simple applications
+\cite{wittenmark95,sanfridson00}. While the Linux scheduler is designed to
+maximise the overall performance of the multiuser multitasking system and
+allows for the assignment of distinct priorities to particular user
+processes, and there exist so-called low latency kernel patches enabling
+better scheduling of user processes, these measures may not be sufficient
+for industrial control. Therefore, the provision of MatPLC with
+hard-realtime capabilities is of great importance.
+
+The remainder of this paper is organised as follows:
+%
+Section~\ref{sec:architecture} presents the existing architecture of the
+MatPLC,
+%
+Section~\ref{sec:rtchoice} describes the required features and the choice
+of the target real-time capable operating system,
+%
+while Section~\ref{sec:issues} outlines the revised MatPLC framework that will include RT capabilities.  The issues arising from the porting
+of various components of MatPLC are also identified, and solutions are proposed.
+%
+Concluding remarks are drawn in Section~\ref{sec:conclusions}.
+
+\section{MatPLC architecture}
+\label{sec:architecture}
+
+The MatPLC is composed of autonomous but cooperating modules that execute
+in separate user-space processes. Each of these modules is free to decide
+whether or not to execute in a standard PLC loop, and accesses a common
+shared state, which is stored in shared memory. They may also synchronise
+their activities, such as the execution of the PLC loop, through the use of
+semaphores. Both the access to the shared memory and the use of semaphores
+is always made through the MatPLC library routines, which present them
+through abstractions more familiar to industrial control. This library
+offers PLC-like semantics for the modules that wish to use them, such as
+inputs that only change at the beginning of the logic and outputs that are
+only written at the end of the logic. This means that an application
+builder's PLC skills can be easily transferred to the MatPLC.
+
+\begin{figure*}[htbp]
+\newcommand{\module}[2]{\fbox{\begin{sideways}\parbox{4cm}{\center #1 module \\
+(e.g.\ #2)\\~}\end{sideways}}}
+\module{Logic}{Stepladder program}
+\module{Logic}{DSP}
+\module{Logic}{IEC 1131 program}
+\module{I/O}{Modbus}
+\module{I/O}{comedi}
+\module{I/O}{parallel port}
+\module{HMI}{X-based GUI}
+\hfill\raisebox{2cm}{\Huge\ldots}\hfill
+\raisebox{2cm}{\parbox{2cm}{\large\center MatPLC\\modules}}
+
+\renewcommand{\sec}[2]{%
+\begin{tabular}[t]{@{}c@{}}
+\framebox[1.8cm]{\rule[-0.5ex]{0pt}{3ex}\large #1}\\
+$\Downarrow$\\
+\fbox{\parbox{1.3cm}{\center #2\\~}}
+\end{tabular}}
+
+\fbox{\parbox{0.99\textwidth}{
+\hrulefill\\[0.5ex]
+\sec{cmm}{Config shared memory and sema\-phore}
+\sec{gmm}{Global shared memory and sema\-phore}
+\sec{synch}{Synch sema\-phores}
+\sec{period}{Period timers}
+\sec{state}{State sema\-phores}
+\sec{config}{Config file}
+\sec{log}{Log file}
+\hfill\raisebox{-1cm}{\parbox{2cm}{\large\center MatPLC\\library}}
+}}
+
+\figcaption{MatPLC Architecture, showing a selection of modules in the top
+part and the sections of the library in the bottom part.}{fig:arch}
+\end{figure*}
+
+Each module is dedicated to a specific function, such as handling physical
+I/O, communicating with other PLCs, executing the program logic or
+interacting with the operator through a graphical interface. Handling of
+physical I/O involves reading inputs from I/O boards and copying their
+states to the MatPLC internal coils (in the PLC shared state), or
+vice-versa. Each I/O module is dedicated to a specific hardware board or
+communication protocol. Program logic modules may be specific to the
+application in question, or may be general modules (such as the digital
+signal processing module) that are configured for the application.
+Application builders simply pick and choose the modules they use.
+
+MatPLC supports multiple instances of a module running at the same time.
+For example, an application builder wanting to run two digital filters at
+different sampling frequencies can create two processes of the same digital
+signal processing module with different configurations. Additionally,
+modules may be launched and stopped on the fly, while the rest of the PLC
+continues to run.
+
+Each module in the MatPLC links against a common library; it is the use of
+this library that makes them MatPLC modules, able to act together to form a
+MatPLC instance, rather than unrelated programs. This library is divided
+into several sections (Fig.~\ref{fig:arch}):
+\begin{description}
+\item[configuration memory manager (cmm)]manages the shared memory area
+that stores core configuration data;
+\item[global memory manager (gmm)]manages the shared memory area used
+to store the state of the plc points;
+\item[synch section]handles the synchronisation between modules;
+\item[period section]enforces scan loop timings;
+\item[state section]handles module execution state;
+\item[configuration section]parses the configuration files; and
+\item[log section]allows every module to produce logs in a consistent
+manner.
+\end{description}
+
+\subsection{The Configuration Memory Manager (cmm)}
+
+The configuration memory area is where the current configuration of the
+MatPLC is stored, which guarantees that every module uses the same core
+configuration data. This memory area is initialised at MatPLC startup based
+on the configuration file.
+% Each module is still free to get more specific configuration data from
+% the file itself upon module initialisation,
+Module-specific configuration is obtained directly from the configuration
+file by each module, but core configuration data is always obtained through
+the cmm. There is a semaphore to control access to the cmm.
+
+If several MatPLCs run simultaneously on the same system, the configuration
+memory area and its shared memory ID are used as the `identity' of each
+MatPLC instance. Each module, upon start-up, connects to one of these
+areas, and thereby to one of the running MatPLCs.
+
+\subsection{The Global Memory Map (gmm)}\label{arch:gmm}
+
+The global memory map is a shared memory block used to store the state of
+the plc points (i.e.\ plc internal coils). Modules access these points
+through the gmm library.
+% by using handles. A handle to a point is obtained by calling a gmm
+% function and passing the name of the point.
+
+Since the architecture permits several modules to be running concurrently,
+every access to the global memory map must be made to be atomic with
+respect to the other modules; in fact, to help avoid errors, this is done
+on a per-scan basis. Several modes are available for enforcing this
+constraint, none of which is optimal for all possible scenarios in which
+the MatPLC is expected to be used. The application builder may choose these
+modes on a per-module basis, so that it is possible to have modules running
+simultaneously using different modes (Fig.~\ref{fig:gmmsynch}).
+
+\begin{figure*}[htbp]
+\epsin{gmmsynch}{100}{fig:gmmsynch}{Synchronisation of gmm memory maps ---
+local (default), isolate and shared}
+\end{figure*}
+
+In the default 'local' mode, a local copy of the
+memory map is created for the module, independent from the global memory
+map (Fig.~\ref{fig:gmmsynch} --- Module A).
+%
+When a module accesses a plc point, it is actually accessing its local
+memory map. Local and global memory maps are synchronised by calling the
+{\tt plc\_update()} function of the gmm. Synchronisation is controlled by a
+semaphore, which provides atomic updates with respect to other modules.
+Both maps have exactly the same size and layout, reducing the update to a
+simple bit-for-bit logical function. The update must be made quickly
+because it requires access to a common shared resource (the global memory
+map) and may therefore become a bottleneck. Because of the use of a common
+shared resource controlled by a semaphore, using the MatPLC in a
+hard-realtime environment will require the use of a scheduling mechanism
+that bounds priority inversion.
+
+The `local' mode allocates the local memory map on the module's heap, and
+accesses the global memory as shared memory mapped onto the module's
+virtual memory address space. This has the drawback that if the module is
+badly written, a stray pointer may access the PLC's global memory map
+without going through the gmm, potentially creating havoc.
+
+This is the reason for the second mode, `isolate' (Fig.~\ref{fig:gmmsynch}
+--- Module B), which completely isolates the module from the shared memory
+used by the PLC. This is done by forking a second process that will serve
+as a proxy for every access to the shared PLC resources. Communication
+between the module and the proxy process, and switching between the two
+processes, introduces some overhead, which is why this mode is expected to
+be used only for modules that were obtained from an untrusted source, or
+that are still in a debugging stage.
+
+Like the `local' mode, a module using the `isolate' mode is also given a
+local memory map. Unlike `local' mode, however, the local memory map is
+shared memory, shared between the module and the proxy process, while the
+global memory map is only mapped into the memory space of the proxy
+process. There is thus a layer of isolation between the module itself and
+the global map. The proxy process, having access to both maps, can
+synchronise them whenever the {\tt plc\_update()} function is called by the
+module. The function call is forwarded to the proxy process using sockets;
+a pipe implementation would also be possible.
+
+% Mario, does it isolate cmm also? that could be quite a bit of havoc
+% too\ldots (assuming cmm isn't read-only)
+%% No, it doesn't.
+%% Wishlist item #822748.
+
+The third and last mode, `shared', is the most simple and efficient of all,
+but restricted in its use. It gives the module direct access to the global
+memory map (Fig.~\ref{fig:gmmsynch} --- Module C). This mode may only be
+used when the modules in question are running a traditional infinite loop
+(i.e.\ a scan), and are configured to run the loops in turn using the synch
+section of the library, described below. With the above constraints, it is
+possible to guarantee that simultaneous access to the map will never occur,
+since only one module will be running at any point in time. This mode could
+also be used if the modules are running concurrently, but access disjoint
+portions of the global map; however, the MatPLC provides no support for
+arranging this.
+
+\subsection{The Synch Section}
+
+The synch section uses standard SysV semaphores to synchronise the modules,
+but does not make this apparent to the modules using the library. The
+application builder models the execution sequence to be enforced using a
+Petri net or a simple sequence. Particular points in the module (usually
+beginning and end of scan, but optionally others) are associated with the
+firing of a transition.
+
+When such a point is reached, the module blocks until the transition fires
+(assuming it cannot fire immediately). Note that a transition will not fire
+unless a module is waiting on it; in this the semantics differ from those
+of a standard Petri net. The whole Petri net is implemented as a single SysV
+semaphore set, with a semaphore for each place. Each transition is
+implemented by simultaneously waiting on all the appropriate semaphores, a
+functionality of SysV semaphores not supported by POSIX semaphores.
+
+As noted in Section~\ref{arch:gmm} above, when modules are configured to
+run in the shared gmm mode, they must be configured so that no other module
+(in any mode) is running simultaneously with the module in the shared mode.
+The simplest way to guarantee this is with a simple sequence of modules,
+but if only some of the modules use shared gmm mode, more complicated
+arrangements are possible.
+
+\subsection{The Period Section}
+
+This section enforces maximum scan rates for each module, to prevent CPU
+saturation and avoid useless calculations. It uses POSIX timers to set an
+alarm that goes off at every multiple of the desired scan period. Each time
+the alarm goes off, a (mutex-protected) alarm counter is incremented. When
+a module is ready to start a new scan, just before waiting for its
+beginning-of-scan synch transition, the period section decrements the alarm
+counter, and continues with the scan. If there are no outstanding alarms at
+the beginning of the scan, then the scan is delayed until the next alarm
+goes off.
+
+\subsection{The State Section}
+
+This section of the library handles RUN/STOP modes both for the MatPLC as a
+whole and for each module. A module will only execute a scan if both the
+whole MatPLC and the module itself are in RUN mode.
+% In any other case, the module stops. The state library also keeps track
+% of the process ids of all running modules.
+%
+In order for these modes to work correctly with the synch library, they are
+implemented by adding hidden places to the synch petri net --- one hidden
+place for the MatPLC as a whole plus one hidden place for each module. In
+these hidden places, the presence of a token indicates RUN mode, and the
+lack of a token indicates STOP mode.
+
+These places are connected with arcs to the synch transitions so that a
+transition will only fire if both the PLC and the module are in RUN mode,
+and so that it replaces the tokens after firing. A module is thus able to
+atomically verify the conditions required by both the state and the synch
+sections.
+
+In the future, the state section is expected to include support for a
+module to be replaced on-line. This mechanism will allow the new
+(replacement) module to execute its startup routine while the old module
+continues to run. When the replacement module is ready to run, the library
+will wait for the module being replaced to finish its scan, and then
+simultaneously switch the old module to STOP and the new module to RUN. The
+old module will then shut down.
+
+\subsection{The Configuration Section}
+
+The configuration section parses the configuration file into heap memory at
+module initialisation. The modules (and the MatPLC setup routine) use this
+data to configure their behaviour.
+
+\subsection{The Log Section}
+
+The log section provides common logging facilities for all MatPLC-related
+processes. Currently, log messages are simply timestamped and written to a
+logging file.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FIGURES ARE HANDLED LIKE THIS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% the figure will be in file rt-tux.eps and will occupy 75mm on the page
+%\epsin{rt-tux}{50}{fig1:f1}{Figure Caption}
+
+\section{Choice of a real-time OS}
+\label{sec:rtchoice}
+
+The choice of the real-time OS for the MatPLC needs to be based on the
+requirements the MatPLC has on the OS and on the way the candidate
+platforms fulfil these criteria. These are treated in turn below, followed
+by a conclusion identifying which of the candidates best meets the
+criteria.
+
+\subsection{Required features and other criteria}
+
+The chosen real-time OS needs to fulfil certain criteria. Some of them are
+narrow technical issues, where the MatPLC requires or prefers support for
+certain OS features. Others are more philosophical, being required for the
+wider goals of the project and continuity of development rather than the
+code itself.
+
+\subsubsection{Quality as a RTOS}
+
+This rubric covers aspects such as maturity, positioning in the field and
+likelihood of continued support and development by its authors and others.
+It is not particularly related to the MatPLC: any project contemplating the
+use of a real-time operating system, or any other support software, would
+have the same requirements.
+
+Obviously, it must actually be a real-time OS; as already noted, approaches
+addressing the kernel latency or the like \cite{linuxsrt03,qlinux03} would
+not provide any advantage over the {\it status quo}.
+
+\subsubsection{Licensing}
+
+While the licensing of the OS does not directly impact upon MatPLC code, it
+does impact on its goals: it'd rather defeat the purpose to produce an
+open-source package which requires a proprietary OS. The licensing of the
+selected candidate should therefore fall under the Open Source Definition
+\cite{osd03,perens99}.
+
+The licensing must also allow GPL programs; however, practically all
+development environments do.
+
+\subsubsection{Relation to Linux}
+
+It is desirable for the candidate operating system to be based on Linux,
+since this presents ``natural'' evolution for the project. It will then be
+possible to continue using familiar tools (such as gcc, make, Python, etc),
+and the MatPLC will continue to be targeted to Linux for applications which
+do not require hard-realtime performance (educational, monitoring,
+low-hazard situations).
+
+However, the MatPLC code was written using standard APIs and open-source
+and free development tools, so an unrelated Unix is also a possibility.
+
+\subsubsection{User-space}
+
+Real-time tasks should as far as possible be ordinary user-space processes.
+There are two primary reasons to prefer this to approaches which make
+real-time tasks a special kind of program such as a kernel module.
+
+From a pragmatic point of view, a user-space process, even a hard-realtime
+one, is easier to deal with as far as programming and debugging are
+concerned. In addition, interaction with non-realtime processes is also
+likely to be much easier.
+
+From a philosophical point of view, placing real-time tasks within the
+kernel breaks the Unix model; as such, it may be considered a kludge. It
+will probably give some performance advantage, but unless such advantage is
+substantial, this approach is to be avoided. In applications where strict
+timing requirements mandate this approach, it is likely that the overhead
+of MatPLC itself will also be too large and the application builder will
+not be able to take advantage of MatPLC anyway.
+
+\subsubsection{Support for Shared Memory}
+
+The MatPLC architecture is based around the sharing of PLC state among the
+MatPLC processes. This is currently implemented through the extensive use
+of the shared memory mechanism. A RTOS supporting shared memory, not only
+among real-time processes, but also between real-time and non-realtime
+processes is essential to the porting effort.
+
+\subsubsection{Synchronisation Primitives}
+
+The MatPLC modules currently synchronise with each other using SysV
+semaphores, both to serialise access to the shared memory areas and to
+enforce the configured module execution sequence. It would be preferable
+for the RTOS to support this variant of semaphores.
+
+Nevertheless, porting the MatPLC to use POSIX synchronisation primitives is
+not out of the question, even though simple POSIX semaphores are not rich
+enough to directly implement the synchronisation features currently
+supported by the MatPLC. This would require more effort for the current
+port, but it would have the advantage that it would greatly ease any future
+porting effort to other POSIX OSs.
+
+Another option would be to use condition variables and their associated
+mutexes. However, since the MatPLC runs in several separate processes and
+the POSIX specification only mandates the provision of these mutexes
+between threads of the same process, it would have the disadvantages of
+both of the above: significant effort and the result is still not POSIX.
+
+\subsubsection{Support for FIFOs}
+
+The MatPLC logging section writes all logs to a user configurable file. As
+writing to a file introduces unpredictable delays not compatible with RT
+processes, a buffer will be required between logging the message and
+writing to the file. This could be implemented with shared memory, but a
+FIFO or message queue would be more appropriate.
+
+
+\subsection{Overview of candidate RT OSs}
+
+There are four main candidates, discussed in turn below. Obviously, there
+are numerous other players in the field, including some quite major ones.
+However, these four represent the candidates that could seriously be
+considered for the MatPLC.
+
+\subsubsection{RTLinux}
+
+RT-Linux was the first attempt at hard real-time Linux \cite{barabanov97}.
+From the beginning the authors have taken a conservative approach to
+the design of RT-Linux components and to the addition of new features.
+This resulted in a solid and high quality RT environment actively supported
+by the open source community. With the creation of a commercial version
+and the filing of a controversial patent (which we in no way intend to
+ discuss here) the support of the community dropped. RT-Linux implements
+basic POSIX API and has support for user-space real-time tasks. The means
+ of interprocess communications include semaphores, mutexes (with priority ceiling), shared memory
+ (mbuff module) and FIFO queues. No dynamic memory allocation is supported.
+An extensive set of debugging tools is available.
+
+\subsubsection{RTAI}
+
+RTAI \cite{mantegazza00,rtai03} is a fork of an early stage of RT-Linux. It
+was born when development a few new features, in which some members were
+interested, had not found due attention from the RT-Linux maintainers. The
+two ``rivals'' have followed separate paths ever since.
+
+RTAI is released under the LGPL \cite{lgpl03}, with some portions, those
+derived from RT-Linux, falling under the GPL. The user and developer
+community around RTAI is vast and ever-growing. It is worth noting the
+successful efforts to cooperate and even merge with other projects, such as
+ADEOS \cite{adeos03}, Xenomai \cite{xenomai03}, COMEDI \cite{comedi03} and
+RTnet \cite{rtnet03}. RTAI features include a userspace real-time mode
+(LXRT), partial POSIX API support, distributed real-time environment,
+dynamic memory allocation, shared memory mechanisms for use among real-time
+and regular Linux processes ({\tt rtai\_shm} module), semaphores, mutexes
+(with priority inheritance), message queues, mailboxes, FIFO queues and
+some debugging capability. The last is considered insufficient
+and
+represents a weak point of RTAI, as is its documentation.
+However, the emerging Magma branch of RTAI addresses the
+debugging issue. The userspace
+variant has slightly lower performance than the kernel-space one ---
+perhaps 3$\mu$s is lost on each task switch and each RTAI system call
+\cite{soetens03}.
+
+The Magma version plans to allow realtime processes to use standard Linux
+system calls, which will reduce the differences between the realtime and
+non-realtime variants of the MatPLC.
+
+\subsubsection{QNX}
+
+QNX \cite{qnx03} is, undoubtedly, one of the flagship real-time operating
+systems.
+It runs on several hardware platforms and features a rich set of
+development tools. This notwithstanding, it is a commercial proprietary
+product. Although there exists a non-commercial edition (QNX Momentics
+Development Suite Non-Commercial), it appears from the corresponding end
+user agreement \cite{qnxlicnc03} that this use is limited to ``proof of
+concept'' and prototyping work. Any for-profit use is excluded. This may
+significantly hinder the proliferation of MatPLC in the industrial field.
+
+QNX supports the classical FIFO and Round-Robin fixed priority scheduling
+mechanisms with 64 distinct priority levels, complemented by an adaptive
+and a sporadic (resource reservation) scheduling mechanisms. All scheduling
+mechanisms include the priority inheritance protocol to avoid priority
+inversion.
+
+This OS also supports a large number of synchronisation primitives, namely
+semaphores, mutexes, condition variables, barriers, sleepon locks and
+reader/writer locks, of which the first three may be used to synchronise
+threads executing in different processes. Additionally, it supports several
+data sharing mechanisms such as shared memory, POSIX message queues, pipes,
+fifos and a QNX specific mechanism known as message passing.
+
+\subsubsection{RTEMS}
+
+RTEMS \cite{rtems03} is a small real-time OS initially developed in Ada
+to be used in the
+military (Real-Time Executive for Missile Systems). Later, its C version
+became free and open source software with a consequent name change (Real-Time Executive for Multiprocessor Systems). Presently, RTEMS implements POSIX~1003.1b and RTEID/ORKID based API, event-driven priority-based scheduling, intertask communication and synchronisation, dynamic memory allocation, priority inheritance mechanisms and TCP/IP networking. Because of its size it is suitable for deeply embedded systems. RTEMS host environments are available for MS-Windows, Linux, FreeBSD, Solaris, MacOS. Many target platforms are suported, the most notable being ARM, Hewlett-Packard PA-RISC, Intel i386 and above, Motorola m680x0 and m683xx, PowerPC, SPARC V7 and above, and a synthetic target CPU allowing native execution of RTEMS programs on Linux, Solaris, FreeBSD, Cygwin, HPUX for prototyping and simulation. A port of CORBA implementation omniORB \cite{omniorb03} is available for RTEMS.
+
+\subsection{Selection of RTOS}
+
+Of the above possibilities, RTAI with LXRT best satisfies the requirements.
+%
+Its quality as a RTOS is high, being one of the top two real-time variants
+of Linux, and its community support is unsullied by the patent issue that
+clouds the alternative. In the LXRT mode real-time tasks are ordinary
+user-space processes, with the only restrictions being that some library
+and all system calls may not be made. Shared memory and FIFOs are
+supported, however synch primitives are currently not SysV (a weak point).
+Either we will need to port to POSIX semaphores, or wait for RTAI to get
+SysV semaphores. Licensing is excellent, and it is closely related to
+Linux.
+
+Second choice would probably go to RTEMS; if RTAI fails in some fashion,
+RTEMS is a serious contender.
+
+\section{Real-time MatPLC}
+\label{sec:issues}
+
+Porting the MatPLC to a RTOS is not by itself sufficient to make the MatPLC
+a realtime application. The MatPLC framework will need to be augmented to
+become time-deterministic and take advantage of the facilities provided by
+the RTOS --- firstly in the core, and secondly in each of the modules. All
+system calls will have to be replaced by their RT equivalents, not only
+calls to semaphores, timers, yielding the processor and so on.
+
+\subsection{Real-time Framework}
+
+A real-time control application is commonly composed of not only
+hard-realtime components, but also of components that, for one reason or
+another, are not hard-realtime --- for instance modules which need to write
+to disk or use other system calls. Since the MatPLC is already well divided
+into simultaneously executing modules, we have chosen to use this division
+to distinguish between real-time and non-realtime components. Application
+components will therefore be mapped onto MatPLC modules, which may or not
+run under a realtime priority, according to the wishes of the application
+builder.
+
+A running MatPLC application will therefore consist of a mixture of
+real-time and non-realtime modules, with the real-time modules under a RT
+OS priority and the non-RT modules under a normal, non-RT priority. The OS
+itself will therefore determine when each module should run.
+
+\subsubsection{Priority Inversion}
+
+Since all modules, no matter what their importance, must access the global
+state atomically, the possibility of priority inversion occurring must be
+taken into account, and a protocol to bound blocking time (such as priority inheritance or priority ceiling) must be used. Additionally, the
+modules may also synchronise their execution amongst themselves, which may
+also lead to priority inversion in the case that the execution of a high
+priority module depends on the completion of another, lower priority,
+module.
+
+The gmm (global state) lock is only accessed in a few routines within the
+MatPLC core. It is therefore relatively easy to calculate the maximum
+blocking time: generally,
+it is the running time of the {\tt plc\_update()} call, which is usually
+the longest-running of those routines\footnote{The {\tt plc\_update\_pts()}
+routine could run longer in pathological cases; it is not used by any of
+the existing modules, but module-builder documentation will need to caution
+its potential users.}.
+
+The synch semaphores are dealt with by a documentation change specifying a
+conservative rule for avoiding priority inversion altogether --- a module's
+execution may only depend on the previous execution of a lower or equal
+priority module. A config editing tool could help enforce this rule, or at
+least warn about its violation, graphically showing the possible extent of
+the resulting priority inversion.
+
+
+\subsection{Porting the MatPLC Core}
+
+Taking into account that most of the system calls made by the MatPLC core
+are done during initialisation --- and therefore do not have real-time
+requirements --- one may assume that the bulk of the porting will be
+routine. Nevertheless, the few situations where the MatPLC makes system
+calls during runtime will require substantial changes to the
+implementation; this affects the cmm, gmm, synch and log sections of the
+library.
+
+Additionally, we will need to add a new library section to handle the
+features specific to real-time execution: initializing and setting
+priorities, locking the process into RAM, etc.
+
+\subsubsection{RT Section}
+
+% Each section of the MatPLC core contains code that is executed at
+% distinct stages of the MatPLC life-cycle, namely setup of shared
+% resources, setup of module resources (executed once for each module) and
+% run-time code.
+The new RT (real-time) section should not require a major effort to code.
+Essentially, it will consist of the system calls to lock the module memory
+into RAM so it cannot be swapped out to disk and RTOS calls to set the
+scheduling parameters appropriately, according to the application builder's
+configuration.
+
+\subsubsection{CMM and GMM Sections}
+
+As stated previously, the cmm and gmm sections each use shared memory
+during run mode, for core configuration data and to communicate the values
+of the plc points, and a single semaphore each for controlling access. Both
+functionalities are available in RTAI with very similar semantics, so the
+porting of these sections should be straight forward.
+
+The sockets used by the `isolate' mode of the GMM section must also be taken into account. They introduce additional overhead and will probably not be used in a RT setting, but can nevertheless be made time deterministic by replacing the sockets with a RT message passing mechanism. However, this part of the port will most likely be defered until later as it will be of limited use.
+
+
+\subsubsection{Synch Section}
+
+As stated previously, the synch section is currently implemented using SysV
+semaphores, which have richer semantics than POSIX semaphores, and makes
+extensive use of these richer semantics. Since RTAI currently doesn't
+support SysV semaphores (no RTOS does), we will either have to
+significantly change the implementation of this section to use POSIX
+semaphores, or wait for the Xenomai RTAI/fusion version of RTAI, which appears to
+support SysV semaphores.
+
+\paragraph{POSIX}
+
+To use POSIX, one option would be to drastically reduce the inter-module
+synchronisation capabilities of the MatPLC, removing the support for the
+Petri Net model. Modules would then only be able to synchronise the
+beginning of a scan loop with the end of another module's scan loop, which
+could easily be implemented using single semaphores or mutexes for each
+synchronisation point.
+
+However, this is highly undesirable for three reasons. Firstly, the synch
+section would no longer support the state section, which currently uses the
+synch section to implement state changes. Secondly, synch points would lose
+their symmetry, i.e.\ signaling the end of the scan loop would require a
+different function that the one used to wait for authorisation to begin the
+next scan loop, unlike the current scenario where both use the same
+function to synchronise with the firing of a Petri Net transition. And
+thirdly, the use of synchronisation at other points in the scan loop would
+be much more difficult.
+
+%% this doesn't make sense now we're talking about Xenomai RTAI/fusion %%
+%
+% We could extend RTAI, adding SysV-style semaphores to it; but this would
+% go beyond the scope of the MatPLC project, and have the additional
+% drawback that future ports to other POSIX operating systems would require
+% further changes to the synchronisation library. It would allow the
+% synchronisation library itself to remain unchanged.
+
+The better option would be to implement semaphores with SysV semantics,
+using POSIX semaphores, as a user library function.
+%
+This may be achieved with a global data structure, protected by a POSIX
+semaphore or mutex, containing the current state of the emulated SysV
+semaphore set, including an integer counter for each semaphore in the set
+and some additional data.
+
+The emulated wait-and-signal operation would involve acquiring the POSIX
+semaphore and checking whether it needs to wait. If it does, it would
+record its requirements in the data structure, release it, and block. Once
+the wait has finished, the signal portion of the function would adjust the
+data structure and scan it to check whether any of the other modules has
+become ready to run. It would then wake up the highest-priority one of
+those modules.
+
+It should be possible to code this emulation in roughly quadratic time and
+space, with a linear number of mutexes for wake-one semantics. It will be
+vulnerable to the calling process being killed ({\tt kill -9}) while the
+function is executing, leaving the system in an incoherent state, unless we
+take special precautions to prevent this.
+
+\paragraph{Xenomai RTAI/fusion}
+
+The upcoming Xenomai RTAI/fusion technology will allow real-time tasks to
+make normal Linux system calls, presumably including the existing SysV
+semaphores. This will completely eliminate the problem of the SysV
+semaphores --- we will simply continue using them, and no change to the
+synch section would be required at all.
+
+However, Xenomai RTAI/fusion is not currently mature; the Magma branch, where it was first introduced, has only very
+recently (October 2003) become the `testing' version of RTAI.
+%
+It would have the additional minor drawback that future ports to other
+POSIX operating systems will face the same problem.
+
+\paragraph{Choice of approach}
+
+Further investigation of Xenomai RTAI/fusion is warranted before a choice
+between the two approaches can be made.
+
+\subsubsection{Log Section}
+
+The log section currently writes all logs to a file during run time. No
+RTOS supports deterministic writing to a file, so this implementation needs
+to be changed --- in fact it should also be changed for the non-realtime
+version of MatPLC.
+
+All logs will be sent to a RT FIFO / message queue, where they may be later
+removed by a non-realtime logging process. This process may then send these
+logs to a file, to a terminal or even to the UNIX system log.
+
+
+\subsection{Porting the Modules}
+
+Since the bulk of the code in the MatPLC is in the modules, one would
+expect that they will require the bulk of the porting effort. However, this
+does not appear to be entirely the case. The majority of modules fall into
+two classes: those which are never going to be real-time --- the file
+loggers, X-based GUI interfaces and so on --- and those which require no
+change at all or very little. The only exception to this broad division
+are the I/O modules, which will require significant work.
+
+\subsubsection{Non-realtime modules}
+
+Some of the modules, for instance those whose purpose is to write
+production data to disk or to a database, are by their nature non-realtime.
+Others, such as X-based GUI interfaces, cannot be made deterministic due to
+their extensive use of libraries which will probably never be RT-ready
+(such as the X window system). In the chosen framework, their handling is
+almost automatic: the application builder will mark these modules
+soft-realtime, and arrange for the hard-realtime modules to leave enough
+processor time for them to run satisfactorily. Interaction of {\tt
+plc\_update()} between hard-realtime and soft-realtime modules will be
+automatically dealt with as necessary by priority inheritance.
+
+These modules will have to be documented in the manual as being
+soft-realtime only, so that the application builder does not mark them for
+hard-realtime execution.
+
+\subsubsection{Realtime modules}
+
+Existing MatPLC modules that will be required to execute in a time
+deterministic fashion are the logic modules --- DSP module (Digital signal
+Processing), the modules generated by the IEC61131-3 IL and ST compilers,
+and so on --- and I/O modules, treated in the next section.
+
+The logic modules (DSP, IL and ST) should not require any change
+whatsoever, since they don't directly make any system calls during run
+time, only through the MatPLC library. A quick audit to confirm this is all
+that should be required, along with a documentation change allowing them to
+be marked for hard-realtime execution.
+
+\subsubsection{I/O modules}
+
+I/O modules such as comedi, cif, dio48, modbus and parallel port require
+special consideration. In order to operate in real-time, such modules must
+not make use of any Linux kernel resource, including hardware drivers. This
+means that these modules will need to be considered on a case-by-case
+basis: some will require no changes at all, for instance those that already
+directly access memory or io spaces; others will require extensive changes
+in order to communicate with their kernel counterparts using the
+RTOS-provided primitives rather than via standard Linux devices, as done by
+COMEDI, SPDRV (real-time serial port driver) and RTnet. Another option is
+to re-implement an originally kernel-space driver entirely in user-space;
+this eliminates some of the complications, but is not always suitable.
+% It's not really a performance issue --- the I/O module is user-space
+% anyway, so there'll be a process switch no matter what we do. However,
+% things like interrupt routines can't be done in user-space (AFAIK).
+
+Note that I/O modules for synchronous communication over a non-RT network
+such as Modbus/TCP will not have time deterministic behaviour. Others are
+more complex: Modbus/RTU using SPDRV can be real-time, provided the cable
+is reliable and the device on the other end has bounded response time (most
+PLCs do).
+
+This part of the RT porting will be ongoing: while the MatPLC core is
+fairly stable, so that the port may be completed and finished, and the
+logic modules are usually trivially realtime (or trivially non-realtime),
+the list of I/O modules requiring RT porting will always be open-ended.
+
+\section{Concluding remarks}
+\label{sec:conclusions}
+
+We have detailed our approach to enabling hard real-time capabilities for
+MatPLC. After reviewing the MatPLC architecture and the available real-time
+operating systems, we have selected RTAI as our platform and summarised the
+major hurdles to be overcome during the port.
+
+Based on the above, the port is likely to be a fairly smooth process, with
+only two real obstacles requiring larger effort: dealing with the use of
+the SysV semaphore semantics by the synch section of the library and the
+I/O modules. The former will either require the re-implementation of the
+Petri net semantics using POSIX semaphores or use of the future version of
+RTAI. The latter will be an ongoing effort, as the list of I/O modules is
+open-ended.
+
+If we wait for Xenomai RTAI/fusion to be available, the problem of the SysV
+semaphores will be eliminated, as we will simply be able to continue using
+the existing Linux SysV semaphore operations. This would remove the largest
+obstacle.
+
+\section{Acknowledgements}
+Andrey Romanenko acknowledges financial support from Funda\c c\~ao para a Ci\^encia
+ e a Tecnologia.
+
+All trademarks and registered trademarks mentioned in the article are the property of their respective holders.
+
+\bibliography{references}
+\bibliographystyle{siam}
+%\begin{thebibliography}{9}
+%\bibitem{book1}  Author(s), Year, {\it Title}, publisher, ISBN.
+%\bibitem{paper1} Author(s), Year, {\it Title}, {\sc Proceedings}, pp1--12.
+%\end{thebibliography}
+
+\end{multicols}
+\end{document}

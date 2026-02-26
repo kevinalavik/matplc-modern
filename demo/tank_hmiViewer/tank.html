@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<TITLE>Tank Demo</TITLE>
+</HEAD>
+<BODY>
+<h3>Tank Demo</h3>
+Set desired tank level and output valve position. The control will try to match the desired level
+by moving the input valve position. Note that the tank level overshoots and when the output 
+valve is closed it can never return to the desired level.<p>
+<applet code="hmiViewer" archive="hmi.jar" codebase="./" width=462 height=345>
+<param name="host" value="localhost">
+<param name="sheet" value="1">
+<param name="port" value="50008">
+<param name="rights" value="1">
+<param name="font" value="Serif">
+><param name="machine" value="tank">
+<param name="bkgnd" value="tank.jpg">
+<param name="0"value="hmiPoti,357,147,50,50,9,0,7, 9,0,7,9,0,7,out_valve,0,100">
+<param name="1"value="hmiVBar,54,78,15,216,12,0,7, 14,0,7,10,0,7,level_sp,10,20,0,100">
+<param name="2"value="hmiVBar,79,79,20,213,9,0,7,9,0,7,9.0,0,7,level,10,20,0,100">
+<param name="3"value="hmiHBar,21,2,42,16,12.0,0,7,10.0,0,7,12.0,0,7,in_valve,10,90,0,100">
+<param name="4"value="hmiHBar,357,225,42,16,12,0,7,10.0,0,7,12,0,7,out_valve,10,90,0,100">
+<param name="5"value="hmiRollSwitch,1,157,20,80,12,0,7, 14,0,7,10,0,7,level_sp,1,99">
+<param name="6"value="hmiRollSwitch,22,157,20,80,12,0,7, 14,0,7,10,0,7,level_sp,0,99">
+<param name="7"value="hmiRollSwitch,413,144,18,58,12,0,7, 14,0,7,10,0,7,out_valve,1,99">
+<param name="8"value="hmiRollSwitch,432,144,18,58,12,0,7, 14,0,7,10,0,7,out_valve,0,99">
+<param name="9"value="hmiDigital,177,163,100,26,14,0,9,0,0,15,9,0,7,level,0,100, ,%,1">
+<param name="hmiPotiHint" value="Click right mouse button to increase, left to decrease">
+<param name="hmiRollSwitchHint" value="Click lower button symbol to decrease, upper to increase by ">
+<param name="hmiButSwitchHint" value="Click left to switch off, right to switch on.">
+<param name="hmiPushButtonHint" value="Click to press button">
+</applet>
+</BODY>
+</HTML>

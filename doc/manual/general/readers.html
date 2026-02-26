@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>MAT manual - who should read this manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../requirements.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Who should read this manual?</h1>
+
+The MatPLC project has three or four faces it presents to the world, with
+corresponding roles that people play. We call these roles Operator,
+Application Builder, Module Builder and Core Builder.
+
+<p>At present, the bulk of this manual is aimed at the Application Builder,
+with some information for the Module Builder. There's not much of interest
+to the Operator at present, except perhaps out of curiosity.
+
+<dl>
+
+<dt>Operator<dd>Interacts with the top level of the MatPLC, the HMI. This
+should be accessible to the average person on the factory floor.</p>
+
+<dt>Application Builder<dd>This can be an external integrator, or an
+in-house engineer, who does the end-user programming in languages such as
+<a href="../logic/classicladder.html">stepladder, GRAFCET</a> and perhaps
+<a href="../lang/python.html">python</a>, or merely sets up things like <a
+href="../logic/dsp.html">PID loops</a>. This requires some skill, but it is
+largely also on the top level; it should be accessible, for instance, to an
+electrician with some experience of PLCs and PCs.
+
+<p>The Application Builder should read or skim all of this manual with the
+exception of the <a href="../custom/intro.html">Custom modules</a> chapter.
+
+<p>For advanced applications with special requirements, the Application
+Builder will also have to be a bit of a Module Builder. The <a
+href="../lang/python.html">python scripting language</a> is somewhat on the
+borderline between the two levels.</p>
+
+<dt>Module Builder<dd>At the middle level is the API and programming
+interface, where modules are written. This should be accessible to the
+average programmer with fairly low effort.
+
+<p>This is the level is where the bulk of the code of the MatPLC resides.
+This is the code that provides most of the functionality to support the
+Application Builders and End Users and generally makes the MatPLC a useful
+project.
+
+<p>The <a href="../custom/intro.html">Custom modules</a> chapter is
+specifically aimed at the Module Builder.</p>
+
+<dt>Core Builder<dd>Finally, there is the low level, where the somewhat
+cryptic core of the project is written.
+
+</dl>
+
+Each of these roles also corresponds to a different way of contributing to
+the project - see the <a href="contribute/intro.html"> Contributing
+chapter</a> if you're interested in more.
+
+<p>Note: the phrasing "should be accessible" above reflects design, not
+always reality. If there's some aspect of the level that is not accessible
+to the designated audience, it's a bug; please report it using the <a
+href="https://sourceforge.net/tracker/?group_id=29758&atid=397247">buglist</a>.
+
+
+<p>
+<!--autolink--><a href="../intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../requirements.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:10 $</small>
+
+</html>

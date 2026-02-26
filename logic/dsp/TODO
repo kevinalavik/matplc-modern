@@ -1,0 +1,13 @@
+
+  - Move the time_util.c functions to the lib directory, and have the
+    lib/logic/timer.c use them
+
+  - Allow parameters to be specified by the values stored in plc points,
+    and not only by constants (eg. P, I, D const. of the PID function block,
+    and the multipliers of the add function block).
+
+* - Have the module use the scan_period provided by the priod library, instead
+    of handling the period all by itself using the usleep() function...
+
+  - PID loop: add a bias/offset (fourth parameter)
+              allow PID to work in series instead of parallel (configurable!)

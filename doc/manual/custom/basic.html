@@ -1,0 +1,230 @@
+<html>
+<head>
+<title>MAT manual - a basic custom module</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/native.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/example.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>A basic custom module</h1>
+
+<p>As far as a module is concerned, the MatPLC is a library. It provides
+various functions, of which only about five or seven are the most
+important. The others provide things like retrieving values from the config
+file - useful, but not vital.
+
+<h2>Usual usage</h2>
+
+There are two usual ways of structuring modules: the first is the "classical
+scan" familiar from stepladder, while the second is a "data interface",
+where MatPLC and some other system exchange data.
+
+<h3>Classical scan</h3>
+
+Here, the behaviour resembles a stepladder scan: at the top of the loop,
+data is read from the inputs (and other parts of the MatPLC), then the
+logic is executed, and then data is written to the outputs (and other parts
+of the MatPLC).
+
+<p>This is the template for a classical-scan module:
+
+<pre>
+#include &lt;plc.h&gt;
+
+int main(int argc,char *argv[])
+{
+  plc_init("<em>modulename</em>",argc,argv);
+
+  <em>/* initialization goes here */</em>
+
+  while (1) {
+    plc_scan_beg();
+    plc_update();
+
+    <em>/* body of loop goes here */</em>
+
+    plc_update();
+    plc_scan_end();
+  }
+}
+</pre>
+
+<h3>Data interface</h3>
+
+Here, the module does data interchange between MatPLC and
+something else (the "other"). In the first half of the loop, any data
+that's going from the other to the MatPLC is written into MatPLC points. In
+the second half of the loop, data is taken from MatPLC points and sent to
+the other. All the I/O modules work this way, exchanging data between
+MatPLC and the I/O.
+
+<p>One advantage is that the module doesn't need to keep track of which
+points are read-only and which are read-write in the MatPLC; in the first
+half, all points may be written, and in the second half all points may be
+read. The <code>plc_update()</code> discards values for which the module
+lacks write permission.
+
+<p>This is the template for a data-interface module:
+
+<pre>
+#include &lt;plc.h&gt;
+
+int main(int argc,char *argv[])
+{
+  plc_init("<em>modulename</em>",argc,argv);
+
+  <em>/* initialization goes here */</em>
+
+  while (1) {
+    plc_scan_beg();
+
+    <em>/* process data going to MatPLC from the "other" */</em>
+
+    plc_update();
+
+    <em>/* process data coming from MatPLC to the "other" */</em>
+
+    plc_scan_end();
+  }
+}
+</pre>
+
+<h2>Filling in the template</h2>
+<h3>Initialization</h3>
+
+<p>One of the main things you need to do here is to get handles to all the
+points your program will access.
+
+<br><code>foo = plc_pt_by_name("foo");</code>
+<br><code>bar = plc_pt_by_name("bar");</code>
+
+<p><code>foo</code> and <code>bar</code> should be declared as variables of
+type <code>plc_pt_t</code>. If you want to be safe, you should also check
+that <code>foo.valid</code> and <code>bar.valid</code> are non-zero after
+the above initialization.
+
+<p>Throughout the rest of the program, you will then use the variables
+<code>foo</code> and <code>bar</code> to refer to those two points.
+
+<h3>Body of loop</h3>
+
+<p>The two most important functions here: <dl>
+<dt><code>plc_get(<em>point</em>)</code>
+<dd>read point
+<dt><code>plc_set(<em>point</em>,<em>value</em>)</code>
+<dd>write the value to the point
+</dl>
+
+<p>These are used both for coils and for integer registers. When used for
+coils, 0 means OFF and 1 means ON.
+
+<p>When used for registers, value is treated as unsigned 32-bit integer
+(MAT defines the type <code>u32</code> for this purpose). Narrower points
+can also be treated as unsigned integers - for instance, a plc_get() on an
+8-bit point will return a number between 0 and 255.
+
+<p>As usual with PLC-style logic, points are read from outside the module
+at the top of the loop and written to the outside at the bottom (that's
+what the <code>plc_update()</code> does). Last value written wins.
+
+<p>Remember that for <code>plc_set()</code>, the module needs point
+ownership in the <code>matplc.conf</code> file. There is no warning if
+you try to write to a point you don't own; the changes are simply discarded and the point value remains unchanged.
+
+<h3>Processing data going to/from MatPLC</h3>
+
+Like "Body of loop", you will use the two functions
+<code>plc_get(<em>pt_handle</em>)</code> and
+<code>plc_set(<em>pt_handle</em>,<em>new_value</em>)</code>.
+
+When processing data going <strong>from</strong> the MatPLC, you will only
+use the first of these (<code>plc_get()</code>); when processing data going
+<strong>to</strong> the MatPLC, you will only use the second
+(<code>plc_set()</code>).
+
+<p>Other than this separation, the previous section applies.
+
+<h2>Summary of the basic functions</h2>
+
+<p>The five most important functions are:
+
+<dl>
+
+<dt><code>plc_init(module_name,argc,argv)</code><dd>Initializes the
+library. The module_name should be a string. If argc and argv are not
+available, pass 0 and NULL instead.
+
+<dt><code>pt_handle = plc_pt_by_name(pt_name)</code><dd>Obtains a handle to
+a MatPLC point, required for the <code>plc_get()</code> and
+<code>plc_set()</code> functions. The pt_name should be a string, while
+pt_handle should be of type <code>plc_pt_t</code>. The success or failure
+of this function is indicated by <code>pt_handle.valid</code>; non-zero
+means OK. This function, like <code>plc_init()</code>, should be called
+before the time-critical part begins.
+
+<dt><code>plc_update()</code><dd>Updates the local (buffered) copy of all
+the MatPLC points. It should be called before reading MatPLC points or
+after writing them. If the module runs in a repeated "scan", this function
+will usually be called once at the beginning of the scan, and once at the
+end.
+
+<dt><code>value = plc_get(pt_handle)</code><dd>Reads a MatPLC point (as it
+was at the time of the last <code>plc_update()</code>, or as changed by
+this module), returning it as an unsigned 32-bit integer. A 32-bit float
+version of this function is also available.
+
+<dt><code>plc_set(pt_handle, new_value)</code><dd>Writes an unsigned 32-bit
+integer to a MatPLC point. A 32-bit float version of this function is also
+available. The write will not be seen by the other MatPLC modules until
+<code>plc_update()</code> is called.
+
+</dl>
+
+The header file defines two types for work with these:
+<code>plc_pt_t</code>, which is used to declare the handles, and
+<code>u32</code> which is a simple 32-bit unsigned integer.
+
+<p>The two additional functions should be used if the module runs in a
+repeated scan, like a traditional PLC. They enable the MatPLC to enforce
+execution periods, sequencing of modules, RUN/STOP modes and the like. They
+take no arguments.
+
+<dl>
+
+<dt>
+
+<code>plc_scan_beg()</code><dd>Beginning of scan. This should precede the
+<code>plc_update()</code> call, as shown in the templates.
+
+<dt><code>plc_scan_end()</code><dd>End of scan. This should follow the
+<code>plc_update()</code> call, as shown in the templates.
+
+</dl>
+
+<p>These functions are explained in more detail in the <a
+href="general.html">general reference</a> and <a href="gmm.html">GMM
+reference</a> chapters.
+
+<h2>Other functions</h2>
+
+Probably the most interesting ones will be the functions to retrieve values
+from the config. Unfortunately there's a lot of them, because they need to
+cover all the combinations of retrieving from single settings and tables,
+from the module's own section or from a different one, and converting the
+values to various types. They all start with <code>conffile_</code> and are
+described in detail in the <a href="conffile.html">conffile reference</a>.
+
+<p>As noted, there are floating-point equivalents to plc_get() and
+plc_set(); they are called plc_get_f32() and plc_set_f32(), work with the
+type f32 instead of u32, but otherwise behave exactly like the integer
+versions.
+
+<h2>Notes</h2>
+
+The MatPLC library is not particularly thread-safe. If you are using
+multiple threads, it would be best to restrict MatPLC functions to one
+thread. However, it is quite OK for one thread to be using the runtime
+functions while another thread does a <code>plc_pt_by_name()</code>.
+
+<p>
+<!--autolink--><a href="../custom/native.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/example.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/05/15 09:37:00 $</small>
+</html>

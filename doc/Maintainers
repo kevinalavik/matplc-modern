@@ -1,0 +1,469 @@
+This file lists the people responsible for various parts of the MatPLC
+project; it is a combined maintainer list and credits-file.
+
+
+Please keep this file sorted by surname. Common fields are: Name, Email,
+ICQ, WWW, PGP, Postal (use semicolons for line-ends), Status, Maintains and
+Updated. At present the only compulsory field is Name.
+
+The Maintains field is a comma-separated list of areas, with optional
+comments in brackets. The comments should be phrased so that they also make
+sense attached to your name in a list of maintainers for a given area. For
+example (primary), (formerly), (a bit), (patches only).
+
+===
+
+Name: Gilles Allard
+Email: gallard@cam.org
+Background: Current job title "System integrator". Experience: 30 years as:
+	technician; electronic design engineer; mini and micro programmer;
+	PLC programmer (15 years); MMI programmer; system analyst; System
+	administrator (HPUX and NT). Various industries, including:
+	asphalt, food and beverage, floor covering, steel and chemical.
+	Various applications, including: data communications; packaging
+	machines; food processing; barcoding; PID. PLCs: Modicon, Texas
+	Instruments, Siemens (S5 and S7), PlcDirect. SCADA and MMI: TiStar,
+	CVU, ProTool, FactoryLink, Genesis, PanelMate, Exor, etc. PLC
+	programming: ladder; APT (SFC and CFC); STEP 7 (LAD, SCL, SFC and
+	CFC).  Computer programming: ASM for X86; C; FORTRAN; Java; PL1;
+	PL/M. Data communication expert (including some PLCs). HPUX
+	experience: 4 years. LINUX experience: none. Reviewer for
+	"Standards Council of Canada".
+Involvement: do not have time for coding. Will review and comment.
+Updated: Jan 2000
+
+Name: Jiri Baum
+Email: jiri@baum.com.au
+ICQ: 55962696 (rarely)
+Maintains: doc/Maintainers, smm (primary)
+
+Name: Mark Bayern 
+Maintains: Modbus or ProMux driver (?)
+
+Name: Johan Bengtsson
+Email: qwerty_42@hotmail.com (home, preferred)
+Email: johan.bengtsson@pol.se (work)
+ICQ: 4110659 (short periods during the swedish evenings)
+Part-of-the-project: None defined yet, ... Will probably deal with pieces
+	everywhere like logic solver, PID-controller, some I/O drivers, ...
+	that is if I can find the time for it :-)
+Background: Working as a programmer writing educational programs in the
+	entire automation area, sometimes a teacher too. Education:
+	electronic construction and design. Running Debian Linux (newbie).
+	High experience in writing simulations in real time in C++. No (or
+	almost no) experience in programming under Linux.
+Eyes: blue
+WWW: http://w1.451.telia.com/~u45102278/johan.htm
+Updated: Jan 2000
+
+Name: David Campbell
+Email: david.j.campbell@honeywell.com
+Maintains:
+	/doc/faq.html	(when needed)
+	/logic/iec	(when no paying work is on [lately])
+Background: Chemical Engineer, kernel hacker (Parallel port ZIP drives,
+	no longer active), process optimisation, operator training simulators
+	Conversant with various operating systems (Linux, VMS, WinNT, HP-UX,
+	etc) and most engineering programming languages
+Updated: Oct 2000
+
+Name: Phil Costigan
+Maintains: Modbus/TCP driver
+Email: phil@pcscada.com.au
+WWW: http://pcscada.com.au
+Background: Current job title "Systems Engineer" for P.C. SCADA LINK P/L.
+	Programming of many different PLC types and SCADA systems.
+	Once worked for 'Square D Company' Melbourne Australia as the
+	service technician. I still have a few contacts at Schneider which
+	is why I chose to work on the modbus stuff. 
+Updated: Sep 2000
+
+Name: Phil Covington
+Maintains: Ethernet/PLC Direct I/O driver (?), GE Ethernet driver (?)
+
+Name: Mario de Sousa
+Email: msousa@fe.up.pt
+Maintains: smm
+Updated: Jun 2000
+
+Name: Ron Gage 
+Email: ron@rongage.org
+Postal: Saginaw, MI
+Maintains: AB Ethernet driver and utils (primary)
+Background: Current job title "Electrical Engineer". Linux/Unix hacking
+	(some SCO, some HP/ux). Machine tool design, programming, debug and
+	installation. Programmed several AB PLC2, PLC5, and Pyramid
+	Integrators. Also played with an AB ControlLogix. Current
+	assignment has me in a Modicon plant so you could say that I am
+	well rounded, PLC wise.  As for computer hacking, I have been doing
+	that since the days of the old Radio Shack TRS-80 Model 1. One of
+	my most popular hack back then was to add the ability to get a file
+	directory displayed on the screen from inside BASIC without leaving
+	BASIC (I hacked a hidden command within the interpreter). I have
+	also dabbled in PC board design as a hobbyist - I have no designs
+	on copper - yet. I also am very active in my region of the world as
+	a Linux Advocate. I am also the co-founder of my local Linux Users
+	Group. Other, lesser known projects of mine include a library and
+	utility set for reading Dallas Semiconductor 1-wire temperature
+	sensors (DS-1820) and a still in development interface program for
+	use with the Fluke ScopeMeter 123. Future planned projects include
+	a Modbus/TCP driver for Linux. I am very well versed in several
+	operating systems (except VMS). I am also a very highly skilled
+	PLC/PC programmer (but no windows, please). I don't mind taking
+	design risks for the sake of breaking new territory, hense my
+	affiliation with Linux in general. Nothing ventured, nothing
+	gained.
+Updated: Jan 2000
+
+Name: Jack Gallagher
+Email: jgallagher@sesco-sw.com
+Background: Current job title "Lead Software Engineer". Have been
+	developing SCADA systems for six years. Most of my PLC experience
+	is with AB (PLC5, SLC) but I have experience working with
+	Motorola's Moscad PLC. Examples of projects, Dallas Area Rapid
+	Transit (DART) Operations Control Center, Chicago TARP project
+	(Deep Tunnel System), Cumberland Gap's Tunnel Ventilation Control
+	System, Northern Correctional Facilities Door Control System
+	(Somers, Conn - all AB PLCs), embedded software development for
+	Nova Biomedical's pHox blood gas analyzer. SCADA: USDATA
+	FactoryLink, RSView, Intellution Fix32, Education: I have a BS in
+	Computer Science. Trying to find the time to work on earning a
+	Masters in either Computer Science or Software Engineering.
+	Learning object-oriented design on my own to be used in my current
+	project (DART II). Programming Languages: I am very strong in the
+	area of writing C, and have some knowledge and experience writing
+	C++ code. Also have developed applications for PLCs using Ladder
+	Logic. I am a newbie to Linux and hope to set up a system at home
+	in the near future. I would like to be involved in some design and
+	coding.
+Updated: Jan 2000
+
+Name: Greg Goodman
+Email: chironsw@swbell.net
+WWW: http://home.swbell.net/chironsw
+Background: 
+	independent SCADA/process control software developer/consultant
+	(Chiron Consulting), 20 years experience in commercial SCADA software
+	development, longtime Linux user, expert 'C' programmer
+Updated: Mar 2001
+
+Name: Mark Hutton
+Maintains: jPLC Java logic engine, misc. resources
+Email: mark.hutton@warrier.demon.co.uk
+WWW: http://www.warrier.demon.co.uk
+Background: Current job title "Software Engineer". 14 years PLC experience
+	as a Test Engineer, Site Engineer, Control Systems Design Engineer
+	and Software Engineer. Various industries including printing, food
+	and beverage, pharmaceuticals and automotive. Various products
+	including Commercial Printing Presses, Gas Turbine controls for
+	onshore/offshore applications and Food Processing equipment. Also
+	product tracking (bar coding) and vision systems. PLCs: Modicon, AB
+	(PLC-3,PLC-5 & SLC), Siemens (S5 and S7-200), Omron, Mitsubishi.
+	SCADA: RSView, Intouch. Some C (a long time ago, in DOS, writting
+	DH+ application using AB KT library), C++ /Java (not frontline),
+	BASIC (communications protocols in AB BASIC module). Machine
+	control expert (usually with an OEM), also Process control.
+	Advocate of modular machinery design. Experienced in the
+	application of SFC specifications - manual conversion to ladder for
+	platfrom independence. Since 1998 have been studying, via distance
+	learning for a Masters degree in Computing for Commerce and
+	Industry. Suse Linux user - newbie.
+Updated: Jan 2000
+
+Name: Hugh Jack
+Maintains: LPC and other stuff as necessary
+Email: jackh@gvsu.edu
+WWW: http://claymore.engineer.gvsu.edu
+Background: Currently at Grand Valley State University in Grand Rapids,
+	Michigan. I have a bachelors in Electrical and a Masters and
+	Ph.D. in Mechanical. Currently I am the chair of the manufacturing
+	and graduate programs in the school of engineering. My interests
+	are varied, but I have a diverse background in computing for
+	controls and automation.
+Updated: Feb 2003
+
+Name: Rick Jafrate 
+Email: rickj@icehouse.net
+Maintains: requirements document (proposed)
+Background: Current job title "Sr. Electrical/Control Engineer/Consultant,
+	Mitek Corp". I have designed, implemented, and installed automation
+	systems for steel and aluminum industry clients around the world. I
+	was on the GE Directo-matic 2000 design team (Multi-bus II based
+	PLC controller) where I helped plan the architecture and designed
+	and implemented a RLD editor. I have been an advocate of the use of
+	finite state machines in control system software since the early
+	80s. I have recently completed a long term contract with Kaiser
+	Aluminum where I assisted in the design and implementation of a
+	Linux based control system architecture that is to be used to
+	replace aging MODCOMP and other legacy systems. I have a solid
+	knowledge of C, SFC, RLD, FBL, ASM86, VMS, QNX, GE DMC. I have a
+	working knowledge of Python, XML, and C++. I am new to the linux
+	kernel but I have a couple of experts who are willing to give me
+	lessons as necessary. I have been formulating a vision of the
+	ultimate automation platform for nearly 20 years. I succeed in
+	deploying a little more of my vision on each new project. During
+	this time I have had the opportunity to work closely with fellow
+	engineers, managers, operators, and technicians. Over the years I
+	have refining my vision so that it more completely addresses the
+	needs ad desires of the above folks.  I would like to share as much
+	of this vision as is useful to this project.  
+
+Name: Joe Jansen
+Email: jjansen@gehls.com
+Background: Current job title "Process Control Tech". Experience: 17 years
+	as amatuer computer geek, starting on Apple II+ and Commodore-64
+	equipment. 10 years as PLC programmer, automation system design for
+	robotics integrators. Currently working at a dairy processing plant
+	(mostly cheese sauce) in Wisconsin. Responsibilties include
+	maintaining all computer equipment on production machines,
+	programming automated machines to interact with SCADA-like
+	software. Write SCADA-like software, mostly in VB. Implement and
+	maintain secondary ethernet network for production data. Administer
+	production network server and router between production and
+	business networks. Maintain software backups for all production
+	equipment on production server and tape backup. Document and
+	maintain documentation on all controls on all production equipment.
+Involvement: Not much good for coding (still trying to self teach C).
+	Willing to help with all documentation as needs arise.
+Maintains: matplc.conf editor
+Updated: Feb 2002
+
+Name: Alan Locke
+Email: aslocke@halcyon.com
+Background: Current job title "Controls Engineer". Electrical Engineer by
+	education. 12 years controls experience in aircraft manufacturing
+	business. Have programmed various PLCs (Allen Bradley
+	Micrologix/SLC500/PLC5 and ControlLogix, TI, GE 90-70 and a little
+	Siemens S7) in applications ranging from x-ray vaults to material
+	handling to forming presses. Have some experience with Wonderware
+	Intouch, Rockwell RSView32, Panelview and Iconics Graphworks HMI.
+	Have experience developing and programming special purpose machines
+	controlled by combinations of DOS based applications and
+	intelligent motion control drives. Also have extensive experience
+	in CNC ladder programming with Allen Bradley 9/260 and 8600 and a
+	little with Fanuc 15 and Siemens 840D. Experienced in motion
+	control applications. Have industrial electrical panel design
+	experience and some circuit board level design experience. My
+	traditional programming experience is mainly C for DOS environment
+	from a number of years ago. Also have some experience in visual
+	basic and Java. I've been using Linux for a couple of years, but
+	have no Linux environment programming experience. I hope to remedy
+	this shortfalling somewhat through participation in this Linux PLC
+	project. If I can keep up with the learning curve, I hope to
+	eventually contribute at least some small amount of code.
+Updated: Jan 2000
+
+Name: Ralph McDonald
+E-mail: ralphm@spicergroup.com
+Background: Current Title: Project Manager / Electrical Engineer at Spicer
+	Group. My department is responsible for engineering electrical and
+	control systems for Water, Wastewater, and Industrial systems.
+	Besides being department supervisor I program and troubleshoot
+	programmable controller systems for our clients. Mostly AB SLC and
+	Opto22 at present. Still some legacy AB 2 & 5, GE Series Six and
+	Square D systems also. First PLC was a 5TI back in late 70's. First
+	computer was a Heathkit 6800 microprocessor trainer that I learned
+	assembler on and later expanded. Hacked a TRS80CC (6809) to expand
+	to 2 banks of 32k RAM each plus rom and rom pak address. Later
+	wrote my own Forth for the TRS80CC. First computer program I actual
+	got paid to write was in assembler for a Rockwell AIM 65 that was
+	made into an automated electronic meter communications checker for
+	Dow Chemical metering department. Did some programming for the
+	Macintosh in assembler (as Macintosh Certified Developer). Wrote
+	Forth program language reviews for "MacGuide" before they went
+	belly up. As a Navy reservist in NMCB-26 helped maintain computer
+	systems and train operators. Programming experience for AB PLC 2
+	through SLC 5/05, GE series 6, Square D, Opto 22, Campbell
+	Scientific Data Loggers and (Modicon - no recent experience ). HMI
+	programming experience mainly with Intellution and OptoDisplay.
+	Computer programming experience in Forth plus some assembler for
+	6800, 6809, 6502, and 68000. Master Electrician License and
+	Professional Engineers registration in Michigan.
+Contributions: I am afraid not a lot at first. Because I have no practical
+	C or C++ coding background and have just recently started on Linux
+	at my oldest son's suggestion. I may be able to offer perspective
+	as a potential used and specifier. Also I may have a client who
+	would let me run a small system in parallel with an existing system
+	at a wastewater pumping station for evaluation. It is a very
+	interesting project, and I will be lurking around. 
+Updated: May 2000
+
+Name: Simon Paul Martin
+Email: smartin@isys.cl
+Maintains: 
+Background: Current job title "R&D Software Engineer in Servo Control; R&D
+	Software Engineer in Transaction Processing & Communications". Trio
+	Motion Technology (UK)(www.triomotion.com)(Ex employee, now
+	consultant). OS design and implementation of the following areas
+	for the MC2 range of controllers (in C/Assembler the Texas
+	Instruments TMS320C3x family of DSP processors): Multitasking
+	real-time OS; Semicompiled BASIC interprerter; Front end of motion
+	commands; Low level motion sequencer; Resource allocation; USB
+	comms. Involved in the implementation of the servo (5 term PID) and
+	VP (Velocity Profile). Design and implementation of MP1 & MP2
+	interface software. Design and implementation of the USB driver for
+	Windows. Design and implementation of the proprietary Fibre Optic
+	Network. Isys (Partner and developer) (Chile). Design and
+	implementation of RTTRP (Real-Time Transaction Resolution Protocol)
+	in various financial/retail institutions. Industries: Retail;
+	Financial; Manufacturing; MoD.  Programming: C (15 years); C++ (5
+	years); MFC (5 years); Pascal (6 years about 10 years ago).
+	Platforms: DOS; Windows (16/32 bit); Unix (Linux, AIX, SCO).
+Updated: Jan 2000
+
+Name: Juan Carlos Orozco
+Email: jorozco@ace-lab.com
+Maintains: mmi/hmi_gtk, demo/oven
+Background: Current job: Director at ACElab (www.ace-lab.com); 10 years
+	of experience building industrial automation projects; Higher
+	school degree: Master in Science degree in Electrical Engineering
+	at Stanford University; Areas of specialty: Advanced PLC
+	programming, textile machines control panels, positioning systems,
+	process	monitoring systems using PCs programmed in java, control
+	systems	using Linux; Programming languages: C(Advanced),
+	C++(Advanced), Java(Advanced),	Python(Intermediate),
+	Lisp(Intermediate), VisualBasic(Intermediate); Platforms: DOS,
+	Windows, Linux.  
+Updated: Jul 2001
+
+Name: Darryl Palmer
+Email: Darryl_Palmer_Jr@acm.org
+Background: Current job title "Research Assistant" at Cleveland State
+	University. Currently Master's student in Industrial and
+	Manufacturing Engineering, thesis is on component-based open HMI
+	system for Windows NT/CE. Current research also includes on-line
+	ultrasonic monitoring of filler concentration for extruders for
+	Ferro Corp., component-based design of thermowave imaging system
+	for NASA Glenn. Performed previous work in long distance learning,
+	educational software, communication, robotics, digital signal
+	processing, image processing, control systems, artificial
+	intelligence (predominantly genetic programming), including other
+	general software development. Programming: C (13 years); C++ (7
+	years); Visual C++ (5 years); Assembly (4 years); FORTRAN (4
+	years). Platforms: Windows 9X/NT/CE; DOS; OpenVMS; Unix (Linux,
+	HPUX). Hardware: Altera FPGA, Motorola HC11, Microchip PICs,
+	Echelon LonWorks. PLCs: AB 5/XX E and 5/XX C
+Updated: Feb 2000
+
+Name: Dan Pierson
+Email: dan@control.com
+Maintains: CVS
+Background: Current job title "Chief Architect - Software, Control
+	Technology Corporation" (blush) (translates to main techie :-)).
+	Linux use, web development and admin 1 year, Quickstep design and
+	development on Windows 7 years, Unix software development 9 years
+	(programming tools, parallel Lisp, office automation), VMS 5 years
+	(OS performance evaluation and Vax Lisp development), other stuff
+	before that 6 years. Member of X3J13 (Common Lisp standard). My
+	Linux experience is limited, but my Unix experience is rather more
+	extensive and part of it was in a company with a very strong real
+	time component (Encore/Gould). A general software guy with emphasis
+	on programming tools and languages. Seen the progress, crash and
+	continuation of many software bandwagons. Doesn't believe any one
+	solution or tool is best for everything. Pragmatic technophile. My
+	control experience is limited to Quickstep and Control Technology
+	Corp. which is a rather different perspecive than much of this
+	group. I eventually hope to make our perspective workable in this
+	space, but think its more important that SOMETHING work first.
+Contributions: Facilitating this project with Linux and web resources. Hope
+	to be able to provide language and tools coding support later (but
+	not from an AB or RLL perspective). Very interested in seeing this
+	project succeed whether or not is produces something that works
+	with Control Tech's approach to automation control.
+Updated: Jan 2000
+
+Name: Dave Pryor
+Email: dpryor@freemancorp.com
+Background: Current job title "Electrical Engineering Manager".  US Navy 12
+	years - Instructor at the Advanced Aviation Electronic School.
+	Specialty was Electronic Warfare. Controls Engineer, Plant
+	Engineer. Mostly involved with the Automotive Business since 1976.
+	Modicon - 084, 184, 484, 584 controls; DEC - PDP-8 series computers
+	as controls; General Electric - 550 NC, & 1050 CNC controls;
+	Induction Heating - IEH, Tacco, IPE; Allen_Bradley - SLC-100/150,
+	PLC-2, PLC-5, SLC-500, 8400 CNC; Omron - C200 & 1000 series;
+	Kawasaki - Series A & AD Robotic Controls; Asea & ABB - Robots;
+	Panosonic - Robots and PLC's; Toyoda - Toyopuc PLC's; Westinghouse
+	- Unimate Robots & Numa-Logic (Hardwired PLC); Fanuc - Series 0, 6,
+	9, 10, 11, 12, & 15 CNC and Powermate A, B, and H; Miscellaneous -
+	Sharp, National, Fuji, Mitsubishi PLC's. Main interests are in
+	integrating multiple Kawasaki Robots into work cells with A-B PLC-5
+	as controller using RIO for communications. Also using A-B DH+ for
+	networking A-B controls. Hoping this project will release us from
+	the shackles of proprietary protocols, hardware, ect.
+Contributions: Since I haven't written computer code since the mid 80's I
+	will be more of a beneficiary of this project than contributor. I
+	might be able to contribute as one who has used the end product on
+	the real factory floor.
+Updated: Jan 2000
+
+Name: Davis Ray Sickmon, Jr
+Email: midryder@intcon.net (day job)
+Email: midryder@midnightryder.com (my company)
+WWW: http://www.creekelectric.com (day job)
+WWW: http://www.midnightryder.com (my company)
+Background: Current job title "System Administrator, MMI Design /
+	Programming, Network Design / Implementation, Tech support" (yes, I
+	do all those jobs and more. I don't have a 'title' that fits me
+	anymore). MMI Design & Programming - 6 years using Wonderware,
+	WinView, RSView, etc. PLC Programming - A couple.  Micro 1, AB PLC
+	2 & PLC 5. While I don't normally program, I do help with
+	troubleshooting and being a soundboard - if you include that, I
+	also know pleanty about Modicon, and older Siemens processors.
+	Programming - VB/VBA (VBA for office automation tasks), C/C++, 6802
+	Assmebly (don't ask me to do it, it's been too long!), Perl, and
+	some more obscure languages. Experience with just a little bit of
+	everything from office automation stuff to low level OS stuff. Open
+	Source Projects: Currently I'm involved in (x) Open Source projects
+	if I count this one: Alliance, and Open Source operating system,
+	XBasic, a recently GPL'd high-power version of basic, and Jaguar
+	MMI, an Open Source project supported by the company I work for.
+	(Creek Electric, Inc.). Industries: Feed milling, flour milling,
+	wood chip plants, windshield plants, etc. Both me and the company I
+	work for are in support of Open Source methodology when it comes to
+	Industrial Control development and runtime tools. Creek Electric,
+	Inc. (my employer during the day) has always been a big fan of
+	giving the customer the source code to the PLC program (well, they
+	COULD just download it from the PLC) and the source code for any
+	MMI and other programming involved. We want our customers to
+	continue to use us because we do good work, NOT because we have
+	locked them into proprietary systems.
+Contributions: Licensing discussions for MatPLC, and general BSing. I'll
+	become more active when it comes time for a MMI system to start
+	communicating with MatPLC - Jaguar MMI is the Open Source project
+	that I'm spending most of my time with now, and when it comes time
+	for interfaces between MatPLC and MMI systems, I've got a couple
+	of things that I will probably be suggesting.
+Updated: Jan 2000
+
+Name: Phil Wilshire
+
+Name: Curt Wuollet
+Email: wideopen@ecenet.com
+Maintains: Modbus/TCP driver, 8255 driver
+Background: Current job title "Linux Systems Engineer, Owner, Wide Open
+	Technologies". Test Equipment Design for automotive electrical
+	components, Electronics Instructor, Unix Systems Administration,
+	UNIX R&D, Linux user and hacker since 1992, Semiconductor Failure
+	Analysis, Semiconductor Test Equipment design, a related patent, PC
+	board design (old), Vision Systems, Part time Linux consultant, C
+	hacker. BASIC hacker, Z80 machine language hacker. Pascal hacker,
+	hardware hacker. Not very knowlegable on Microsoft products,
+	switched to Linux many years ago. Limited knowledge of PLC's and
+	PLC programming, mostly interfacing and add on systems. vision,
+	measurement, etc.
+Contributions: The idea for this project, driven by righteous anger at the
+	total lack of interoperability and excessive greed in the
+	automation industry.  Various ravings about reality and doing
+	things the Linux way. Interested in changing an industry for the
+	good of the community and bringing all the factions together behind
+	a truly open community owned free alternative. Promoting tools for
+	education and cooperation. Moving Linux toward world domination:^),
+	and building a system that people can really understand and use.
+	Very interested in using commodity hardware, networking and
+	software to solve real world problems in industrial automation.
+	Interested in Open Source machine controllers and robotics.
+Updated: Jan 2000
+
+# Don't put your name here unless you really are after Curt in the
+# alphabet. Insert yourself in the appropriate spot.

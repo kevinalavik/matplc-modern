@@ -1,0 +1,203 @@
+vim:tw=75
+
+This is $Revision: 1.21 $. Latest revision can be found at:
+http://mat.sf.net/lplc-article.txt
+
+Revision 1.14 of this article was published in the Embedded Linux Journal on
+May/June 2001  ( http://embedded.linuxjournal.com)
+
+
+
+
+
+Linux-based PLC for Industrial Control
+copyright 2001 Mario de Sousa
+DECK: What Linux is doing in the highly proprietary embedded systems market is what the MatPLC will do for industrial automation.
+
+The MatPLC project is an effort to produce a Linux-based Gnu Public Licensed Programmable Logic Controller (PLC). PLCs were developed in the 1960s to replace the complex electrical relay circuits that were widely used for machine control in industrial automation. Users program PLCs to define a series of actions that a machine will perform. The PLC works by reading input signals from devices such as sensors or switches and, depending on their value(s) turning outputs on or off.
+
+In its simplest form, a PLC replaces relay logic. Instead of mechanical devices, such as interconnected relays or timers, providing the logic for a machine or other device, the PLC is a single boxed device performing the same function. Because it is programmable, and in essence a computer, it is more flexible, easier to change than physical relay wiring, and a great deal smaller than the relay equivalent. It can also perform arithmetic and other functions such as servo control and analog measurement.
+
+Traditional PLC programming resembles a relay diagram, and for simple diagrams it has the same meaning. However, there are some differences: The diagram works repeatedly from top to bottom rather than all at once. The external-world contacts of relays don't open or close until the bottom of the diagram, input relays change only at the top of the diagram, and there are some restrictions on the connections allowed. This heritage of relays with coils has led the internal state variables of modern PLCs to be commonly known as simply 'coils'.
+
+Over time, PLCs have introduced new programming methods that have become dominant in the industry. These fall into two categories: text-based programs and graphical state-flow diagrams. There are many proprietary and non-proprietary standards of varying complexity and functionality for each category. PLCs are usually programmed off-line, using tools running on DOS or Windows. The text-based programs or diagrams are compiled to an intermediate language that is downloaded to the PLC and interpreted.
+
+Although simply replacing relays would be enough to explain the success and popularity of the PLC, a much greater advantage arises from the concept of busses: several PLCs or parts of PLCs on a single cable, communicating, cooperating, and reporting to a central control room. This effectively integrates the factory floor into a seamless whole, linked by a barely-visible electronic thread.
+
+Since manufacturers have taken different approaches to PLC development, the result is a veritable Tower of Babel. Dozens of product lines provide essentially identical functionality, and most are incompatible and non-interoperable. Customers have a choice of vendors, but are then locked into that vendor's proprietary solutions. No good open alternatives are available. What Linux is doing in the highly proprietary embedded systems market is what we propose to do for automation with the MatPLC.
+
+The MatPLC is an interesting study as an embedded controller. Like the PLCs it will replace, is much more general than most embedded projects. PLCs tend to be very expensive. The MatPLC running on an off-the-shelf PC will be more than cost-competitive. Recently PC-based controllers have emerged, typically running a real-time executive with Windows as a low priority task. If this sounds a lot like what RTAI or RealTime Linux does, that's where we are heading.
+
+Providing a platform for sharing and code reuse should make it possible to raise the productivity of solutions providers by at least an order of magnitude, eliminating the enormous waste of maintaining hundreds of parallel solutions. This will allow integrators, consultants and in-house teams to concentrate on their core competencies. A free, open solution will also benefit educators, who teach the use of controllers and how they work.
+
+The MatPLC
+Although the MatPLC is intended to emulate a standard PLC, it has a very different architecture. This is partly to take advantage of the fact that it will be running over a full fledged Operating System (in this case Linux), but mostly because we want it to be highly modular to support multiple parties developing code simultaneously.
+
+Unlike standard PLCs, the MatPLC does not necessarily run in an infinite loop: read the inputs, execute the logic, and update the outputs. The MatPLC is composed of autonomous modules that, by default, will execute in separate processes. Each of these modules is free to decide whether or not to execute in a standard PLC loop. Communication among the modules is made through a common MatPLC library of routines (see Figure 2), written in C and with C header files available. These routines access two common memory areas that together harness the PLC's state and synchronize using semaphores.
+
+Despite this, however, the standard PLC model permeates the structure: the MatPLC library offers PLC like semantics for the modules that wish to use them. For example, inputs that can only change at the beginning of the logic, and outputs that are only written at the end of the logic. This means that a user's PLC skills can easily be transferred to the MatPLC.
+
+Each module is dedicated to a specific function. Some handle physical I/O, reading inputs from I/O boards and copying their states to the MatPLC internal coils, or writing the state of other MatPLC internal coils to the physical outputs. Some modules are dedicated to executing the program logic, and others may be dedicated to communicating with other PLCs. All modules run asynchronously by default, but may be synchronized using the MatPLC library.
+
+With a modular architecture, contributors can write modules that implement a specific communication protocol, interface to a specific vendor's I/O card, or support a specific PLC programming language. End users will be able to pick and choose the modules they use.
+
+A specific module can also have multiple instances running in a working environment. For example, a user wanting to run two digital filters at different sampling frequencies can create two processes of the same digital signal processing (dsp) module with different configurations. Each process will run under a different name, which is configured when the module is launched by a command line parameter.
+
+This architecture does not differentiate between modules executing logic and modules doing physical I/O. For this reason all the coils of the MatPLC are internal coils, called plc points, and no output and input coils exist.
+
+The mapping between plc points and physical I/O is left to the configuration of the I/O modules. It is perfectly possible to have the same plc point mapped to more than one output. The opposite is not supported; it would not make sense to have the same plc point reflect two different inputs. For every plc point there is at most one module instance that can change that point (set/reset or set to a value).
+
+For modules to run, the shared memory areas and the semaphore sets need to be set up. This is done by a utility called matplc, using the data stored in a configuration file (matplc.conf by default). This utility also launches the modules the configuration requires.
+
+The MatPLC Library
+The common MatPLC library is divided into several sections (see Figure 1):
+* The configuration memory manager (cmm) manages the shared memory that stores configuration data;
+* The global memory manager (gmm) manages the global memory used to store the state of the plc points;
+* The synch library handles the synchronization between modules;
+* The period library handles scan timings
+* The state library handles module running state
+* The configuration library is used for parsing of the configuration files; and
+* The log module is a group of functions that lets every module produce logs in a consistent manner.
+
+A module starts by calling the plc_init() function to initialize access to the common resources that have been set up by the matplc utility. The argv and argc variables of the module are forwarded to the plc_init() function call. This allows the MatPLC library to be configured at runtime by the end user simply by passing the parameters interpreted by the PLC library (--PLCxxx). This allows the end user to identify the module instance being launched (--PLCmodule=xxx), but also allows the MatPLC library to be tailored for a specific purpose.
+
+When a module finishes, it calls the plc_close() function. Both these functions call the relevant init() or close() functions of each section of the MatPLC library. Apart from the previous functions, the plc_setup() and plc_shutdown() functions do the actual initialization of the common resources, and are called by the matplc utility.
+
+The Configuration Memory Manager
+The configuration memory area is where the current configuration of the PLC is stored. This guarantees that every module uses the same configuration data. Every access to the configuration memory area is made through the cmm. At present, the cmm does not have a public interface, so the modules themselves never access the cmm directly, but always through other sections of the MatPLC library.
+
+Several MatPLCs can run simultaneously on the same system. Each is distinguished by the configuration memory area it uses, which is identified by a unique number. When a module is launched, the identity of the MatPLC to which it should attach is specified as a command line parameter (--PLCplc_id=xxx).
+
+The cmm views the configuration memory as a simple linked list of memory blocks that have been allocated and another list of empty memory blocks. The memory blocks are allocated by the cmm when requested by other sections of the MatPLC library. This currently only occurs during resource setup. Each block has a type identifier (1 byte) and a name (31 character string). During each module initialization, the MatPLC library requests the relevant block of memory using these identifiers. The type identifier is used to identify the structure of the data stored within that memory block; the name allows several data structures of the same type to be stored.
+
+The Global Memory Map
+The gmm manages the global shared memory, which stores the state of the plc points (i.e. plc internal coils). Plc points, with a size between 0 and 32 bits, are configured in the configuration file with a unique name. At setup, this configuration is copied into the configuration memory. Modules access these points solely through the gmm library by using handles. A handle to a point is obtained by calling a gmm function to which the name of the point is passed.
+
+Each module has its own private memory map and a private map mask, both created upon module initialization, and both independent from the global memory map. When a module accesses a plc point, it is actually accessing its private memory map. Private and global memory maps are synchronized by calling the plc_update() function of the gmm. Synchronization is controlled by a semaphore, which provides atomic updates. During synchronization, only the plc points to which the module has write access are copied into the global memory map. All other plc points are copied from the global memory map into the private memory map.  The map mask is used to determine whether a module has write access to a plc point. All three maps are exactly the same size and use the same locations to store the plc points, which allows the update to be made as a simple bit-for-bit logical function. The update must be made quickly because it requires access to a common shared resource (the global memory map) and may therefore become a bottleneck. Because of the use of a common shared resource controlled by a semaphore, using the MatPLC in a hard real-time environment will require the use of a scheduling mechanism that bounds priority inversion.
+
+The use of private memory maps allows modules to run asynchronously without interfering with each other. Although it is not mandatory, it is expected that modules will run in an infinite loop, synchronizing their private memory maps at the beginning and end of each loop iteration. This guarantees that while the module is running its logic, the state of the plc points will not be changed by other modules executing their own logic or doing I/O. Nevertheless, the MatPLC architecture is sufficiently flexible to support modules that do not execute in an infinite loop; these may synchronize their private maps (in whole or in part) when they see fit.
+
+Currently the gmm provides three alternative strategies to achieve the described functionality. One of these strategies may be chosen when a module is launched by including one of three command line options (--PLClocal, --PLCisolate, --PLCshared).
+
+The default strategy (--PLClocal) places the private memory map and the memory map mask in the module's heap, and accesses the global memory as shared memory mapped onto the module's virtual memory address space. This has the drawback that if the module is badly written, a stray pointer may access the PLC's global memory map without going through the gmm, potentially creating havoc.
+
+In the second strategy, (--PLCisolate), the module forks a second process. The first process executes the module logic and accesses the private memory map, but never actually maps the global memory into its virtual address space. The second process uses the shared memory mechanism, to access both the global memory and the private map of the first process. Whenever the first process requests a memory map synchronization, it sends the request through a socket to the second process. The second process actually performs the memory map synchronization. This strategy involves large delays for each memory synchronization, but allows a developer to isolate a module that has not been thoroughly tested, making debugging easier.
+
+The third strategy, (--PLCshared), does not get to actually create a private memory map, but rather accesses the global memory map directly. Since no synchronisation control is done when reading/writing to the global map, this strategy should only be used by modules that are guaranteed to run when no other module is runnig simultaneously, which may be achieved by properly configuring the module synchronisation, explained further on. This variant has the advantage that the private and the gobal versions no longer have to be synchronised (i.e. copied onto each other), which significantly reduces the execution time of the plc_update() function.
+
+The Synchronisation Library
+The mechanism employed by the gmm enforces semantics very similar to those in existing standard PLCs, but the two are not exactly the same. Situations arise where the exact same semantics are required, and this is resolved by the synchronisation library. This library simplifies the task of the module programmer, but leaves a lot of flexibility for the end user. Standard semaphores are used to atomically synchronise the modules, but their use is not made apparent at the synchronisation library API.
+
+The end user defines a petri net model (see sidebar) of the sequence of events they wish to enforce. Modules may synchronise with the firing of the transitions in the petri net. Since the end user may specify which transitions each module should synchronise to, (s)he has complete control over the sequence of events in the MatPLC. Modules waiting on the firing of a transition will block until the transition is fired.
+
+It is worth enfasizing that the semantics the MatPLC supports for the synchronisation petri net are not exactly those of standard petri nets, due to the fact that the MatPLC will not fire a transition unless there is a module currently waiting on that transition. Nevertheless this modified petri net remains a good a base from which to work and allows very complex synchronisation semantics. Howerver, due to the complexity of configuring this model, a simplified configuration syntax is also supported which consists of a simple execution sequence for modules. This sequence is automatically transformed into its equivalent petri net model upon setup.
+
+The transitions defined by the end user are loaded into the configuration memory. A module wishing to synchronise with a transition must first get a handle to that transition. The module then instantiates a new synchronisation point using the transition as a model. The module may then call the synchronisation primitives to synchronise on the synchronisation point.
+
+By using synchronisation points, instead of synchronising directly with the transition, allows the module, if it so wiches, to introduce changes to the sycnhronisation conditions specified by the transition. By using the 'null' transition as a model to a new synchronisation point, the module may even start off from a clean slate and create a synchronisation point with the synchronisation conditions it requires.
+
+Every module is required to call plc_scan_beg() and plc_scan_end() before commencing and upon completion of its scan loop. These functions synchronise with two default transitions that, if not configured, will map to the 'null' transition that continues execution without delay. These two functions provide the hooks for the synch library to provide module synchronisation in a standard form. Modules that wish to synchronise at other locations of their execution can use additional transitions as desired.
+
+The Period Library
+Scan rates for each module are handled by the period library. This library creates an alarm (using POSIX timers) that goes off at every multiple of the desired scan period. Say, for exapmle, that the user configures the module to execute the scan once every 10 seconds. In this case the alarm will go off at 0, 10, 20, etc. seconds. Each time the alarm goes off, an alarm counter is incremented. When a module is ready to start a new scan, the period library decrements the alarm counter, and continues with the scan. If there are no are outstanding alarms at the beginning of the scan, i.e. if the alarm counter is 0, then the scan is delayed until the next alarm goes off.
+
+In order to support on-line configuration changes that will be added in the near future, this library allocates a cmm memory block for each running module, where it stores the current scan period of the module. This allows a new instance of the module (i.e. a new process) to continue executing with the same scan period as the old instance of the same module. This mechanism is required because the scan period can be changed at run-time through a plc library function, and therefore the new module instance cannot rely on the scan period specified in the configuration file as being current. Note that the cmm memory block used by the period is not deleted when the module shuts down, and upon setup of a module, it first checks for a pre-existing block before it decides to create a new one and use the scan period specified in the configuration file.
+
+The State Library
+The state library handles the state of a module. This library has not yet been completed, and at the moment merely keeps a tab on running modules. It uses a memory block from the cmm for each running module, where the process id of that module is stored, which allows the plc to be completely shutdown, including every running module, by a single library function.
+
+In the future it will control the state of the module (running, stopped, switching to a new instance, ...). It will also be used to support online configuration changes by synchronising scan execution of the new and old instance of the same module.
+
+The Configuration Library
+The configuration library is a collection of functions that help parse the configuration file. The file is completely parsed upon module initialization and loaded into the module's heap memory. To obtain specific configuration data, the module calls functions that scan the parsed file from the heap memory. The configuration file may include other files using the *include directive. Circular includes are detected and supported.
+
+The configuration file may contain name = value pairs or data organized in a table, for example:
+table_name value_1_1 value_1_2
+table_name value_2_1
+table_name value_3_1 value_3_2 value_3_3
+
+These values may be grouped into sections under the [section_name] syntax. Generally the data required for PLC setup, such as plc points, synchronization points and model, are all placed under the [PLC] section. Other sections should contain the name of the module instance and the configuration data for that module.
+
+The Log Library
+The log library is a group of functions that provide common logging facilities for all MatPLC related processes. Currently nine logging levels are supported for error, warning, and trace messages. These messages, with an additional timestamp, are placed into a logging file. We plan to offer the option of forwarding these messages to the syslog sub-system, taking advantage of the forwarding capabilities of TCP/IP to a remote message concentrator.
+
+Embedding the MatPLC
+The MatPLC makes liberal use of memory, which is not consistent with a program that will be run in embedded applications. Two main areas need to be augmented to fulfil this requirement: the configuration file parsing library and the gmm.
+
+Currently, in a running MatPLC with five modules, all five modules will parse the configuration file and load it into memory. Once there, the relevant data for the module will be copied into its internal data structures. This, and the existence of the configuration file, leads to very poor use of memory.
+
+This situation will be rectified by requiring the modules to store their internal state in the configuration memory. This will allow the modules to be broken into two independent processes. The first will parse the configuration file, allocate enough memory from the cmm for its internal state variables, and initialize this memory. The second process ask the cmm for the location of its initialized state variables, and then execute the module logic. The first process may be run on the developing platform and is not required to run in the target platform. We have to make a copy of the already-initialized configuration memory into the target platform. This removes the requirement for the configuration file and the multiple copies of its parsed form in the target platform's memory. This will also be required for the mechanism for on-line configuration changes to work.
+
+The second area that needs to be augmented is the gmm. The current architecture makes sense if we want to take full advantage of the capabilities of the underlying OS. Unfortunately this requires multiple copies of the memory map (i.e. a global memory and a private memory map for each module). In many situations, end users will not require these capabilities and will have the modules synchronized to run in lock step, one after another. In this case, a single copy of the global map, and even a single process will suffice.  We are planning on expanding the methods of accessing the global memory map, such as dispensing with private memory maps and accessing the global memory map directly. Eliminating the need to synchronize the memory maps will save memory and be quicker. On the other hand, it will mean the modules must be run in lock step, one after another, to preserve the PLC semantics.
+
+MatPLC Modules
+We are well on our way toward completing several basic modules that will provide the standard capabilities of PLCs. While some will be running user-defined logic, others will be communicating with the real world. Logic-based modules will provide support for specific PLC programming languages (e.g. iec compiler), and commonly executed functions (e.g. dsp). I/O modules all take MatPLC points and either transmit them over a network using a specific protocol (e.g. modbus) or turn them into real, electrical signals that move cylinders and motors (e.g. DIO48). They may also take electrical signals from devices such as buttons and proximity switches and turn them into MatPLC points.
+
+The iec Compiler
+The IEC 61131-3 language compiler is not yet fully functional. This compiler will compile IEC ST (structured text) and IL (instruction logic) programs into C++ modules. Each compiled program will be an independent MatPLC module. Debugging support will probably be provided by an IEC language interpreter.
+
+The Simple IL Compiler
+The IL compiler is a perl-written compiler of a non-standard simple instruction logic language. This language provides only basic logic operations (e.g., LOAD, AND, OR, OUT) and is intended as a stop-gap until the IEC compiler is working, allowing for easier testing of other MatPLC components.
+
+The dsp Module
+The digital signal processing (dsp) module provides signal-handling capabilities. The dsp module itself is composed of sub-modules or blocks that implement basic signal-processing algorithms. The user can string these sub-modules together to implement the desired functionality.
+
+Currently we have adder, multiplier, PID, filter, alarm, ramp, non-linear, multiplexor, and type conversion blocks. In future we expect to have hysteresis, FFT, delay, and signal source blocks. The dsp module executes the blocks by the same order in which they are configured.
+
+All blocks except the type converter expect the inputs to be in 32-bit, floating-point format and provide the outputs in the same format. The type converter can convert data to/from (unsigned) integer of several sizes, from/to 32-bit, floating-point format. The adder adds a variable number of inputs, each scaled by a configurable constant, to provide a single output. The PID block provides an open loop PID (Proportional, Integral, Derivative) controller. Closed-loop controllers can be implemented by closing the loop with an adder block. The PID block does not assume fixed period scans of the dsp module, as it takes into account the elapsed time between every two successive scans.
+
+The filter block implements Infinite Impulse Response (IIR) and Finite Impulse Response (FIR) filters using canonical second order sections. These filters can be configured directly or by giving the desired frequency and attenuation response along with the desired analog transfer function type (butterworth, chebyshev, elliptic, bessel). This block, unlike the PID, assumes fixed period scans of the dsp module.
+
+The alarm block allows Boolean alarms to be set depending on the input value. This block supports alarm activation when the input value is larger than, less than, equal to, or different from a specified constant.
+
+The ramp block provides an output that follows the input but whose maximum first and second derivatives may be limited. Maximum positive and negative derivatives may be set independently.
+
+The non-linear block implements dead-band and limiting functions, while the multiplexor works as a switch, copying to the output the value of one of the inputs. The input used depends on the value of yet another control input.
+
+The Vitrine
+This simple curses-based display can show the status of MatPLC points as they change. The data in the plc point may be in any of several integer formats or a 32-bit float. Support for basic graph drawing, based on the values of plc points, is currently being added.  While in some ways the vitrine may be considered a stop-gap, nevertheless many applications will not need the full power of a graphical interface and will appreciate the lower CPU demands of plain text.
+
+The Keyboard Module
+This is an I/O module or, more precisely, an input-only module. It maps the states of keyboard keys to MatPLC points. It is intended primarily for debugging and demonstration purposes.
+
+The Parallel Port Module
+The parallel port module was written to provide support for cheap physical I/O. It will allow users with low budgets to evaluate the potential of the MatPLC or use it in simple settings.  The parallel port provides 8 LS TTL level inputs/outputs, 5 LS TTL level inputs, and 4 TTL open collector outputs. These last 4 outputs can sometimes also work as inputs when placed in their high impedance state.
+
+The Modbus Modules
+Two modules support the modbus protocols, one for the modbus_tcp and another for modbus_rtu. These modules allow the MatPLC to communicate with the real world over ethernet (modbus_tcp) or a serial port (modbus_rtu).
+
+The DIO48 Card Module
+Physical I/O is also possible using extra I/O boards. Currently the CIO-DIO(48, 96, 192) digital I/O boards are supported by the dio48 module. These cards are based on the 8255 integrated circuit. The 8255 chip is used in most industrial PC I/O boards, so this module covers a great range of relatively high-speed I/O.
+
+The Hilscher card Module
+This module supports fieldbus network cards made by Hilscher (www.hilscher.com). This module was only possible with help from Hilscher, as they kindly made some of their cards available to the project. This module allows the MatPLC to communicate with practically any networked device on the factory floor, as the Hilscher cards support ASI, CANopen, ControlNet, DeviceNet, InterBus, ModConnect, ProfiBus, and SDS communication protocols.
+
+The Allen Bradley PLC5[insert registered trademark R here] Language Emulator
+With the help of its original author, Hugh Jack, we will be porting an AB PLC5[insert registered trademark R here]  emulator as a MatPLC module. This will allow the MatPLC to execute existing AB PLC5[insert registered trademark R here]  programs, easing the transition to a MatPLC.
+
+Code for the MatPLC can be obtained from the project's cvs server at our website, http://mat.sf.net. A first full release is expected shortly. In the meantime, the project is evolving in many other directions, including support for other hardware and communication protocols.
+
+Although the project is still in its infancy, it is already possible to identify some of the hurdles we face. It has not been easy to get people from the automation industry involved in writing code, mainly because of time limitations and sometimes due to a lack of Linux-based programming experience. Nevertheless, we have a large silent following that will come in very useful when the time comes for debugging the beta releases. Another obstacle is obtaining copies of communication protocol standards. Some are very expensive; some standards bodies require an official organization to represent the MatPLC as a member; and some standards require expensive conformance testing to use their protocol name. This is why we do not expect to directly support, in the near future, many of the communication protocols used in factory automation, and will merely support commercial add-on cards that implement these protocols.
+
+Despite these obstacles, the industry has already started providing support for this project. Help has come from integrators interested in the success of the project, and PC hardware vendors that want their hardware to work with the MatPLC.
+
+I would like to finish by thanking Jiri Baum for coming up with the basic MatPLC architecture and for having written many modules besides the initial version of the library. He is still actively contributing to the project. I would also like to thank David Campbell (IEC compiler) and Philip Costigan (Modbus modules) for their continuing contributions. I also appreciate the help of Curt Wuollet, the project's founder, and Jiri for having written the article's introduction, and the staff at Control.com for helping out with the drawings.
+
+Mario de Sousa, an electrical engineer, is currently a lecturer on industrial automation systems in Porto University's engineering faculty. He can be reached by email at msousa@fe.up.pt
+
+START BOX: Whose Project Is It, Anyway?
+The MatPLC project is a community effort. The individual developers own copyright in their pieces of code, but collectively license the project to everyone. By pooling our resources in this way, we hope the overall benefit will outweigh our efforts. We have major developers on at least three continents--North America, Europe, and Australia--aiming for a truly world-class solution in industrial control.
+
+The project is currently hosted at SourceForge (http://mat.sf.net), although it started out under the auspices of Control.Com Inc. While that gave Control.com a certain amount of privilege and responsibility, the company had no more voice in the project than would any other developer contributing comparable resources. Unfortunately the association with Control.Com was viewed, wrongly, by many of the wider community as a compromise to our independent and open-source status. We were therefore forced to move in order to maintain our public profile. We are nevertheless still indebted to Control.Com for their hard work, support, and above all the publicity they generated for the project.
+
+The project is written under a GNU licence, which means that anyone is welcome to take part in the project, study it, change it, publish changes or extensions, as long as they're happy to let others do the same.
+
+What's in it for us, and for Control.com? Apart from getting a PLC package we can really call our own, really understand, and use with the kind of confidence that only comes with full understanding, we will be doing our part as loyal minions in Linus' quest for world domination. END BOX
+
+START BOX: The Petri Net Model
+A petri net is basically a glorified state machine (see figure). The places (the correct petri net term for states) are not limited to being active or inactive, but may contain any number of tokens. Petri nets also have transitions that, when fired remove one or more tokens from a place, and insert one or more tokens into another place. These quantities are defined by the weight of the directed arcs that connect the places and the transitions. The number of tokens removed does not necessarily equal the number of tokens inserted. This means that the total number of tokens in a petri net is not necessarily constant. Arcs between two places or two transitions are not allowed. Arcs may only begin at a place and end at a transition, or begin at a transition and end at a place.
+
+There can be more than one arc beginning at the same transition, in which case tokens will be inserted at every place that the arcs end whenever the transition fires. Similarly, there can be more than one arc ending at a transition, in which case tokens are removed from every place where the arcs begin. Since places cannot have a negative number of tokens, a transition can only fire if every place from which it will remove tokens contains enough tokens to be removed.
+
+Firings of transitions are considered instantaneous, which implies that no two transitions may fire simultaneously. END BOX
+

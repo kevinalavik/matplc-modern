@@ -1,0 +1,31 @@
+
+
+  Modbus Protocol Libraries
+  =========================
+
+  This directory contains the libararies that implement the modbus protocol
+  stack.
+
+  This protocol has been implemented as a two layer stack. Layer two includes
+  the mb_master and the mb_slave protocols. Layer one is composed of
+  the mb_rtu, mb_ascii and mb_tcp protocols.
+
+  Layer1 protocols all implement the same interface, defined in mb_layer1.h
+  Layer2 protocols implement different interfaces, defined in mb_master.h
+  and mb_slave.h
+
+  Users of these libraries should only use functions defined in the layer2
+  protocol header files (i.e. mb_master.h and mb_slave.h)
+
+
+            ------------------------------------------
+            |                    |                   |
+  layer 2   |    mb_master.h     |    mb_slave.h     |
+            |    mb_master.c     |    mb_slave.c     |
+            |                    |                   |
+            |----------------------------------------|
+            |              mb_layer1.h               |
+  Layer 1   |            |              |            |
+            |  mb_rtu.c  |  mb_ascii.c  |  mb_tcp.c  |
+            |            |              |            |
+            ------------------------------------------

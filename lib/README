@@ -1,0 +1,226 @@
+			 LIB Architecture
+			 ================
+ The LIB is a collection of several autonomous libraries, which together form
+the basis of the matplc.
+
+It is composed of 5 main libraries:
+   - log     : the central logging services
+   - conffile: the matplc.configuration file (matplc.conf) parser
+   - cmm     : the configuration shared memory manager
+   - gmm     : the global shared memory manager
+   - synch   : the module synchronisation manager
+   - period  : the module scan period manager
+   - state   : the module state manager
+
+ In reality, each of the above libraries is actually a pair of libraries.
+One library out of each pair is used by the modules to access the common PLC
+resources, while the other library of the pair (xxx_setup, e.g. cmm_setup) is
+used to setup those resources.
+ The above 5 libraries are merged into two libraries:
+ - matplc: which all modules will use;
+ - matplc_setup: used only by the utilities that setup the PLC resources
+                   (currently the smm-mgr utility under lib/util)
+
+ The plc.h file declares the plc_init() and plc_done() functions, and
+includes each of the public interfaces of the above mentioned libraries.
+
+ The plc.c file defines the plc_init() and plc_done() functions. These
+functions, used to init/close down the access to the common plc resources,
+call the init/close down functions of each of the above mentioned libraries.
+
+ The plc_setup.h file declares the plc_setup() and plc_shutdown() functions.
+The plc_setup.c file defines the plc_setup() and plc_shutdown() functions. These
+functions are used to setup/shutdown the common plc resources, and call the
+setup/shutdown functions of each of the above mentioned libraries.
+
+ There is also an io library used merely by IO modules that somehow access
+physical IO. This library is in essence a complete IO module (including the main()
+function), lacking only the functions required to access the physical IO. To create
+a new IO module, simply write the hardware access functions described in io_hw.h,
+and link to this library.
+
+ Apart from the above, the LIB also includes several utility libraries (all in the
+/lib/misc directory) grouped by general functionality in several files:
+   - sin_util.h/c    - internet socket utility functions
+   - shmem_util.h/c  - shared memory utility functions
+   - sem_util.h/c    - semaphore utility functions
+   - string_util.h/c - string handling utility functions
+   - ds_util.h       - data structures type declarations
+   - signal_util.h/c - signal handler setup functions
+   - timer_util.h/c  - timer handling functions
+   - daemon_util.h/c - daemon process utility functions
+
+
+
+			 LOG Library Architecture
+			 ------------------------
+- log.h - The public interface to this library.
+
+- log.c - This library's implementation.
+
+- log_setup.h - The public interface to the functions required to
+                setup and shutdown the logger.
+
+- log_setup.c - The implementation of the functions declared in log_setup.h
+
+
+			 CONFFILE Library Architecture
+			 -----------------------------
+- conffile.h - The public interface to this library.
+
+- conffile.c - This library's implementation.
+
+- conffile_setup.h - The public interface to the functions required to
+                     setup and shutdown the conffile.
+
+- conffile_setup.c - The implementation of the functions declared in
+                     conffile_setup.h
+
+
+                         CMM Library Architecture
+			 ------------------------
+
+- cmm.h - The public interface to this library.
+
+- cmm_private.h - Private declarations which need to be known throughout
+  the CMM library.
+
+- cmm.c - This library's implementation.
+
+- cmm_setup.h - The public interface to the functions required to
+  setup and shutdown the cmm. Even though this is a 'public' interface,
+  it is meant to be called by a limited number of programs. I/O and
+  logic modules will not need to access these functions.
+
+- cmm_setup.c - The implementation of the functions declared in cmm_setup.h
+
+
+                         GMM Library Architecture
+			 ------------------------
+
+- gmm.h - The public interface to this library.
+
+- gmm_private.h - Private declarations which need to be known throughout
+  the GMM library.
+
+  The gmm_mod variable is used to allow two different variants of the GMM
+  library to coexist. Those six functions are just short wrappers in
+  gmm_lib.c which call through the relevant field of gmm_mod. In OO
+  terminology, gmm_mod is the Virtual Table.
+
+- gmm.c - the front end to the gmm library implementation. It contains
+  functions common to all variants of the gmm (corresponding to an OO base
+  class), as well as wrappers for the functions that differ. It also
+  decides which version (local, shared or isolate) of the gmm to use.
+
+- gmm_local.c -
+- gmm_isolate.c -
+- gmm_shared.c -
+	These files include the functions to implement each variation of the
+	gmm. In an OO design these would be three distinct classes, each
+	inheriting from the base class.
+
+- plcproxy.h/c - this file implements the proxy used by the isolate version
+  to access the global shared memory.
+- protocol.h/c - this file implements the communication protocol between the
+  main and proxy processes in the isolate version of the gmm.
+
+- gmm_setup.h - The public interface to the functions required to
+  setup and shutdown the gmm. Even though this is a 'public' interface,
+  it is meant to be called by a limited number of programs. I/O and
+  logic modules will not need to access these functions.
+
+- gmm_setup.c - The implementation of the functions declared in gmm_setup.h
+
+
+
+                         SYNCH Library Architecture
+			 --------------------------
+
+- synch.h - The public interface to this library.
+
+- synch_private.h - Private declarations which need to be known throughout
+  the synch library.
+
+- synch.c - This library's implementation.
+
+- synch_setup.h - The public interface to the functions required to
+  setup and shutdown the synchroniser. Even though this is a 'public' interface,
+  it is meant to be called by a limited number of programs. I/O and
+  logic modules will not need to access these functions.
+
+- synch_setup.c - The implementation of the functions declared in synch_setup.h
+
+
+
+			 PERIOD Library Architecture
+			 ---------------------------
+- period.h - The public interface to this library.
+
+- period_private.h - Private declarations which need to be known throughout
+  the synch library.
+
+- period.c - This library's implementation.
+
+- period_setup.h - The public interface to the functions required to
+  setup and shutdown the period manager.
+
+- period_setup.c - The implementation of the functions declared in period_setup.h
+
+
+			 STATE Library Architecture
+			 --------------------------
+- state.h - The public interface to this library.
+
+- state_private.h - Private declarations which need to be known throughout
+  the state library.
+
+- state.c - This library's implementation.
+
+- state_setup.h - The public interface to the functions required to
+                  setup and shutdown the state manager.
+
+- state_setup.c - The implementation of the functions declared in state_setup.h
+
+
+                         IO Library Architecture
+			 -----------------------
+
+  The io library is an almost complete implementation of a generic IO module,
+including the main() function. All that it is missing to generate a complete
+IO module are the functions to access the physical IO, which are hardware
+dependent.
+
+- io_hw.h - The functions to access the physical IO. These functions are not
+  implemented by the io library. It is the user that must implement these
+  functions so that, after linking to the io library, a full IO module is created.
+
+- io.h - The public interface to this library. Some of the functions defined in
+  io_hw.h may need to call the functions defined in this io.h file.
+
+- io_private.h - Private declarations which need to be known throughout the io
+  library.
+
+- io.c - The implementation of the io libarry.
+
+==
+
+If the plc (or something) crashes and doesn't clean up after itself, or you
+just want to be sure you're starting from a clean slate, you can get rid of
+IPC resources with the ipcs and ipcrm commands, like this:
+
+> ipcs
+------ Shared Memory Segments --------
+key       shmid     owner     perms     bytes     nattch    status
+0x00000001 640       jiri      666       65536     0
+
+------ Semaphore Arrays --------
+key       semid     owner     perms     nsems     status
+0x00000001 768       jiri      666       16
+
+> ipcrm shm 640
+resource deleted
+> ipcrm sem 768
+resource deleted
+>
+

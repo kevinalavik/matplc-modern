@@ -1,0 +1,9 @@
+
+ To be able to compile this module, you must have the console tools develpoment
+package installed in your system.
+
+ For a Debian box, execute as root
+$apt-get install console-tools-dev
+
+ You need to have the /etc/apt/sources.list file correclty configured
+for the above command to execute correctly.

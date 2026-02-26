@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>MAT manual - log messages</title>
+<head><body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../appendix/matplc.conf.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../appendix/gpl.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Log messages</h1>
+This appendix lists the messages that may appear in the
+<code>matplc.log</code> file. It is intended to be complete (but isn't
+- yet), so if you
+get
+a message which is not listed here from one of the generic or specific
+modules, it's a problem - please let us know so we can fix it.
+<p>Messages are organised by module; with messages that may be produced
+by
+any module or by the MatPLC tools listed first in the "General"
+section.
+</p>
+<h2>General</h2>
+<table border="1">
+  <tbody>
+    <tr>
+      <th valign="top">type<br>
+      </th>
+      <th valign="top">text<br>
+      </th>
+      <th valign="top">explanation<br>
+      </th>
+    </tr>
+    <tr>
+      <td>TRACE</td>
+      <td>Module started.</td>
+      <td>The module started successfully.<br>
+      </td>
+    </tr>
+    <tr>
+      <td>TRACE</td>
+      <td>Launched 3 modules.</td>
+      <td>The <code>matplc -g</code> command has successfully started
+all the modules listed in <code>matplc.conf</code>. (This will always
+be labelled as coming from the "<code>plc_setup</code>" module.)<br>
+      </td>
+    </tr>
+    <tr>
+      <td>WARNING</td>
+      <td>The clock's resolution on this system (0.010000 sec) is not
+small enough to guarantee correct periodic execution of the module at
+the required period (0.010000 sec).</td>
+      <td>The timing of the module is likely to jitter badly;
+otherwise, everything's fine.<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">ERROR<br>
+      </td>
+      <td valign="top">Error initializing access to the plc config
+memory...<br>
+      </td>
+      <td valign="top">The <code>matplc -s</code> command couldn't
+find the MatPLC - most often this will happen when you do a &nbsp; <code>matplc
+-s</code> "just to make sure" and there isn't actually one running.
+(This will always
+be labelled as coming from the "<code>plc_shutdown</code>" module.)</td>
+    </tr>
+  </tbody>
+</table>
+<p></p>
+<!--autolink--><a href="../appendix/matplc.conf.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../appendix/gpl.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<p><small>$Date: 2004/12/28 05:32:09 $</small>
+</p>
+</body>
+</html>

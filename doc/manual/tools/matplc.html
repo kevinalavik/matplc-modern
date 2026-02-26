@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>MAT matplc manual</title>
+</head>
+<body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../general/config/rt.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../tools/config/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>matplc</h1>
+
+This is MAT PLC's main "control" program, used for starting the MatPLC
+and shutting it down.
+
+<p>This page of the manual is not really written yet, there's just the
+usage summary here.
+<strong>FIXME</strong>
+
+<pre>
+usage: .../matplc  {-{c|g} [file_name] | -{r|h} [<module_name>] | -{s|l|d} [PLC options]
+          c: Check matplc config file syntax. fname defaults to matplc.conf
+          g: Go. Start the MatPLC. fname defaults to matplc.conf
+          s: Shutdown the MatPLC.
+          r: Place the MatPLC, or the &lt;module&gt; if specified, in RUN mode.
+          h: Place the MatPLC, or the &lt;module&gt; if specified, in STOP mode.
+          d: Dump the MatPLC configuration map.
+</pre>
+
+<h2>Source code note</h2>
+
+If you're looking for the source code to the <code>matplc</code> program,
+it's actually in the <code>lib/util</code> directory, even though the
+program itself is in <code>tools/run</code>. This is simply for historical
+reasons.
+
+<p>
+<!--autolink--><a href="../general/config/rt.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../tools/config/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:12 $</small>
+</body>
+</html>

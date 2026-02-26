@@ -1,0 +1,27 @@
+
+status: add function works,
+        pid function almost works, but not yet. I always assumes a period of ??
+
+  D S P
+ =======
+
+This is merely the structure for a dsp processing module. It will
+contain sub-module (blocks) such as filters, pid, lag, histeressis,
+dead-band, ... These blocks will be interconnected using plc points.
+
+At the moment we only have an adder block (adds two signals) and a
+very basic pid block (open loop) that doesn't quite work because I have
+not yet gone to the trouble of finishing it (it is only missing the
+gettimeofday function call to determine the elapsed time between
+two successive calls).
+
+I have not gone to the trouble of finishing it because without 
+synching of modules, the pid loop is almost useless, so I'll concentrate
+on that first.
+
+In the mean-time, Chetan has promised to write a full-blown PID loop,
+but it seems as if he currently tied up with lot's of work, so it will
+be some time before it comes on-line.
+
+
+ Mario.

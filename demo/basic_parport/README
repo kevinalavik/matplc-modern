@@ -1,0 +1,63 @@
+This is a simple light-chasing demo, controlled from the keyboard, in which
+the matplc points reflecting the state of the lights are copied onto
+some pins of the parallel port. If you wish, you can see these pins change
+state with a voltmeter, or build a simple led array to see the lights go on
+and off.
+
+The parallel port can sink enough current to light up a led, so you can connect
+a led the following way:
+
++3 to +5 V (you can use two 1,5 V batteries, or a single 4,5 V battery for 
+   |        convenience)
+   |
+   |
+  ---
+  \ / ->   Led
+  ---
+   |
+   |
+  ---
+  | |  470 ohm resistor (yellow, violet, brown, gold/silver)
+  | |
+  ---
+   |
+   |
+ connect to parallel port output pin.   
+
+Mind you, this was the original specification of the parallel port, when it was
+built using SSI TTL chips. Your parallel port is most probably implemented
+in a LSI chip, so I give no guarantees on what it's current sinking capabilities
+are. My parallel port has been working with this configuration for some time 
+and has not yet been destroyed, so you may be lucky as well.
+
+With the current config file, the mapping is as follows,
+L1 - pin 6
+L2 - pin 7
+L3 - pin 8
+L4 - pin 9
+
+To start:
+	cd demo/basic_parport; make
+
+Note - you may have to give the parport driver SUID priviledges, so it can
+access the port.
+
+To quit:
+	press `Q' on the keyboard
+
+
+It's controlled from the keyboard (module Kbd, kbd.c): the keys L, R and Q
+on the keyboard toggle the three points `left', `right' and `quit'.
+
+The Chaser module (chaser.c) is a primitive `light chasing' program. The
+direction of movement can be changed using the `left' and `right' points;
+these are notionally push-buttons, but in this demo they are controlled by
+the L and R keys. The speed of the chaser can be configured with the
+"delay" setting in the "Chaser" section of matplc.conf
+
+The demo terminates when the `quit' point comes on (keyboard Q).
+
+
+Buglet:
+	- assumes a linux terminal (hard coded escape codes).
+

@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>vitrine manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../mmi/hmi_gtk.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/logger.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>vitrine</h1>
+
+Vitrine is a simple text-based HMI. It is display-only (it can be paired
+with the <code>kbd</code> module to provide both display and control, or
+with buttons wired to inputs).
+
+<p>It is useful in small systems for which the overhead of graphics would
+be excessive.
+
+<h2>Config</h2>
+
+There are three settings:
+
+<dl>
+
+<dt><code>background=<em>filename</em></code><dd>This specifies a plain
+text file to be loaded as the unchanging part of the screen.
+
+<dt><code>show <em>point row col [type] [on [off]]</em></code><dd>This table specifies
+the points to be shown on the screen, one point per row. The columns are:
+<dl>
+<dt><code><em>point</em></code><dd>The MatPLC point to be shown.
+
+<dt><code><em>row</em></code><dd>The row on the screen to use.
+
+<dt><code><em>col</em></code><dd>The column on the screen to use.
+
+<dt><code><em>type</em></code><dd>(optional, default <code>bool</code>) The
+type to be shown: <code>f32 | i32 | u32 | i16 | u16 | i8 | u8 |
+bool</code>. The default is <code>bool</code>, which is used for on-off
+points (coils, discrete inputs).
+
+<dt><code><em>on</em></code><dd>(optional, default "1") The string to use
+when the point is on. Only valid for the default <code>bool</code> type. In
+bespin (and CVS before June 2005), only the first character is shown on the
+display.
+
+<dt><code><em>off</em></code><dd>(optional, default "0") The string to use
+when the point is off. Only valid for the default <code>bool</code> type.
+If you want a string which only appears when the point is ON and disappears
+when the point is OFF, use <code>""</code> as the <code><em>off</em></code>
+marker (two double-quote marks). In bespin (and CVS before June 2005), only
+the first character is shown on the display, and a blank must be written as
+<code>"&nbsp;"</code> (double-quote, space, double-quote).
+
+</dl>
+
+<dt><code>graph ...</code><dd><strong>FIXME</strong> Document how to do
+text-based graphs. See <code>demo/basic_dsp/vitrine.conf</code> for an
+example.
+
+</dl>
+
+<p>
+<!--autolink--><a href="../mmi/hmi_gtk.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/logger.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/05/26 11:20:33 $</small>
+</html>
+

@@ -1,0 +1,35 @@
+# Build artifacts
+*.o
+*.lo
+*.a
+*.so
+*.la
+*.log
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# Compiled binaries
+tools/run/matplc
+tools/run/mattest
+logic/dsp/dsp
+
+# Emacs/Vim backup files
+*~
+.*.swp
+.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Bazaar backup (not needed for git)
+.bzr.backup/
+bzr-version-info
+
+# Libtool
+ltmain.sh
+libtool
+config.guess
+config.sub
+install-sh

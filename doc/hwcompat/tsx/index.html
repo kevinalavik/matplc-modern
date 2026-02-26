@@ -1,0 +1,75 @@
+<html><head>
+<title>MatPLC HW compatibility - TSX</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF"
+link="#000088" alink="#880000" vlink="#660066"
+>
+<!-- navbar more-or-less like on the SourceForge page -->
+<HR SIZE="1" NoShade>
+<A href="https://sourceforge.net/projects/mat/">Summary</A> | 
+<A href="https://sourceforge.net/project/admin/?group_id=29758">Admin</A> | 
+<A href="http://mat.sourceforge.net">Home Page</A> | 
+<A href="https://sourceforge.net/forum/?group_id=29758">Forums</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758">Tracker</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397247">Bugs</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397248">Support</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397249">Patches</A> | 
+<A href="https://sourceforge.net/mail/?group_id=29758">Lists</A> | 
+<A href="https://sourceforge.net/pm/?group_id=29758">Tasks</A> |
+<A href="https://sourceforge.net/docman/?group_id=29758">Docs</A> | 
+<A href="https://sourceforge.net/survey/?group_id=29758">Surveys</A> | 
+<A href="https://sourceforge.net/news/?group_id=29758">News</A> | 
+<A class=tabs href="https://sourceforge.net/cvs/?group_id=29758">CVS</A> | 
+<A class=tabs href="https://sourceforge.net/project/showfiles.php?group_id=29758">Files</A><HR SIZE="1" NoShade>
+
+<a href="tsx-s.jpg"><img src="tsx-t.jpg" alt="[photo of twido]"
+align="right" border="0"></a>
+
+Back to <a href="..">compatibility list</a><HR SIZE="1" NoShade>
+
+<h2>TSX</h2>
+
+<h3>Summary</h3>
+
+The TSX was tested successfully.
+
+<h3>Hardware tested</h3>
+
+Schneider/Telemecanique Modicon TSX Premium TSX P57202 CPU, with a TSX SCY
+21601 comms module using a TSX SCP 111 PCMCIA card (RS 232), configured as
+slave, and using 9600 baud, 8 bits, 1 stop bit, even parity.
+
+<p>Click on the picture on the right for a larger photo.
+
+<p>Tested March 2004.
+
+<h3>Comments</h3>
+
+The TSX is a Modbus slave.
+
+<p>RTU version checked out OK with 4800, 9600 and 19200 baud, and several
+parity/stop permutations. Other possible (slower) speeds were not tested.
+
+<p>I couldn't get the ascii version to work. The modicon PLC reported
+character errors, which means it was not reading the individual characters
+in the frame succesfully, even though all parity/stop bits/data bits/baud
+all seemed to be OK. Strange... Does anybody have any bright ideas?
+
+<p><a href="dialog-s.jpg"><img align="left" src="dialog-t.jpg"
+border="0"></a>TCP version also checked out OK, using the same CPU, but now
+with a TSX ETY 110WS ethernet communication module, and using the default
+port (502).  However, this module seemed to ignore the slave address, and
+responded to all requests.  This means that the value in the 'node address
+table' was completely ignored by the modicon PLC.
+
+<p>Aditionally, I never got to figure out what the Net.Station
+configuration was for. I just inserted '1.100', and things seemed to
+work...
+
+<p>The dialog box on the left (click to enlarge) shows the configuration of
+the PLC as made in <strong>FIXME</strong>...
+
+<p>Mario de Sousa <address><a href="mailto:msousa@fe.up.pt">msousa at
+fe.up.pt</a></address>
+
+<p><small>$Date: 2004/03/10 08:04:39 $</small>

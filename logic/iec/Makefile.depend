@@ -1,0 +1,1 @@
+main.o Makefile.depend: main.cc absyntax/absyntax.hh absyntax/absyntax.def

@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Pontech sv203b servo motor driver manual.</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../io/parport.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/simple-udp.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Pontech sv203b</h1>
+
+<h2>Introduction</h2>
+
+This is a Python module that interfaces MatPLC with the sv203b servo board from Pontech.<br>
+
+The board uses an RS232 serial interface to comunicate with a PC using a ASCII protocol.<br>
+
+The module was developed as part of the MatPLC <a href="http://www.ace-lab.com/SCADA/demo.html">Live-Demo</a>, it is used to move the robot arm.
+
+<h2>Functions</h2>
+
+Class name: sv203b<br><br>
+
+sv203b class methods:<br><br>
+
+open(port, speed, rtscts, timeout)<br>
+
+Opens the serial port. It needs to be called before anything else can be done with the module.<br><br>
+
+close()<br>
+
+Closes the serial port.<br><br>
+
+move(motor, position)<br>
+
+Command to move a servomotor to a certain absolute position. Motor is a number from 0 to 5.<br><br>
+
+incr(motor, position)<br>
+
+Same as move but using a relative position.<br><br>
+
+pos(motor)<br>
+
+Returns the selected servo motor current absolute position.<br><br>
+
+<p>
+<!--autolink--><a href="../io/parport.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/simple-udp.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/12/26 13:23:27 $</small>
+</html>

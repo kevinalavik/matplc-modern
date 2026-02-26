@@ -1,0 +1,165 @@
+<html>
+<head>
+<title>MatPLC user manual</title>
+</head>
+<body>
+<h1><a href=".."><IMG src="../images/MAT-linux-h100.gif" WIDTH="95" HEIGHT="100"
+alt="[MAT logo]" align="right" border=0></a>MatPLC user manual</h1>
+
+<h2>Foreword</h2>
+
+This manual is available in several places and formats:
+
+<ul>
+<li>On the web at <a
+href="http://mat.sourceforge.net/manual/">http://mat.sourceforge.net/manual/</a>
+This version is updated every eight hours from the developers' version.
+<li>In each distribution (alderaan, weekly, etc), in
+<code>doc/manual/index.html</code>
+<li>As PDF or PostScript for printing; please ask on the mailing list for
+this, we do not have anything automated set up.
+</ul>
+
+<h2>Table of Contents</h2>
+
+<ul>
+<li>General
+<ul>
+<li><a href="intro.html">Introduction</a>
+<li><a href="general/readers.html">Who should read this manual</a>
+<li><a href="requirements.html">System Requirements</a>
+<li><a href="safety.html">Safety Considerations
+<br>Disclaimer of Warranty</a>
+</ul>
+<li><a href="getstarted.html">Getting Started</a>
+<ul>
+<a href="usage/intro.html"><li>Usage scenarios</a>
+<ul>
+<li><a href="usage/plc.html">PLC</a>
+<li><a href="usage/traffic.html">Traffic Cop</a>
+<li><a href="usage/operator.html">Operator station</a>
+<li><a href="usage/scada.html">SCADA server</a>
+<li><a href="usage/web.html">Intranet web server</a>
+</ul>
+<li><a href="demo/intro.html">Demos</a>
+<ul>
+<li><a href="demo/basic.html">Basic demo</a>
+<li><a href="demo/basic_etc.html">Basic_... demos</a>
+<li><a href="demo/oven.html">Oven demos</a>
+<li><a href="demo/lpc.html">LPC demos</a>
+</ul>
+</ul>
+<li><a href="program/intro.html">Program engineering</a>
+<ul>
+<li><a href="program/modularity.html">Modularity</a>
+<li><a href="program/specs.html">Specifications</a>
+<li><a href="program/hmi.html">HMI</a>
+<li><a href="program/tests.html">Testing</a>
+<li><a href="program/hints.html">Hints and Heuristics</a>
+</ul>
+<li>Concepts
+<ul>
+<li><a href="general/concept/modules.html">Modules</a>
+<li><a href="general/concept/points.html">Points</a>
+</ul>
+<li><a href="general/config/intro.html">Config file</a>
+<ul>
+<li><a href="general/config/plc.html">PLC section</a>
+<li><a href="general/config/common.html">Common configuration settings</a>
+<li><a href="general/config/synch.html">Configuration of synch</a>
+<ul>
+<li><a href="general/config/synch_advanced_example.html">Advanced example</a>
+</ul>
+<li><a href="general/config/rt.html">Configuration of real-time features</a>
+</ul>
+<li>Tools
+<ul>
+<li><a href="tools/matplc.html">matplc</a>
+<li><a href="tools/config/intro.html">Config editor</a>
+<ul>
+<li><a href="tools/config/modules.html">Module definition</a>
+<li><a href="tools/config/points.html">Point definition</a>
+</ul>
+<li><a href="tools/plctest.html">mattest / plctest</a>
+</ul>
+<li>Modules
+<ul>
+<li>Logic engines
+<ul>
+<li><a href="logic/classicladder.html">Classicladder</a> <em>(external
+project)</em>
+<li><a href="logic/dsp.html">Digital Signal Processing</a> (including PID
+control)
+<li><a href="logic/iec/intro.html">IEC 61131-3 ST and IL languages</a>
+<li><a href="logic/il.html">MAT IL language</a> (mnemonics)
+<li><a href="logic/plc5.html">PLC5 emulator</a>
+<li><em><strong>planned:</strong> <a href="logic/orocos.html">OROCOS integration</a></em>
+</ul>
+<li>HMI modules
+<ul>
+<li><a href="mmi/hmi_gtk.html">HMI GTK (graphical)</a>
+<li><a href="mmi/curses.html">vitrine (text-based, output only)</a>
+<li>kbd (text-based, input only)
+</ul>
+<li>SCADA modules
+<ul>
+<li><a href="io/logger.html">Data logger</a>
+<li><a href="scada/hmiViewerServer.html">hmiViewerServer</a> (visual)
+</ul>
+<li>Input/Output modules
+<ul>
+<li><a href="io/common.html">Common I/O options</a>
+<li>8255-based cards
+<li><a href="io/abel.html">abel</a> (AB PLC5 and similar, over Ethernet)
+<li><a href="io/cif.html">CIF</a> (ASi, CANopen, ControlNet, DeviceNet,
+Interbus, ModBus Plus, PROFIBUS, Sercos)
+<li><a href="io/comedi.html">comedi I/O
+(various DAQ cards)</a></em>
+<li><a href="io/modbus.html">Modbus</a>
+<li><a href="io/parport.html">Parallel port</a>
+<li><a href="io/pontech.html">Pontech sv203b</a>
+<li><a href="io/simple-udp.html">Simple UDP connection</a>
+</ul>
+</ul>
+<li>Tips and tricks
+<ul>
+<li><a href="general/howto/bumpless.html">Bumpless transfers</a>
+</ul>
+<li><a href="custom/intro.html">Custom modules</a>
+<ul>
+<li><a href="lang/intro.html">Languages other than C</a>
+<ul>
+<li><a href="lang/python.html">Python</a> <em><small>(perhaps the most
+similar style of language to BASIC and VB)</small></em>
+<li><a href="lang/tcl.html">Tcl</a>
+</ul>
+<li><a href="custom/native.html">Native C</a>
+<ul>
+<li><a href="custom/basic.html">A basic custom module</a>
+<li><a href="custom/example.html">Example custom module</a>
+<li><a href="custom/general.html">General functions reference</a>
+<li><a href="custom/gmm.html">Global Map (gmm) reference</a>
+<li><a href="custom/conffile.html">Config (conffile) reference</a>
+<li><a href="custom/log.html">Logging (log) reference</a>
+<li><a href="custom/synch.html">Synchronisation (synch) reference</a>
+<li>...
+<li><a href="custom/timer.html">Timer (timer, timer_ext) reference</a>
+<li><a href="custom/io.html">A custom I/O module</a>
+</ul>
+</ul>
+<li><a href="general/contribute/intro.html">Contributing to the MatPLC</a>
+<ul>
+<li><a href="general/contribute/interface.html">Interfacing other projects
+to the MatPLC</a>
+</ul>
+<li>Appendices
+<ul>
+<li><a href="appendix/glossary.html">Glossary</a>
+<li><a href="appendix/matplc.conf.html">sample matplc.conf</a>
+<li><a href="appendix/log.html">Log messages</a>
+<li><a href="appendix/gpl.html">License terms</a>
+</ul>
+</ul>
+
+<p><small>$Date: 2006/12/26 13:23:27 $</small>
+</body>

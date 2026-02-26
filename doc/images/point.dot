@@ -1,0 +1,32 @@
+digraph G {
+  node [shape=point];
+  subgraph cluster_g {
+    label="global"
+    g
+  };
+  subgraph cluster_m1 {
+    label = "module 1";
+    subgraph cluster_p1 {
+      label = "private";
+      p1
+    };
+  }
+  subgraph cluster_m2 {
+    label = "module 2";
+    subgraph cluster_p2 {
+      label = "private";
+      p2
+    };
+  }
+  subgraph cluster_m3 {
+    label = "module 3";
+    subgraph cluster_p3 {
+      label = "private";
+      p3
+    };
+  }
+  edge [arrowhead = vee];
+  g -> p1 [arrowhead=none, arrowtail=vee];
+  g -> p2;
+  g -> p3;
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+../../../tools/run/matplc -g
+../../../tools/run/handler -c vitrine.cmd &
+../../../tools/run/handler -c chaser.cmd & 
+../../../tools/run/handler -c kbd.cmd
+sleep 1
+../../../tools/run/matplc -s
+reset

@@ -1,0 +1,6 @@
+plcshutdown.o Makefile.depend: plcshutdown.c ../plc.h ../types.h ../log/log.h \
+ ../conffile/conffile.h ../conffile/../types.h ../cmm/cmm.h \
+ ../cmm/../types.h ../gmm/gmm.h ../gmm/../types.h ../synch/synch.h \
+ ../synch/../types.h ../period/period.h ../period/../types.h \
+ ../state/state.h ../state/../types.h ../synch/synch.h ../rt/rt.h \
+ ../rt/../types.h ../plc_setup.h

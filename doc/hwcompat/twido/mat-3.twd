@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<KampaiApplication>
+    <FileVersion>1.0</FileVersion>
+    <SymbolTable/>
+    <Resources>
+        <AppTable>
+            <AppTableVersion>1</AppTableVersion>
+            <Password>$</Password>
+            <AppName>untitled</AppName>
+            <AppVersion>1</AppVersion>
+            <AppSignature>15479</AppSignature>
+            <AppMaxCycleTime>250</AppMaxCycleTime>
+            <AppMinCycleTime>0</AppMinCycleTime>
+            <Protection>0</Protection>
+            <Autoload>1</Autoload>
+            <AppReadyToRun>1</AppReadyToRun>
+            <LenListIdTableModBuffer>369</LenListIdTableModBuffer>
+            <AppIntModBufferLength>5904</AppIntModBufferLength>
+            <AppMaxModsAllowed>369</AppMaxModsAllowed>
+            <AppNumModsUsedInt>0</AppNumModsUsedInt>
+            <LangVersion>1</LangVersion>
+            <CompilerVersion>1</CompilerVersion>
+            <CompilerSettings>0</CompilerSettings>
+            <HardwarePartNumber>TWDLCAA10DRF</HardwarePartNumber>
+            <HardwareID>2224</HardwareID>
+            <HWOptionsStatus>0</HWOptionsStatus>
+            <AppTableChksum>62756</AppTableChksum>
+            <AppStructChksum>55837</AppStructChksum>
+        </AppTable>
+        <KWTable/>
+        <CfgTable>
+            <CfgTableVersion>1</CfgTableVersion>
+        </CfgTable>
+        <SwObjList>
+            <BaseDigInput>
+                <BDI12Filter>0</BDI12Filter>
+                <BDI3Filter>0</BDI3Filter>
+                <BDICapture>0</BDICapture>
+                <BDIRunStop>0</BDIRunStop>
+                <BDINumInputs>6</BDINumInputs>
+                <BDIIsDedicated>0</BDIIsDedicated>
+            </BaseDigInput>
+            <BaseDigOutput>
+                <BDONumOutputs>4</BDONumOutputs>
+                <BDOOutputStat>0</BDOOutputStat>
+                <BDOIsDedicated>0</BDOIsDedicated>
+            </BaseDigOutput>
+            <BaseAnalogInput>
+                <BAINumInputs>2</BAINumInputs>
+                <BAIPrecision>0</BAIPrecision>
+            </BaseAnalogInput>
+            <CommObj>
+                <CmDeviceRemote>0</CmDeviceRemote>
+                <CmDeviceTypeRemote>0</CmDeviceTypeRemote>
+                <CmIndex>0</CmIndex>
+                <CmPort1Address>1</CmPort1Address>
+                <CmPort1LnCfg>131</CmPort1LnCfg>
+                <CmPort1Protocol>0</CmPort1Protocol>
+                <CmPort1MbTimeout>4</CmPort1MbTimeout>
+                <CmPort1RespTimeout>10</CmPort1RespTimeout>
+                <CmPort1EndOfFrame>10</CmPort1EndOfFrame>
+                <CmPort2Address>1</CmPort2Address>
+                <CmPort2LnCfg>132</CmPort2LnCfg>
+                <CmPort2Protocol>1</CmPort2Protocol>
+                <CmPort2MbTimeout>10</CmPort2MbTimeout>
+                <CmPort2RespTimeout>10</CmPort2RespTimeout>
+                <CmPort2EndOfFrame>10</CmPort2EndOfFrame>
+                <CmPort2RtsCts>0</CmPort2RtsCts>
+                <CmPunitLnCfg>132</CmPunitLnCfg>
+                <CmPunitMbTimeout>20</CmPunitMbTimeout>
+            </CommObj>
+        </SwObjList>
+    </Resources>
+    <Program>
+        <ListInstruction>LD    %M0</ListInstruction>
+        <ListInstruction>ST    %Q0.0.0</ListInstruction>
+        <ListInstruction>LD    %M1</ListInstruction>
+        <ListInstruction>ST    %Q0.0.1</ListInstruction>
+        <ListInstruction>LD    %M2</ListInstruction>
+        <ListInstruction>ST    %Q0.0.2</ListInstruction>
+        <ListInstruction>LD    %M3</ListInstruction>
+        <ListInstruction>ST    %Q0.0.3</ListInstruction>
+        <ListInstruction>LD    %I0.0.0</ListInstruction>
+        <ListInstruction>ST    %M4</ListInstruction>
+        <ListInstruction>LD    %I0.0.1</ListInstruction>
+        <ListInstruction>ST    %M5</ListInstruction>
+        <ListInstruction>LD    %I0.0.2</ListInstruction>
+        <ListInstruction>ST    %M6</ListInstruction>
+        <ListInstruction>LD    %I0.0.3</ListInstruction>
+        <ListInstruction>ST    %M7</ListInstruction>
+        <ListInstruction>LD    %I0.0.4</ListInstruction>
+        <ListInstruction>ST    %M8</ListInstruction>
+        <ListInstruction>LD    %I0.0.5</ListInstruction>
+        <ListInstruction>ST    %M9</ListInstruction>
+        <ListInstruction>$</ListInstruction>
+        <ListInstruction>$</ListInstruction>
+        <ListInstruction>$</ListInstruction>
+        <ProgramValidated>TRUE</ProgramValidated>
+    </Program>
+</KampaiApplication>
+
+

@@ -1,0 +1,44 @@
+Bill of materials for DIO48 24V optoisolated terminal board
+ITEM	QTY	PN	DESC
+
+1	1		Board Blank
+2	1		50 Pin Male Header Connecter
+3	29		.200 Spacing Dual Screw Terminal
+4	24		2.2k 1/4 W 5% CF Resistor
+5	24		3.3k 1/4 W 5% CF Resistor
+6	24		680 Ohm "          "
+7	12		TLP620-4 Toshiba Quad Optoisolator
+8	3		Allegro UDN2803A Octal Darlington Sink Driver
+9	3		1 uF Monolithic Ceramic Capacitor 50 V
+
+
+Sourcing  These are are the sources I used ca 3/28/01 You may
+be able to find better pricing.
+
+1	Fabricated from artwork I used Alberta Printed Circuits
+	Cost: $26US in qty 10
+
+2	Jameco	53559	Cost .32 in qty 20
+3	Jameco	152346	Cost .29 in qty 100
+4	Jameco	30314	Cost .0089 in qty 100
+5	Jameco	30672	""	""	""
+6	Jameco	31499	""	""	""
+7	Digi Key 	Cost $1.75 in qty 20
+8	Arrow		Cost  .49 in qty 30	
+9	Jameco	81509	Cost .35 in qty 10
+
+Total cost per board was about $59.00  
+
+Total cost for 48 points of Industrial I/O for your Linux Box is 
+about $160.00 allowing $100.00 for the DIO48 and cable
+
+Cost/point = $3.33
+
+
+
+
+
+
+
+
+

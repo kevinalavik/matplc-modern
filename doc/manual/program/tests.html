@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>MAT manual - Program Engineering - Testing</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../program/hmi.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/hints.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Testing</h2>
+
+<blockquote>I'm an idiot.. At least this one [bug] took about 5 minutes to
+find.. <i>(Linus Torvalds in response to a bug report.)</i> </blockquote> 
+
+
+<h3>Test rigs</h3>
+
+<p>When writing modular programs, one of the important things is to be able
+to test each section separately.
+
+<p>This means that often you will have to construct test rigs for each
+section that let you run it separately, making sure that it does what it is
+expected to do. This can be a lot of work, but pays off in tracing down
+problems - it's much easier to find a problem the earlier it gets
+discovered.
+
+<h3>Integration testing</h3>
+
+<p>The other part of testing is ensuring that the sections work well
+together.
+
+<p>Again, it is not a good idea to simply throw all the sections together
+and hope they work. As far as possible, always add one thing at a time.
+This cuts down on tracing the source of problems, because it will usually
+be connected with the section just added.
+
+<p>If the program is big enough to have sub-sections and sub-subsections,
+always integrate each section separately before putting them together.
+Again, the idea is to simplify tracking down problems.
+
+<h3>Risk analysis</h3>
+
+<p>Under what circumstances can the software do damage to the machine or
+the product it is manufacturing? How much will this damage cost to rectify?
+These should form part of the test plan, including such techniques as
+simulating such situations (or inducing them under controlled conditions),
+to ensure that the software does indeed handle them satisfactorily.
+
+<p>If there is any way in which the software could (through action or
+inaction) cause a hazardous situation or harm a human, safety-critical
+software specialists need to be brought in, or such situations removed
+through hardware interlocks and the like.
+
+<p>
+<!--autolink--><a href="../program/hmi.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/hints.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:12 $</small>
+</html>

@@ -1,0 +1,84 @@
+
+This TEA-compliant loadable Tcl extension implements commands for
+interacting with the MatPLC.  The form and structure of this extension
+were derived from the sample TEA extension (sha1).
+
+As such, the files in this directory, except for those listed below, are
+copyrighted by the Scriptics Corporation, and used and distributed according
+to the license terms specified in the file license.terms.
+
+For more information on Tcl, the Tcl Extension Architecture, and the sample
+extension, see http://www.scriptics.com/products/tcltk/tea/
+
+The following files are copyrighted by Greg Goodman, and contributed to the 
+MatPLC project (aka MatPLC) under the terms of the GPL:
+
+	BUGS
+	MANUAL
+	README
+	lplc.c
+
+The code was developed in a Tcl 8.3 environment, but should work with
+any version version that supports Tcl stubs (versions >= 8.2)
+
+The code was written using 3-space tabs and the indentation convention I'm
+most comfortable with, for which I make no apologies.
+
+This remainder of this file explains how to build and install the extension.
+The Tcl command(s) implemented by the extension are described in MANUAL, and
+known bugs are described in BUGS.
+
+The following build and installation procedure is known to work on a Mandrake
+7.2 system, and known to have problems on a Debian potato system.
+(The problem encountered is described at the end of this README.)
+
+To build the module:
+
+1. Install the code in the MatPLC source tree.
+
+2. Make sure the MatPLC library (matplc.a) has been built,
+and is located in the MatPLC lib directory.
+
+3. Verify that the Makefile.in specifies a valid path to the MatPLC root
+directory.  If this code is installed in a second-level subdirectory of the
+MatPLC source tree (i.e. lang/tcl), then Makefile.in already specifies
+the correct relative path (../..).
+
+4. autoconf
+
+5. ./configure
+
+6. make
+
+
+To install the module:
+
+7. make install
+
+By default, this installs the extension in the /usr/local/lib directory.
+If you want it installed elsewhere, invoke ./configure with the appropriate
+directory specified (i.e. --exec-prefix=).
+
+If you install in /usr/local/lib and /usr/local/lib is not in the default
+auto_path for your Tcl interpreter (tclsh or wish), then you will need to
+execute the following line
+
+	lappend auto_path /usr/local/lib
+
+before invoking
+
+	package require lplc
+
+
+Problems:
+
+At least one user encountered problems building the package on a Debian
+(potato) system.  The autoconf failed to find the tclConfig.sh file, and
+therefore failed to properly create the configure script.  Once that was
+worked around, the Makefile built the shared library with a .so.1 extension,
+rather than simply .so, which caused the mk_pkgIndex to fail.
+
+If you encounter problems building the system, or if you know how to solve
+the problems described, please email the MatPLC mailing list
+(matplc@matplc.org) and/or Greg Goodman (chironsw@swbell.net).
+

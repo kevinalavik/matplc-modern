@@ -1,0 +1,17 @@
+matplc.o Makefile.depend: matplc.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/plc_setup.h ../../lib/plc_private.h
+mattest.o Makefile.depend: mattest.c ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h \
+ ../../lib/misc/string_util.h ../../lib/misc/../types.h

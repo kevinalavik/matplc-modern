@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>MAT manual - basic demo</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../demo/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../demo/basic_etc.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Basic demo</h1>
+
+<p>The basic demo is very primitive. Its main purpose is to ensure that the
+MatPLC has downloaded and compiled more-or-less correctly, as outlined in
+the <a href="../getstarted.html">Getting Started section</a>. It also forms
+the basis of the <a href="basic_etc.html">basic_... demos</a>, most of
+which add one single feature to this demo.
+
+<dl>
+			<dt><CODE>basic</CODE>
+			<dd>basic light chaser demo</p>
+</dl>
+
+
+<p>It's a simple light-chasing demo, controlled from the keyboard. No
+special hardware required.
+
+<dl>
+<dt>To start:
+	<dd><code>cd demo/basic; make</code></p>
+
+<dt>To quit:
+	<dd>press <strong>Q</strong> on the keyboard</p>
+</dl>
+
+It's controlled from the keyboard (module Kbd, <code>kbd.c</code>): the
+keys <strong>L</strong>, <strong>R</strong> and <strong>Q</strong> on the
+keyboard toggle the three points 'left', 'right' and 'quit'.
+
+<p>The Chaser module (<code>chaser.c</code> in the <code>demo/basic</code>
+directory) is a primitive 'light chasing' program. The direction of
+movement can be changed using the 'left' and 'right' points; these are
+notionally push-buttons, but in this demo they are controlled by the
+<strong>L</strong> and <strong>R</strong> keys. The speed of the chaser can
+be configured with the "delay" setting in the "Chaser" section of
+matplc.conf
+
+<p>The demo terminates when the 'quit' point comes on (keyboard
+<strong>Q</strong>).
+
+<p>
+<!--autolink--><a href="../demo/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../demo/basic_etc.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:09 $</small>
+</html>

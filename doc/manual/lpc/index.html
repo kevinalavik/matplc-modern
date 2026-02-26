@@ -1,0 +1,210 @@
+<html>
+<head>
+<title>MAT LPC Library</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../scada/hmiViewerServer.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/cif.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a>
+
+<h1>LPC (Linux Programmable Controller) Libraries</h1>
+
+<h2>Introduction</h2>
+
+The LPC library tools allow users to create simple programs and compile them as libraries. A special program, called the <i>handler</i> is then used to load the libraries and connect them to the MATPLC. This layer of abstraction does add some overhead in terms of memory and processor cycles, but the advantages are,
+<UL>
+	<LI>the modules are smaller in length and simpler to write
+	<LI>the handler program takes care of starting/stopping modules politely
+	<LI>periodic run times are handled by the process handler
+	<LI>the libraries are very portable and don't require extensive recompilation
+	<LI>message passing abilities allow higher level modules
+	<LI>compiled libraries (in ELF format) don't need to be recompiled for each kernel
+	<LI>it is easy to dynamically change, or diagnose problems with the libraires
+	<LI>the libraries are portable to other architectures and operating systems
+</UL>
+
+The basic method for using the LPC libraries is outlined below.
+<OL>
+	<LI>Planning: figure out what has to be done and the required functions, etc.
+	<LI>Look for exisitng LPC libraries. If they exist use them.
+	<LI>If libraries don't exist, create them. See the section enetitled <B>A Library Example</B> for a sample library file.
+	<LI>Create configurtion files for the modules and/or matplc.
+	<LI>Create a script file to run the matplc, and then load the libraries.
+	<LI>Test, run, have some fun....
+</OL>
+
+The following sections outline the basic files and structures required to create a simple LPC application.
+
+
+<H2>A Library Example</H2>
+
+The following code is used as the basis for a dynamically linked library. In this example five functions are defined. In simpler applications functions can be ommitted if not needed. For example, if the module does not need to receive messages, the message_receive function can be left off. Notice that there is no main function, this is in the handler program that will be used to load the library. The init and deinit functions will be run when the module starts or stops to allow things to be setup or shutdown gracefully. When the library is loaded the step_run or step_init functions will be called. If the matplc is running and the outputs should be active, step_run will be called. If the matplc is not active, but running, the step_idle function will be called. If a message has arrived for the library the handler will look for a message_receive function. If it exists it will be called with the message.
+
+<pre>
+// test.cpp A test process to verify the operation of the LPC and other clients
+
+<CODE>#include <unistd.h>	// standard stuff here
+#include <stdio.h>
+#include <string.h>
+</CODE>
+
+#include <module_library.h>	// the header files for the LPC libraries
+#ifdef __cplusplus	// do this so C++ code will link
+extern "C" {
+#endif
+
+//////////////////////////////////////////////////////////////////////////////////
+//
+// Functions specific to this program follow. i.e. you write them
+//
+// note:	Write the step_function() with care, it should run
+//		once in a fraction of a second.
+//
+// required functions:
+//		init() - called when the program is first loaded
+//		deinit() - called before the program is unloaded
+//		step_run() - called each active scan - it should run once - fast!
+//		step_idle() - called each idle scan - ie not running
+//		message_receive(char*) - will retrieve any waiting messages
+
+unsigned char *tmp;
+int		count;
+
+int	init(){
+	printf("LIBRARY: Initializing\n");
+	return 0;
+	count = 0;
+}
+
+int	deinit(){
+	printf("LIBRARY: Shutting down \n");
+	return 0;
+}
+
+int	step_run(){
+	int	error;
+
+	error = 0;
+	count++;
+	printf("LIBRARY: A Run Step # %d\n", count);
+	if(count == 5){
+		error = send_message("MESSAGE THIS oh no, not again");
+	}
+	if(count == 20){
+		printf("Maximum count reached.... quitting \n");
+		error = send_message("QUIT");
+	}
+
+	return error;
+}
+
+int	step_idle(){
+	int	error;
+
+	error = 0;
+	printf("LIBRARY: An Idle Step\n");
+
+	return error;
+}
+
+int message_receive(char *text){
+	printf("GOT MESSAGE [%s]\n", text);
+	return 0;
+}
+
+#ifdef __cplusplus
+}
+#endif
+</pre>
+
+The program above can be compiled using the following makefile. In this case the library is not for global usage, so it will be stored locally. Normally global libraries are stored under the PLC/tools/lib directories.
+
+<PRE>
+LPLC = ../../..
+HANDLER = $(LPLC)/lib/lpc
+
+all:	test.so
+
+CFLAGS = -Wall -fPIC -I$(LPLC)/lib -I$(HANDLER)
+LIBFLAG = -shared
+
+test.so:	test.cpp
+		$(CC) $(CFLAGS) -c test.cpp
+		$(CC) $(LIBFLAG) -o test.so test.o
+</PRE>
+
+At this point you should have a compiled library file.
+
+
+<H2>Configuration Files</H2>
+
+The configuration file below will be used by the handler program to setup and load the dyanmic library. It is actually a sequential set of commands interpreted by the handler program. The first command in this file sets the module name to be used by the matplc to test. The library file is provided on the next line, this should be the file compiled in the last section. After this the library file is loaded into the handler program, but not yet running. Following this the delay is defined. This will be the time period between execution of the library. In this case it is 100,000 microseconds, or 1/10th of a second. The next command starts the execution of the library. The last command sends a message with the command MESSAGE. The next token is THIS, indicating that the message goes to the local client. The folloeing text is the actual message sent.
+
+<PRE>
+#
+# handler.cmd - An example command file 
+#
+
+MODULE test
+LIBRARY ./test.so
+DELAY 100000
+RUN
+MESSAGE THIS I am alive!!
+</PRE>
+
+The matplc.conf file is basically empty for this example because it is so simple. The file is shown below.
+
+<PRE>
+#
+# linuxplc.conf - configuration file
+#
+
+[PLC]
+#empty
+</PRE>
+
+<H2>The Execution Script</H2>
+
+The following script, demo, is used to run the various programs required to run the test example created before. (Note: after creating the file don't forget to used chmod 755 demo to make it executable.) The first and last lines of the file start and stop the matplc. The middle line runds the handler program. the '-c handler.cmd' option tells the program to open the file created in the previous section and run the commands in it. 
+
+<PRE>
+#!/bin/sh
+../../../tools/run/matplc -g
+../../../tools/run/handler -c handler.cmd
+../../../tools/run/matplc -s
+</PRE>
+
+
+<H2>The Final Result</H2>
+
+After all is created the demo script is run, and the following output results.
+
+<PRE>
+LIBRARY: Initializing
+GOT MESSAGE [I am alive!!]
+LIBRARY: A Run Step # 1
+LIBRARY: A Run Step # 2
+LIBRARY: A Run Step # 3
+LIBRARY: A Run Step # 4
+LIBRARY: A Run Step # 5
+GOT MESSAGE [oh no, not again]
+LIBRARY: A Run Step # 6
+LIBRARY: A Run Step # 7
+LIBRARY: A Run Step # 8
+LIBRARY: A Run Step # 9
+LIBRARY: A Run Step # 10
+LIBRARY: A Run Step # 11
+LIBRARY: A Run Step # 12
+LIBRARY: A Run Step # 13
+LIBRARY: A Run Step # 14
+LIBRARY: A Run Step # 15
+LIBRARY: A Run Step # 16
+LIBRARY: A Run Step # 17
+LIBRARY: A Run Step # 18
+LIBRARY: A Run Step # 19
+LIBRARY: A Run Step # 20
+Maximum count reached.... quitting 
+LIBRARY: Shutting down 
+</PRE>
+
+
+<HR>
+<p><small>$Date: 2003/02/11 15:11:53 $</small>
+</html>

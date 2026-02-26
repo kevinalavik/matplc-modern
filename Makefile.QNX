@@ -1,0 +1,6 @@
+# Set the QNX Specific constants...
+
+PLCSYSTEM_CFLAGS  = -DPLC_HOSTOS_QNX
+PLCSYSTEM_LDFLAGS = -lm -lsocket
+
+

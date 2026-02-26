@@ -1,0 +1,18 @@
+<h3>Notes</h3>
+
+If a module does just one thing, it does not need a timer - it can use the
+<code>scan_period</code> setting instead. For instance, the <a
+href="../io/logger.html">Data logger</a> works this way - it just writes
+the values to file or to the database as fast as it can, and the MatPLC
+library slows it down to the speed requested by the Application Builder.
+Most of the generic modules work this way.
+
+<p>The chaser needs a timer because it does two things at different time
+scales: it checks the left and right buttons as often as possible, but it
+only moves the light along a couple of times per second.
+
+<p>
+<!--autolink--><a href="../custom/native.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/gmm.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a>
+
+<p><small>$Date: 2003/09/03 11:26:51 $</small>
+</html>

@@ -1,0 +1,24 @@
+			       Light chaser
+			       ============
+
+				  Lights:
+
+				1  2  3  4
+
+			      
+				  Buttons
+
+				    <->
+
+
+   This is a simple light-chasing demo, similar to the basic demo, but now
+ with the vitrine and chaser modules synchronised. Compare the CPU usage with
+ the basic non-synchronised demo, and you'll notice the difference.  You can 
+also run/stop the plc loop with $./plc_stop and $./plc_run on another terminal.
+
+		       Controls (from the keyboard)
+		       ----------------------------
+      - L and R - toggle the `left' and `right' points. Remember to
+	toggle them off again before trying the other direction :-)
+      - Q - toggles the `quit' point, which terminates the demo.
+

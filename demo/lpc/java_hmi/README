@@ -1,0 +1,50 @@
+README - matd demo
+
+Last Updates May 10, 2002
+
+------------------------------------------------------------------------
+About:
+
+This directory contains a configuration and utilities for testing the
+matd process that allows remote access the the MATplc. 
+
+
+------------------------------------------------------------------------
+Use:
+
+1. Run './setup' so that you can set up a user account.
+2. Add a new account with a name of your choosing. NOTE: For now there is a
+   demo user/password of test/test. This WILL be removed in later distributions
+   but if you plan to put this on a computer on the net, you should change it NOW.
+3. Edit the account and set the password.
+4. Also set the read, write and execute permissions all to 3. This
+   is the least secure setting, but is suitable for this demo.
+5. Dump the accounts and verify the settings.
+6. Save and quit. You should now have a user account defined in
+   the 'passwd' file.
+7. Run the matd server with './demo'.
+8. In another window connect to the matd with 'telnet localhost 1234'. If
+   you get a report of 'localhost' unknown use '127.0.0.1' instead. You can
+   change the port number from '1234' to something else in the 'matplc.conf' file.
+9. Enter your user name and password using 'USER xxxxx' and 'PASS xxxxx'.
+10. Use 'HELP' to determine what commands are available.
+11. Have fun.
+
+
+------------------------------------------------------------------------
+Notes:
+
+------------------------------------------------------------------------
+Todo:
+- This is the first prototype with very few function. The functionality can be expanded later.
+- I hate plain text passwords, later this can be converted to something better.
+
+------------------------------------------------------------------------
+Bugs:
+
+------------------------------------------------------------------------
+History:
+
+May 10, 2002 (Hugh Jack) - This directory was set up to allow the matd
+   to be tested.
+

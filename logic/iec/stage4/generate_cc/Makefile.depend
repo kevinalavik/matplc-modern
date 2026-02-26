@@ -1,0 +1,37 @@
+decompose_var_instance_name.o Makefile.depend: decompose_var_instance_name.cc
+function_call_iterator.o Makefile.depend: function_call_iterator.cc
+function_call_param_iterator.o Makefile.depend: function_call_param_iterator.cc \
+ ../../absyntax/visitor.hh ../../absyntax/absyntax.hh \
+ ../../absyntax/absyntax.def
+function_param_iterator.o Makefile.depend: function_param_iterator.cc \
+ ../../absyntax/visitor.hh ../../absyntax/absyntax.hh \
+ ../../absyntax/absyntax.def
+generate_cc.o Makefile.depend: generate_cc.cc ../../util/symtable.hh \
+ ../../util/../absyntax/absyntax.hh ../../util/../absyntax/absyntax.def \
+ ../../util/symtable.cc ../../util/symtable.hh ../../util/dsymtable.hh \
+ ../../util/dsymtable.cc ../../absyntax/visitor.hh \
+ ../../absyntax/absyntax.hh ../../absyntax/absyntax.def ../stage4.hh \
+ ../../absyntax/absyntax.hh spec_init_separator.cc \
+ function_param_iterator.cc function_call_iterator.cc \
+ function_call_param_iterator.cc type_initial_value.cc \
+ search_fb_instance_decl.cc search_base_type.cc \
+ search_var_instance_decl.cc decompose_var_instance_name.cc \
+ search_varfb_instance_type.cc search_constant_type.cc \
+ generate_cc_base.cc generate_cc_typedecl.cc generate_cc_vardecl.cc \
+ generate_cc_configbody.cc generate_cc_tempvardecl.cc generate_cc_st.cc \
+ generate_cc_il.cc generate_cc.hh ../../absyntax/absyntax.hh
+generate_cc_base.o Makefile.depend: generate_cc_base.cc
+generate_cc_configbody.o Makefile.depend: generate_cc_configbody.cc
+generate_cc_il.o Makefile.depend: generate_cc_il.cc
+generate_cc_st.o Makefile.depend: generate_cc_st.cc
+generate_cc_tempvardecl.o Makefile.depend: generate_cc_tempvardecl.cc
+generate_cc_typedecl.o Makefile.depend: generate_cc_typedecl.cc
+generate_cc_vardecl.o Makefile.depend: generate_cc_vardecl.cc
+plciec.o Makefile.depend: plciec.cc
+search_base_type.o Makefile.depend: search_base_type.cc
+search_constant_type.o Makefile.depend: search_constant_type.cc
+search_fb_instance_decl.o Makefile.depend: search_fb_instance_decl.cc
+search_var_instance_decl.o Makefile.depend: search_var_instance_decl.cc
+search_varfb_instance_type.o Makefile.depend: search_varfb_instance_type.cc
+spec_init_separator.o Makefile.depend: spec_init_separator.cc
+type_initial_value.o Makefile.depend: type_initial_value.cc

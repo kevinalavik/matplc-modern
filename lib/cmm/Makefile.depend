@@ -1,0 +1,15 @@
+cmm.o Makefile.depend: cmm.c ../plc.h ../types.h ../log/log.h ../conffile/conffile.h \
+ ../conffile/../types.h ../cmm/cmm.h ../cmm/../types.h ../gmm/gmm.h \
+ ../gmm/../types.h ../synch/synch.h ../synch/../types.h \
+ ../period/period.h ../period/../types.h ../state/state.h \
+ ../state/../types.h ../synch/synch.h ../rt/rt.h ../rt/../types.h \
+ ../misc/mutex_util.h cmm_private.h ../plc_private.h cmm.h cmm_setup.h \
+ ../types.h ../conffile/conffile.h ../log/log.h ../misc/shmem_util.h \
+ ../misc/string_util.h ../misc/../types.h ../plc_private.h
+cmm_setup.o Makefile.depend: cmm_setup.c ../misc/mutex_util.h cmm_private.h \
+ ../plc_private.h ../gmm/gmm.h ../gmm/../types.h cmm.h ../types.h \
+ cmm_setup.h ../plc.h ../types.h ../log/log.h ../conffile/conffile.h \
+ ../conffile/../types.h ../cmm/cmm.h ../synch/synch.h ../synch/../types.h \
+ ../period/period.h ../period/../types.h ../state/state.h \
+ ../state/../types.h ../synch/synch.h ../rt/rt.h ../rt/../types.h \
+ ../misc/shmem_util.h ../misc/string_util.h ../misc/../types.h

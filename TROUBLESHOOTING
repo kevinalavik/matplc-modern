@@ -1,0 +1,71 @@
+                      Trouble Shooting
+                      ================
+
+Known problems and fixes are documented below. There may also be
+suggestions in sub directories. If you find a problem with no known
+solution, please let us know (mat-devel@lists.sf.net).
+
+
+1. Problem: 'make all' finishes with an error complaining that it can't
+	    find comedilib.h or gtkplot.h
+
+   Solution #1: You don't have the comedi development files (comedilib.h)
+		or the gtk extra development files (gtkplot.h). Install
+		them. On Debian, that's libcomedi-dev and libgtkextra-dev
+
+	    #2: Comment the mmi/hmi_gtk/all or io/comedi/all out of the
+		main Makefile.
+
+		The comedi module is only useful if you have a comedi
+		device, so this may be the best solution.
+
+		The hmi_gtk module is needed by some of the demos; but you
+		can do without it if it's a problem. You'll have to avoid
+		any of the demos that have a graphical interface.
+
+
+2. Problem: When compiling a demo with 'make' I get an error that says
+            'could not compile linuxkbd.o'.
+
+   Solution #1: Some of the demos use a replacement program called
+                'kbd.o', and you will be able to run the program. Other
+                demos have not been changed to use it and they will fail.
+                The 'basic' demo will work without it now. 
+
+            #2: You can download and install 'console tools' and this
+                >may< solve the problem.
+
+
+3. Problem: I run the 'basic' demo, and all I get is a blank screen. The
+            only way to stop it is to hit [CNTL]C. This is caused by
+            POSIX timer functions that are not implemented completely or
+            at all in older Linux distributions.
+
+   Solution #1: In the file 'lib/period/period.c' comment out the
+                'SPIFFY_NEW_POSIX' definition, and uncomment the
+                'GOOD_OLD_UNIX' definition. If you do this some demos
+                may not work, and the 'sleep' function can't be used.
+
+            #2: Upgrade the 'glibc' libraries, or load a newer Linux
+                distribution. Slackware 8.0 and Redhat 7.1 are recent
+                enough.
+
+
+4. Problem: When trying to compile the PLC there is an error in the
+            'lib/period' directory. This is caused by the use on newer
+            POSIX timer functions that may not be implemented on older
+            Linux distributions.
+
+   Solution #1: In the file 'lib/period/period.c' comment out the
+                'SPIFFY_NEW_POSIX' definition, and uncomment the
+                'GOOD_OLD_UNIX' definition. If you do this some demos
+                may not work, and the 'sleep' function can't be used.
+                If it still won't compile use the 'NO_TIMERS' option.
+                This will get the demos to run, but they may not work
+                correctly.
+
+            #2: Upgrade the 'glibc' libraries, or load a newer Linux
+                distribution. Slackware 8.0 and Redhat 7.1 are recent
+                enough.
+
+

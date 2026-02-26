@@ -1,0 +1,13 @@
+#!/bin/sh
+make ready
+../../tools/run/matplc -g
+if [ -x ../../mmi/kbd/linuxkbd ]
+then
+  ../../mmi/kbd/linuxkbd --PLCmodule=Kbd
+else
+  ../basic/kbd --PLCmodule=Kbd
+fi
+
+# clean up after the vitrine
+clear
+reset

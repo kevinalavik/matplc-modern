@@ -1,0 +1,8 @@
+#!/bin/sh
+make ready
+../../tools/run/matplc -g
+../basic/kbd --PLCmodule=Kbd
+
+# clean up after the vitrine
+clear
+reset

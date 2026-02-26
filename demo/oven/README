@@ -1,0 +1,69 @@
+This is a demo of a Thermal Fluid Oven, controled from the keyboard. No
+special hardware required.
+
+To compile:
+	cd demo/oven; make
+
+To start: (once in the demo/oven directory)
+        ./demo
+
+To quit:
+	press `Q' on the keyboard
+
+
+It's controlled from the keyboard (module Kbd, kbd.c): 
+
+The keys that are enabled (Case insensitive):
+
+Thermal Fluid Temperature Setpoint or Gas Air Valve Position
+S - Increment 
+X - Decrement
+This keys change the ThermalFluidTemperatureSP or the GasAirValve depending if the mode is Automatic or Manual respectively. In Automatic mode the GasAirValve position is controlled by a PID.
+
+A - Start Machine
+Z - Stop Machine
+Please note that even if the machine is stopped numbers move on the screen, this is because they are simulated values (temperatures). For example when we first run the program all temperatures are zero, and they start moving up until they all reach the ambient temperature value. This is of course when the oven is stopped (flame off).
+
+Belt Speed Setpoint
+D - Increase
+C - Decrease
+
+Temperature of Zone 1 Setpoint or Zone 1 Three way valve position
+F - Increase
+V - Decrease
+
+Temperature of Zone 2 Setpoint or Zone 2 Three way valve position
+G - Increase
+B - Decrease
+
+Temperature of Zone 3 Setpoint or Zone 3 Three way valve position
+G - Increase
+B - Decrease
+This keys change the Temperature setpoint or the three way valve position of each zone depending if the mode is Automatic or Manual respectively. In Automatic mode the three way valve position is controlled by a PID.
+
+M - Toggle Manual/Automatic
+Q - Quit
+
+Some tipical values to operate this machine coud be (running in atomatic mode):
+(Dont forget to start the machine and set it to automatic)
+Belt speed        10 m/min
+FluidTempSP      200 Cº
+AirTempSP Zone1   90 Cº
+AirTempSP Zone2  120 Cº
+AirTempSP Zone1  140 Cº
+
+After some time the actual values should reach their desired values.
+
+Then you could play with this values to see how does the machine behaves.
+
+It is interesting to note that we have a Product Temperature variable, this does not mean that we require sensors to measure the product temperature in the real machine, this is a calculated value and depends on the belt speed.
+
+This program uses the next MATplc modules:
+
+Two DSP modules one for the Oven and one for the Heater.
+A special kbd module. (It is specific to this project).
+The vitrine module.
+
+The two DSP modules and the vitrine module are synchronized using the simple secuential synchronization scheme.
+
+Read README.html for more implementation details.

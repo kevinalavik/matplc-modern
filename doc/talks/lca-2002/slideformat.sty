@@ -1,0 +1,115 @@
+%   slideformat.sty --- for talk slides
+%
+%   Just LaTeX the file, no other files are needed. To help, here 
+%   is a description of the main features: 
+%    
+%   1)    To get a slide title use the slidetitle macro and place the
+%         text inside curly brackets, a newline is achieved by
+%         using \\. The text is printed in bold HUGE.
+%    
+%   2)    The footer also contains the slide number in the corner
+%         in a small font.
+%    
+%   3)    To vary the size of the font you will have to use
+%            large
+%            Large
+%            LARGE
+%            huge
+%            HUGE
+%         or define your own.
+%%%%%%
+\typeout{Document Style `Talk slide format'. RJH 28:11:89}
+\textheight 23cm
+\textwidth 17cm
+\topmargin -2.04cm
+\headheight 1cm
+\headsep 1cm
+\oddsidemargin -.54cm
+\evensidemargin -.54cm
+% \oddsidemargin 0.5cm
+% \evensidemargin 0.5cm
+\setlength{\baselineskip}{24truept}
+\renewcommand{\baselinestretch}{1}
+
+% THE SLIDE TITLE (PUT AT TOP OF SHEET)
+%
+\def\slidetitle#1
+   {
+   \vbox{
+        \hbox{ \kern3pt
+               \vbox{\kern3pt\Huge{\bf
+                                   \begin{center}
+                                   \Blue{#1}
+                                   \end{center}
+                                   }
+%%                      \kern3pt
+                     }
+               \kern3pt }
+         \protect{\BrickRed{\rule{\textwidth}{0.5mm}}}
+               \kern3pt 
+         }
+   }
+%
+% THE FOOT (BOTTOM OF SHEET)
+%
+\def\thefoot
+    {
+       \parbox[b]{\textwidth}
+          {
+             \protect{\rule{\textwidth}{0.5mm}}
+             \protect\\
+             \makebox[\textwidth]
+                {
+                   \hfill
+%   		  \normalsize{PRICAI-96,  Workshop 7, 1996}
+%  		  \normalsize{PRICAI-96,  August, 1996}
+  		  \normalsize{November 25, 1996}
+  		  \hspace{1.5in} 
+ 		\normalsize{InfoSys seminar}
+		  \hspace{1.5in} \small{\em slide-\thepage}
+                   \hfill
+                 }
+	}
+%        \parbox[b]{\textwidth}
+%           {
+%              \protect{\rule{\textwidth}{0.5mm}}
+%              \protect\\
+%              \vspace*{2mm}
+%              \makebox[\textwidth]
+%                 {
+%                    \hfill
+%   		  \normalsize{CSC3091 Artificial Intelligence, 1995. Lecture 1}
+%                    \hfill
+%                 }
+%              \makebox[\textwidth]{\small{\hfill {\em slide-\thepage}}}
+%           }
+   }
+
+\def\myfoot
+    {
+       \parbox[b]{\textwidth}
+          {
+             \protect{\BrickRed{\rule{\textwidth}{0.5mm}}}
+             \protect\\
+             \makebox[\textwidth]
+                {\footcolor{
+                   \hfill
+  		  \normalsize{\foottitle}
+  		  \hfill\hfill
+		\normalsize{\footdate}
+		  \hfill\hfill \small{\em slide-\thepage}
+                   \hfill
+                }}
+%              \makebox[\textwidth]{\small{\hfill {\em slide-\thepage}}}
+          }
+   }
+
+\def\ps@myheadings
+   {\let\@mkboth\@gobbletwo
+    \def\@oddhead{}
+     \def\@evenhead{}
+     \def\@oddfoot{\myfoot}
+     \def\@evenfoot{\myfoot}
+     \def\sectionmark##1{}\def\subsectionmark##1{}}
+
+\ps@myheadings

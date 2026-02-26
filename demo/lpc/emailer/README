@@ -1,0 +1,25 @@
+README - test
+
+Last Updates May 31, 2002
+
+------------------------------------------------------------------
+About:
+
+This is a test program that is used to simplfy quick-and-dirty tests of the email sending client.
+If you run this program it will send a message via email. Right now it is send email to me -> you should change the email address in 'emailer.cpp' and recompile to send it elsewhere.
+
+------------------------------------------------------------------
+Notes:
+- if you don't have root access you should change the email target to something else in emailer.cpp.
+
+------------------------------------------------------------------
+Todo:
+	- 
+
+------------------------------------------------------------------
+Bugs:
+
+------------------------------------------------------------------
+History:
+
+May 31, 2002 (Hugh Jack) - program translated to use handler

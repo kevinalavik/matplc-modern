@@ -1,0 +1,24 @@
+README - test
+
+Last Updates April 15, 2002
+
+------------------------------------------------------------------
+About:
+
+This is a test program that is used to simplfy quick-and-dirty tests of dynamically loaded library modules. It doesn't connect to the LPLC, and prints a limited number of test messages.
+
+------------------------------------------------------------------
+Notes:
+
+------------------------------------------------------------------
+Todo:
+	- this is a crude client, for a simple tests
+	- If you want, this can be a quick and dirty place to add some simple test routines
+
+------------------------------------------------------------------
+Bugs:
+
+------------------------------------------------------------------
+History:
+
+April 16, 2002 (Hugh Jack) - original program finalized

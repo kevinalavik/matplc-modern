@@ -1,0 +1,23 @@
+User-land counterparts of kernel I/O drivers and I/O modules that are
+entirely user-land (eg, for hardware connected over serial cable or
+ethernet where the standard kernel drivers suffice).
+
+
+	"Io is a sulfur-rich, iron-cored moon in a circular orbit around
+	Jupiter. What does this. Sound like? Tidal forces from Jupiter and
+	Ganymede pull and squeeze Io sufficiently to melt Tartarus, its
+	subsurface sulfur ocean. Tartarus vents its excess energy with
+	sulfur and sulfur dioxide volcanoes. What does. This sound like?
+	Io's metallic core generates a magnetic field that punches a hole
+	in Jupiter's magnetosphere, and also creates a high-energy ion flux
+	tube connecting its own poles with the north and south poles of
+	Jupiter. What. Does this sound like? Io sweeps up and absorbs all
+	the electrons in the million-volt range. Its volcanoes pump out
+	sulfur dioxide; its magnetic field breaks down a percentage of that
+	into sulfur and oxygen ions; and these ions are pumped into the
+	hole punched in the magnetosphere, creating a rotating field
+	commonly called the Io torus. What does this sound like? Torus.
+	Flux tube. Magnetosphere. Volcanoes. Sulfur ions. Molten ocean.
+	Tidal heating. Circular orbit. What does this sound like?"
+		-- Michael Swanwick, The Very Pulse of the Machine
+		   (1999 short story Hugo)

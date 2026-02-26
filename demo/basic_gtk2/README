@@ -1,0 +1,25 @@
+About the basic_gtk2 (basic demo graphical interface):
+
+#
+# (c) 2001 Juan Carlos Orozco
+#
+# Offered to the public under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+# Public License for more details.
+#
+# This code is made available on the understanding that it will not be
+# used in safety-critical situations without a full and competent review.
+#
+
+The hmi_gtk2 should now be used instead of hmi_gtk.
+
+To execute:
+
+Type "make" at this directory.
+
+Type "./demo" at this directory.

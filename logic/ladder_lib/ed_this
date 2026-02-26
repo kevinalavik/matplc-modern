@@ -1,0 +1,3 @@
+gedit email.cpp email.h interp.cpp test_core.cpp default.plc ladder.cpp ladder.h core.cpp core.h temp.cpp \
+   function.cpp function.h queue.cpp queue.h step.cpp step.h io_list.cpp io_list.h store.cpp store.h \
+   parser.cpp parser.h TODO Makefile README ed_this &

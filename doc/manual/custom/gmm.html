@@ -1,0 +1,281 @@
+<html>
+<head>
+<title>MAT manual - custom modules - gmm reference</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/general.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/conffile.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Custom modules - gmm reference</h2>
+
+<p>The global map is the area where MatPLC points are kept.
+
+<p>It contains all of the application data, including physical I/O,
+internal coils, and any other data to be shared between
+modules.  Private data may still be maintained inside the module, but be
+aware that if it is not in the global memory map, it is not going to be
+available to any other logic engines, HMI modules, debugging tools, etc.
+
+<p><img src="../../images/gmm.png" align="right">Each module, upon being
+started, by default is given a private copy of the global
+memory map. All functions performed by a module are done to this private
+memory map which is then synchronized back to the global memory map through
+a function call in the shared memory library. This synchronization is
+semaphore controlled, which provides atomic updates. When run with a single
+logic engine, this allows the MatPLC to mimic the behaviour of a
+traditional PLC.
+
+<p>The shared memory is allocated when the MatPLC is started
+(<code>matplc -g</code>), and deallocated when the PLC is shut down
+(<code>matplc -s</code>). Even in the rare cases that MatPLC becomes
+inconsistent (e.g. while hacking the MatPLC kernel itself) the shutdown
+command usually manages to remove all the shared resources correctly.
+If for some reason some resources may reamin, these may be deallocated
+manually using <code>ipcrm(8)</code>.
+
+<p>The MatPLC gmm library is the only way to access the shared memory. At
+initialization, it allocates a private map and also a map mask. The mask is
+used to determine whether a module has write access to a particular data point.
+If a module tries to modify a data point to which it does not have write
+access, these changes will simply be ignored.
+
+<p>The library provides various functions for access to the global map, and
+some subsidiary functions, types and variables. Note the distinctions between
+private and global memory.
+
+<!-- make sure the gmm.png picture doesn't squash the table -->
+<br clear="both"></p>
+
+<table border>
+<tr><th rowspan=2>plc_pt_t</th>
+
+<td colspan=2>This is the "point handle" data type.
+
+<p>The only field of <code>plc_pt_t</code> that is public is the
+<code>.valid</code> field. This indicates whether the point handle is
+properly initialized. Non-zero indicates success.
+
+<p>Languages which have exceptions typically do not have a
+<code>.valid</code> field in the corresponding type.
+
+<p>Point handles are usually obtained using the functions
+<code>plc_pt_by_name()</code>, <code>plc_subpt()</code> or
+<code>plc_pt_null()</code>.
+
+</td></tr><tr><td valign="top"><pre>plc_pt_t data_point;</pre></td>
+
+<td valign="top">&nbsp;</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_get()</th>
+
+<td colspan=2>
+
+Provides read access to the private memory map. Note that this may not be
+an accurate representation of the data in the global memory map, as it is
+stored as a snapshot of data since the last call to
+<code>plc_update()</code>. If it is critical that the most accurate data be
+used, call <code>plc_update()</code> or <code>plc_update_pt(s)()</code> prior
+to <code>plc_get()</code>.
+There is no restriction to what data may be read in the private memory map.
+
+</td></tr><tr><td valign="top"><pre>i=plc_get(data_point);</pre>
+
+Data_point is of type plc_pt_t, and is checked to ensure it is a valid
+private memory map location. Please see the description of
+<code>plc_pt_t</code> above.
+
+<p>The returned value is an unsigned integer of up to (currently) 32 bits, as
+read from the private map at the location addressed by data_point.
+
+</td><td valign="top">real-time; immediate</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_set()</th>
+
+<td colspan=2>Provides write access to the private memory map.  Note that when
+<code>plc_set()</code> is called, any changes to data not marked for
+write access in the shared memory manager's configuration will be
+discarded. Changes made to the private memory map will not
+be reflected in the global memory map until plc_update is called. If it is
+critical to get data changes to the global memory map, call
+<code>plc_update()</code> immediately after <code>plc_set()</code>.
+
+</td></tr><tr><td valign="top"><pre>plc_set(data_point, value);</pre>
+
+<code>data_point</code> is of type <code>plc_pt_t</code>, and is checked to
+ensure it is a valid private memory map location. Please see the
+description of <code>plc_pt_t</code> above.
+
+<p><code>value</code> is a 32-bit unsigned integer. This will be placed into
+<code>data_point</code> upon successful completion of the function.
+
+</td><td valign="top">real-time; immediate</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_get_f32()<br>plc_set_f32()</th>
+
+<td colspan=2>These have the same functionality as the
+<code>plc_get()</code> and <code>plc_set()</code> functions, except that
+the type of the value is a 32-bit float (<code>f32</code>). The value is
+simply stored as-is. It is up to the application to ensure that the point
+in question is also considered as a float by all other modules that access
+it.
+
+<p>The only value that is guaranteed to make sense when mixing types is
+that an integer zero will convert to a floating point zero. All others will
+result in nonsense values.
+
+</td></tr><tr><td valign="top"><pre>value=plc_get(data_point);
+plc_set(data_point, value);</pre>
+
+<code>data_point</code> is of type <code>plc_pt_t</code>, and is checked to
+ensure it is a valid private memory map location. Please see the
+description of <code>plc_pt_t</code> above.
+
+<p>The returned or accepted <code>value</code> is a 32-bit float.
+
+</td><td valign="top">real-time; immediate</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_update()</th>
+
+<td colspan=2>Causes the memory manager to re-synch the global memory map with
+the private memory map. Points to which the module calling <code>plc_update()</code> has right access are copied from the private to the global map. Read-only points will copied from the global map to the private map. The updates are semaphore controlled. This provides for atomic
+updates of the global memory map between all modules.
+
+<p>Some of the scripting languages, for instance <a
+href="../lang/tcl.html">Tcl</a>, do not explicitly have this function;
+instead, they call <code>plc_update()</code> every time a point is
+accessed.
+
+<p>Note: Partial updates of the global memory map are supported, but not
+documented here yet; see the <code>plc_update_pt()</code> and
+<code>plc_update_pts()</code> functions in <code>lib/gmm/gmm.h</code>
+
+
+</td></tr><tr><td valign="top"><pre>plc_update();</pre></td>
+<td valign="top">real-time; may sleep on semaphore</td></tr>
+
+<tr><td colspan=3>&nbsp;</td></tr>
+<tr><th rowspan=2>plc_pt_by_name()</th>
+
+<td colspan=2>Provides point handles of type <code>plc_pt_t</code> for use
+with the <code>plc_get()</code> and <code>plc_set()</code> functions. This
+function does not operate in real-time, as it must access the configuration
+file. All point handles should be established before time critical portions
+of the module start running.
+
+<p>In the object-oriented languages, this function is usually the
+constructor of the point class.
+
+<p>The only field of the <code>plc_pt_t</code> data type that is public is the
+<code>.valid</code> field. This indicates whether the point handle initialized
+properly or not. (Non-zero indicates success.)
+
+<p>Languages which have exceptions throw an exception when there is a
+problem; thus, there is no <code>.valid</code> field in those languages.
+
+</td></tr><tr><td valign="top"><pre>
+data_point = plc_pt_by_name(data_point_name);
+if (data_point.valid == 0) {
+    printf("Error!  Can't access %s \n",
+           data_point_name);
+}
+
+</pre></td><td valign="top">  non-real-time
+
+<tr><td colspan=3>&nbsp;</td></tr>
+
+<tr><th rowspan=2>plc_subpt()</th>
+
+<td colspan=2>
+
+Creates sub-point handles of type plc_pt_t, which refer to a part of a `parent'
+point. Sub-point handles can be used the same as normal point handles.
+
+
+</td></tr><tr><td valign="top">
+For example, given a 16-bit point, one can split it into two 8-bit points and
+access these separately.
+<pre>
+/* get left half */
+data_a_point = plc_subpt(data_point,0,8);
+/* get right half */
+data_b_point = plc_subpt(data_point,8,8);
+if ((data_a_point.valid == 0) ||
+    (data_b_point.valid == 0)) {
+  printf("%s:%d: Internal error!\n",
+         __FILE__,__LINE__);
+}</pre></td><td valign="top">  non-real-time
+
+
+<tr><td colspan=3>&nbsp;</td></tr>
+<tr><th rowspan=2>     plc_pt_null()
+
+
+</th>
+
+<td colspan=2>
+
+Creates a null point handle of type plc_pt_t. Null handles can be used the same
+as normal point handles. Anything written to them is discarded, on reading they
+return zero.
+
+<p>In object-oriented languages which allow polymorphic constructors, for
+instance <a href="../lang/python.html">python</a>, this function is usually
+a constructor of the point class with no arguments.
+
+</td></tr><tr><td valign="top"><pre>
+if (report_status) {
+  status_point = plc_pt_by_name(status_point_name);
+  if (status_point.valid == 0) {
+      printf("Error!  Can't access %s \n",
+             status_point_name);
+      status_point = plc_pt_null();
+  }
+} else {
+  status_point = plc_pt_null();
+}</pre>
+
+The rest of the program can then ignore the <code>report_status</code> flag
+and simply set and reset the <code>status_point</code> as appropriate.
+
+</td><td valign="top">non-real-time</td></tr>
+
+
+</table>
+<h3>Other gmm functions</h3>
+
+
+There are other functions dealing with point handles. These are not documented
+here yet - see <code>lib/gmm/gmm.h</code> for more details
+
+<ul>
+<li>variable modifying behaviour of plc_pt_by_name():<ul>
+    <li>int plc_magic_bit_aliases;</ul>
+
+<li>functions for obtaining handles:<ul>
+    <li>plc_pt_by_index() /* get the n'th point */
+    <li>plc_pt_by_loc() /* directly specify all details (dangerous) */</ul>
+
+<li>number of configured points:<ul>
+    <li>plc_pt_count() /* useful with plc_pt_by_index() */</ul>
+
+<li>partial map updates:<ul>
+    <li>plc_update_pt()
+    <li>plc_update_pts()</ul>
+
+<li>functions returning information about a handle:<ul>
+    <li>plc_pt_len() /* length */
+    <li>plc_pt_rw() /* read/write status */
+    <li>plc_pt_rw_s() /* read/write status as a string */
+    <li>plc_pt_details() /* low-level details */</ul>
+</ul>
+
+<p>
+<!--autolink--><a href="../custom/general.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/conffile.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/03/06 03:38:50 $</small>
+</html>

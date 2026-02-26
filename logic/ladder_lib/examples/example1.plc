@@ -1,0 +1,63 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+
+	<memory>
+		<integer name="A" value="0"/>
+		<integer name="B" value="0"/>
+		<integer name="C" value="0"/>
+		<integer name="state" value="0"/>
+		<integer name="T4:0" value="0"/>
+		<real name="T4:0.ACC" value="0.0"/>
+		<real name="T4:0.PRE" value="0.6"/>
+		<string name="error_routine" value="error"/>
+	</memory>
+
+	<io>
+		<input local="A" remote="A"/>
+		<input local="B" remote="B"/>
+		<output local="C" remote="C"/>
+		<output local="T4:0.ACC" remote="acc"/>
+		<input local="T4:0.PRE" remote="delay"/>
+		<output local="state" remote="state"/>
+	</io>
+
+	<program>
+		<ladder location="main" comment="This is a three line main program">
+			SOR
+				XIC BIT state 0
+				ADD A B C
+			EOR
+			SOR
+				XIC BIT A 0
+				BST
+					XIC BIT A 1
+				NXB
+					XIO BIT A 2
+				BND
+				BST
+					DIV 3.0 1.0 F
+				NXB
+					OTE BIT X 0
+				NXB
+					ADD F 2.0 F
+				NXB
+					TON	T4:0 T4:0.PRE T4:0.ACC
+				BND
+			EOR
+			END
+		</ladder>
+		<ladder location="error" comment="This is an error handling program">
+			SOR
+				XIC BIT error 0
+				BST
+					MOV error 0
+				NXB
+					MOV Y 123
+				BND
+			EOR
+		</ladder>
+	</program>
+
+</plc>

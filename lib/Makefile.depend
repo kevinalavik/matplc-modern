@@ -1,0 +1,14 @@
+plc.o Makefile.depend: plc.c plc.h types.h log/log.h conffile/conffile.h \
+ conffile/../types.h cmm/cmm.h cmm/../types.h gmm/gmm.h gmm/../types.h \
+ synch/synch.h synch/../types.h period/period.h period/../types.h \
+ state/state.h state/../types.h synch/synch.h rt/rt.h rt/../types.h \
+ plc_private.h misc/string_util.h misc/../types.h misc/signal_util.h
+plc_setup.o Makefile.depend: plc_setup.c misc/string_util.h misc/../types.h \
+ log/log_setup.h conffile/conffile_setup.h cmm/cmm_setup.h cmm/../types.h \
+ plc_private.h gmm/gmm.h gmm/../types.h cmm/cmm.h plc.h types.h log/log.h \
+ conffile/conffile.h conffile/../types.h cmm/cmm.h synch/synch.h \
+ synch/../types.h period/period.h period/../types.h state/state.h \
+ state/../types.h synch/synch.h rt/rt.h rt/../types.h gmm/gmm_setup.h \
+ gmm/gmm.h rt/rt_setup.h synch/synch_setup.h synch/synch.h \
+ period/period_setup.h period/period.h state/state_setup.h state/state.h \
+ plc_private.h plc.h

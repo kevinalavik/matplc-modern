@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>MAT manual - Program Engineering - Specifications</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../program/modularity.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/hmi.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Specifications</h2>
+
+<p>Or, writing it all down.
+
+<p>Program specifications fulfil the same role as engineering drawings and
+circuit diagrams: they help organize things so that nothing gets overlooked
+or left out, and they help communicate to the other people involved about
+what's going on; just as importantly, they serve later on down the line
+when maintenance needs to be done.
+
+So, during the design of the program, make sure you write it all down.
+
+<p>No-one would start cutting and welding, or wiring up anything beyond a
+throw-away mock-up, without the proper drawings being made and signed off
+on. Programming is no different.
+
+<p>Each section and sub-section should have a one-page description of what
+it does and how it relates to other sections and sub-sections. If
+necessary, it should then have a larger document describing details; but
+that one-page description should be written so that it's enough for someone
+trying to get the overall idea of the system.
+
+<p>Write down what the morning startup (or shift handover) will look like
+to the operator. What about recovery from various kinds of snags and stops?
+Can the operator clear a blockage and resume automatic mode? How? What
+about going to lunch - will the operator log out, shut down the machine?
+(These are called "use cases".)
+
+<p>Talk to the other people involved with the building of the machine to
+make sure you haven't overlooked anything. Will your program mesh well with
+the mechanics, hydraulics, pneumatics, electrics and electronics? Will it
+make sense to the operators, and the maintenance people?
+
+<p>This is the best time to ensure that nothing has been overlooked -
+things like callibration and resumption from manual modes often affect
+large parts of the program, and if they're not planned-for at this stage
+they'll be difficult to add later.
+
+<p>If you're programming for another company, make this one of the earlier
+deliverables ("Functional Specification") and sign off on it with the
+client. This makes it clear exactly what you're planning to deliver, and
+what the client expects you to deliver.
+
+<p>
+<!--autolink--><a href="../program/modularity.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/hmi.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:12 $</small>
+</html>

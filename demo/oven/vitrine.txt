@@ -1,0 +1,24 @@
+                          Thermal Fluid Oven Demo
+HEATER                    =======================
+  Automatic   :
+  Flame       :
+  FLuidPump   :
+  FluidTempSP :               Cº
+  FluidTemp   :               Cº
+  GasAirValve :               %    PID Out :
+  FluidDeltaT :               Cº/T 
+  HeaterHeat  :               kcal/sec
+                                          Zone1       Zone2       Zone3
+OVEN                    AirTempSP
+  BeltSpeed (m/min)     AirTemp                                           
+  SetPoint:             PID out                                            
+  Command :             3WayValve%                                         
+  FeedBack:             RadiatorTemp                                       
+			ProductTemp                                        
+Note: SP stands for Set-Point   
+
+Controls (from the keyboard)    Q-Quit      M-Manual/Automatic
+----------------------------    
+Machine FluidTempSP BeltSpeedSP TempZone1SP TempZone2SP TempZone3SP
+A-Start	S-Increase  D-Increase  F-Increase  G-Increase  H-Increase
+Z-Stop 	X-Decrease  C-Decrease  V-Decrease  B-Decrease  N-Decrease

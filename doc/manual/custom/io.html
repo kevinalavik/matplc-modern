@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>MAT manual - a custom I/O module</title>
+</head>
+<body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/timer.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../general/contribute/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>A custom I/O module</h1>
+<p>IO modules are all very similar, except for the way they access the
+hardware, and the format of how that hardware's IO addresses are
+specified
+in the configuration file. That is why Mario wrote an IO library to be
+used
+by IO modules. It essentially has everything required by an IO module
+(including the main() function), except for the functions to access the
+hardware and interpret the hardware's addresses specified in the config
+file.
+</p>
+<h2>Overview</h2>
+<p>What you need to do is write the functions listed below and link
+everything together - and presto, you have an IO module!
+
+<p>Some of the functions won't be relevant to your module; just write blank
+functions for those.</p>
+
+<h3>Initialization</h3>
+Three functions to write here.
+
+<ul>
+  <li><code>io_hw_parse_config()</code> - this function will be called
+  first of all; if the module has any global options, this would be the
+  place to read them from config. </li>
+  <li><code>io_hw_parse_io_addr()</code> - will be called once for each
+  point.  a function to translate a string (char *) into an address; if
+  your inputs and outputs are numbered, you can just use
+  <code>atoi()</code>; if it's more complicated, it'll depend on what it
+  looks like.
+  <li><code>io_hw_init()</code> - the rest of initialization - anything
+  that needs to be done after all the addresses have been translated. If
+  the module needs to open devices or similar, this should also be done
+  here.
+</ul>
+<h3>Input and output</h3>
+<ul>
+  <li><code>io_hw_read()</code> - takes the address of an
+  input, and reads it.</li>
+  <li><code>io_hw_write() </code>- takes the address of an output and a
+  value, and writes the value to the output. </li>
+</ul>
+<h3>Miscellaneous</h3>
+These functions are useful if you need them, but you probably don't. Most
+likely they'll be blank.
+<ul>
+      <li><code>io_hw_read_end()</code> - called after each bunch of
+      reads.</li>
+      <li><code>io_hw_write_end()</code> - called after each bunch of
+      writes - useful if you need to flush a buffer.</li>
+      <li><code>io_hw_done()</code> - clean-up should go here, but since
+      the module will terminate directly afterwards, it's not so important.
+</ul>
+<h2>Details</h2>
+<p>You may assume that the <code>plc_init()</code>, <code>plc_update()</code>,
+<code>plc_scan_beg/end()</code> and <code>plc_done()</code> functions
+will be called for you at the appropriate times.
+<p>Your module will be given 8 bytes per I/O address to store the
+details;
+if this is insufficien, feel free to <code>malloc(3)</code> more space
+in
+the <code>io_hw_parse_config()</code> and/or
+<code>io_hw_parse_io_addr()</code> functions.
+</p>
+<h3>Order of calling</h3>
+<p>The I/O library will call the your functions in the following order:
+</p>
+<ul>
+  <li><code>io_hw_parse_config()</code> </li>
+  <li>for each IO address in the map table
+    <ul>
+      <li><code>io_hw_parse_io_addr()</code> </li>
+    </ul>
+  </li>
+  <li><code>io_hw_init()</code> </li>
+  <li><code>while (1)</code>
+    <ul>
+      <li>for each input point
+        <ul>
+          <li><code>io_hw_read()</code> </li>
+        </ul>
+      </li>
+      <li><code>io_hw_read_end()</code> </li>
+      <li>(note that <code>plc_update()</code> is called at this
+point) </li>
+      <li>for each output point
+        <ul>
+          <li><code>io_hw_write()</code> </li>
+        </ul>
+      </li>
+      <li><code>io_hw_write_end()</code> </li>
+    </ul>
+  </li>
+  <li><code>io_hw_done()</code>
+  </li>
+</ul>
+<h3>Function prototypes</h3>
+Here are the functions you need to define.
+(The actual definition is in the <code>lib/io/io_hw.h</code> file; if
+there's a clash, please let us know so we can fix this manual.)
+<dl>
+  <dt><code>const char *IO_MODULE_DEFAULT_NAME</code>
+  </dt>
+  <dd>The default name of the IO module.
+    <p></p>
+  </dd>
+  <dt><code>int io_hw_parse_config(void)</code>
+  </dt>
+  <dd> This function is called first so the module gets a chance to
+parse any
+specific configuration before any other functions get called.
+    <p>For instance, it might parse a list of devices with device
+parameters.
+The individual I/O addresses would then use the names of these devices,
+as
+given in this list.
+    </p>
+    <p>It should also check that the size of whatever you're casting
+io_addr to
+is no more than the size of io_addr_t, like this:
+    </p>
+    <pre>  if (sizeof(my_io_addr_t) &gt; sizeof(io_addr_t)) {<br>    plc_log_errmsg(1,"Datatype size problem.");<br>    return -1;<br>  }<br></pre>
+    <p>Should return 0 on success, -1 on failure.
+    </p>
+  </dd>
+  <dt><code>int io_hw_parse_io_addr(io_addr_t *io_addr, const char
+*addr_stri, dir_t dir, int pt_len)</code>
+  </dt>
+  <dd>This function must parse the I/O address described in the string
+    <code>addr_stri</code>, and store it in <code>*io_addr</code>,
+which is 8
+bytes long. Should return 0 on success, -1 on failure.
+    <p>The direction and point-length values may be used for
+consistency
+checking. The definition of <code> dir_t is <code>enum { dir_in,
+dir_out,
+dir_none }</code>
+    </code></p>
+  </dd>
+  <dt><code>int io_hw_init(void)</code>
+  </dt>
+  <dd>Connect to hardware, etc. This function is called at the end of
+start-up, after all the I/O addresses have been parsed, so it can also
+do
+whatever housekeeping is required, allocate buffers depending on the
+number
+of I/O addresses used, and so on.
+    <p></p>
+  </dd>
+  <dt><code>int io_hw_write(io_addr_t *io_addr, u32 value)</code>
+  </dt>
+  <dt><code>int io_hw_read (io_addr_t *io_addr, u32 *value)</code>
+  </dt>
+  <dd>These functions will be called to read/write a single point at a
+time. They
+should send/store the result in the 'value' variable
+    <p>Should return 0 on success, -1 on failure.
+    </p>
+  </dd>
+  <dt><code>int io_hw_write_end(void)</code>
+  </dt>
+  <dt><code>int io_hw_read_end (void)</code>
+  </dt>
+  <dd>These are useful when the hardware itself is double buffered -
+you may
+need to do some special stuff with the hardware to tell it to update
+the
+outputs with the values you have been writing, or similar. If nothing
+special needs to be done at this point, simply <code>return 0;</code>
+    <p>Should return 0 on success, -1 on failure.
+    </p>
+  </dd>
+  <dt><code>int io_hw_done(void)</code>
+  </dt>
+  <dd>Terminate connection to hardware and generally shut down. Should
+return
+0 on success, -1 on failure.
+  </dd>
+  <dt><code>int io_hw_dump_config(int debug_level)</code>
+  </dt>
+  <dd>Should dump to plc_log_trcmsg(debug_level, ...) any configuration
+parameters it will use. Used only for debugging purposes. Please use
+the
+debug_level specified.
+    <p>Should return 0 on success, -1 on failure.
+    </p>
+  </dd>
+  <dt><code>char *io_hw_ioaddr2str(io_addr_t *io_addr)</code>
+  </dt>
+  <dd>Should return a string description of the io_addr. Memory for the
+string must be <code>malloc()</code>'d, and will be <code>free()</code>'d
+by the calling function in the io library.
+    <p></p>
+  </dd>
+</dl>
+<h2>Overriding the scan loop</h2>
+<p>If the module is not suited to the standard scan cycle, as for
+instance
+many network and bus slaves aren't, this can be over-ridden by setting
+the
+<code>run_loop</code> callback.
+</p>
+<p>Just write a function the way you want it, and in one of the setup
+functions, set run_loop to point to it, thus:
+<code></code></p>
+<pre>int my_run_loop(void*foo) {<br>  ...<br>}<br><br>int io_hw_init(void) {<br>  run_loop = my_run_loop;<br>  ...<br>}<br></pre>
+<p>The function <code>my_run_loop()</code> should return a negative
+value
+on error. It is not expected to return on success, but if it does, the
+value should be non-negative. The parameter is an internal structure,
+access to which has not been thought through at this point :-) We
+apologise
+for the inconvenience.
+</p>
+<h2>Utility functions</h2>
+<code>plc_pt_t io_status_pt(const char *base, const char *suffix, int
+loglevel)</code>
+<p>This function looks for a point called <em>base.suffix</em>. If it
+exists, it's returned. If it doesn't exist, a warning is logged at
+<code>loglevel</code>, and a null point is returned.
+</p>
+<p>The upshot is that if an optional status point is desired, one
+simply
+calls this function and uses the returned point as the status point.
+The
+user will take advantage of it, or not.
+</p>
+<p>The <code>base</code> should be the name of the point to which the
+status point will refer. The <code>suffix</code> should indicate what
+kind
+of status is reported: it might be <code>"ok"</code>, <code>"err"</code>,
+<code>"timeout"</code>, <code>"errno"</code>, or similar, depending on
+what
+condition is to be indicated by the status point.
+</p>
+<h2>Slave mode</h2>
+An IO module may work in one of two modes: master or slave. By default
+it
+will work in the master mode.
+<p>To run in slave mode, where it responds to requests from the bus...
+<strong>FIXME</strong>
+</p>
+<!--autolink--><a href="../custom/timer.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../general/contribute/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<p><small>$Date: 2005/08/20 06:11:42 $</small>
+</p>
+</body>
+</html>

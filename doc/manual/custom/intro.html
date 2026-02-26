@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>MAT manual - custom module intro</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../general/howto/bumpless.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../lang/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Introduction to custom modules</h1>
+
+<p>Most of the time, a combination of existing modules (generic and/or
+specific) will fulfil the requirements of a project. However, sometimes
+only a custom-made module will do. This chapter provides a short tutorial
+on writing custom modules.
+
+<p>Unless you need a custom module, you can safely skip this chapter.
+
+<p>Custom modules can be written in several languages. They fall into two
+broad groups, C and everything else.
+
+<dl>
+
+<dt>C<dd>C in a group of its own because it's the native language of the
+MatPLC. As such, it allows access to 100% of the functionality as soon as
+it appears in the MatPLC, and is a little more efficient (though with
+current computers that generally doesn't matter).</p>
+
+<dt>Everything else<dd>Writing C is a specialist job, and sometimes it's
+better to write in a more user-friendly language such as <a
+href="../lang/python.html">python</a> (sort of like BASIC or VB but about
+three decades more modern). If you are already using one of these languages
+elsewhere in the project, you can also connect directly from there to the
+MatPLC without going through an intermediary.
+
+<p>If you decide to use one of the other languages, you should still skim
+the chapter on C, as the other languages may be incomplete (please file a
+bug or ask on the mailing list if there's a function there that you want to
+use from one of the other languages), and in any case they generally follow
+the same layout and structure.
+
+</dl>
+
+<p>Another purpose of this chapter is to explain somewhat the workings of
+the supplied generic and specific modules. The modules supplied with the
+MatPLC work exactly the same way as custom modules. Currently they're all
+written in <a href="native.html">native C</a>.
+
+<h2>Contributing modules to the project</h2>
+
+<p>If you write an interesting custom module that you think other people
+would find useful, you can contribute it to the project. There's no
+difference between writing a custom module and writing a module to
+contribute.
+
+<p>Just about the only requirement is that the module has to be under the
+<a href="../appendix/gpl.html">GPL licence</a>. We may make some
+adjustments to the module to make it fit better with our intended
+architecture or project organization, of course, or merge it with an
+existing module; but if it's something that people would generally find
+useful, we'd love to have it in the CVS!
+
+<p>For other ways of contributing to the project, please see the <a
+href="../general/contribute/intro.html">Contributing to the MatPLC</a>
+chapter.
+
+<p>
+<!--autolink--><a href="../general/howto/bumpless.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../lang/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:09 $</small>
+</html>

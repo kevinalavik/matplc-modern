@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>MAT manual - modules</title>
+</head>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../program/hints.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/concept/points.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Modules</h1>
+
+Modules are individual pieces of the MatPLC. Much like a real PLC, a
+particular MatPLC installation consists of several modules, plugged into a
+core (virtual backplane), working together to provide a useful application.
+There are I/O modules, logic modules, user interface modules etc. Most of
+this manual concerns the detailed instructions for one or another
+particular kind of module.
+
+<p>What modules are run is usually configured in the <a
+href=../config/plc.html>PLC section of the config</a>. It's also possible
+to start modules as separate programs, even when they aren't listed in the
+config; the <a href="../../tools/plctest.html">plctest</a> tool is usually
+started this way.
+
+<p>Due to the high modularity of the MatPLC, most systems will consist of
+several modules - perhaps between three and a dozen. Even the simplest of
+demos typically have three or four modules.
+
+
+<h3>Module groups</h3>
+
+Modules are organized according to their function. This organization is
+purely to simplify orientation; once modules are running, there is no
+particular distinction between them (except that they do different jobs, of
+course).
+
+<dl>
+
+<dt>Logic engines<dd>do the actual logic, decision making and calculation
+of the MatPLC.</p>
+
+<dt>I/O<dd>connect to the real world, or sometimes to a slave PLC over a
+bus or other connection.</p>
+
+<dt>HMI (or MMI)<dd>interact with the operator.</p>
+
+</dl>
+
+<h3>Module types</h3>
+
+Modules come in three basic types.
+
+<dl>
+
+<dt>generic<dd>These modules come with the MatPLC and are used without
+modification. An example is the DSP module - you specify in the
+<code>matplc.conf</code> file that you wish to use it and specify the
+inputs, outputs and tuning parameters for the PID loop (for instance).
+
+<p>Most I/O modules also fall into this category.</p>
+
+<dt>specific<dd>These modules do not directly come with the MatPLC.
+Instead, they are created for a particular project using the tools
+provided. An example is the <a href="../../logic/il.html">IL language</a>. You
+write a PLC program in a file with the extension <code>.il</code>, which is
+converted into a module before starting.
+
+<p>The up-coming IEC 61131 translator will work the same way.</p>
+
+<dt>custom-made<dd>This is the ultimate in specific modules; if none of the
+existing modules is suitable for the job at hand, a completely new module
+can be written in the C language. Such a module can do anything, but it is
+much more difficult to write. It is essentially an extension of MAT
+itself.</p>
+
+</dl>
+
+<p>
+<!--autolink--><a href="../../program/hints.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/concept/points.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:10 $</small>
+
+</html>

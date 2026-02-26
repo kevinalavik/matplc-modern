@@ -1,0 +1,48 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+
+	<memory>
+		<bit name="L1"/>
+		<bit name="L2"/>
+		<bit name="L3"/>
+		<bit name="L4"/>
+		<bit name="left" value="0"/>
+		<bit name="right" value="0"/>
+		<bit name="direction" value="0"/>
+
+		<real name="limit" value="5.0"/>
+		<real name="counter_acc" value="0.0"/>
+		<integer name="counter_status"/>
+
+		<real name="delay" value="50"/>
+		<real name="timer_acc" value="0.0"/>
+		<integer name="timer_status"/>
+			<bit parent="timer_status" number="13" name="timer_done"/>
+	</memory>
+
+	<program>
+		<ladder location="2" comment="This is the light chaser program">
+
+			<line instruction="SOR XIC timer_done TON timer_status delay timer_acc EOR" comment="the clock"/>
+
+			<line instruction="SOR XIC left OTL direction EOR" comment="set the direction for left"/>
+			<line instruction="SOR XIC right OTU direction EOR" comment="set the direction for right"/>
+
+			<line instruction="SOR XIC direction CTD counter_status limit counter_acc EOR" comment="count down"/>
+			<line instruction="SOR XIO direction CTU counter_status limit counter_acc EOR" comment="count up"/>
+
+			<line instruction="SOR EQ counter_acc 4 MOV 0 counter_acc EOR" comment="roll counter if >3"/>
+			<line instruction="SOR EQ counter_acc -1 MOV 3 counter_acc EOR" comment="roll counter if <0"/>
+
+			<line instruction="SOR EQ counter_acc 0 OTE L1 EOR" comment="turn on light L1"/>
+			<line instruction="SOR EQ counter_acc 1 OTE L2 EOR" comment="turn on light L2"/>
+			<line instruction="SOR EQ counter_acc 2 OTE L3 EOR" comment="turn on light L3"/>
+			<line instruction="SOR EQ counter_acc 3 OTE L4 EOR" comment="turn on light L4"/>
+
+			<line instruction="SOR END EOR" comment="end of the program"/>
+		</ladder>
+	</program>
+
+</plc>

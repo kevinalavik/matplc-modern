@@ -1,0 +1,223 @@
+<html>
+<head>
+<title>MAT IL language manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../logic/iec/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../logic/plc5.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>MAT IL language</h1>
+
+<h2>Introduction</h2>
+
+The MAT IL is a simple text transcription of the traditional
+"stepladder" style of programming (sometimes also called "mnemonics").
+
+<p>The stepladder is described a rung at a time from left to right.
+
+<p>At the top of the scan, inputs are read from the MatPLC core. The
+program is then scanned an instruction at a time from top to bottom (unless
+a <code>JMP</code> instruction changes this). Once scanning reaches the
+bottom of the program or the special instruction <code>END</code>, outputs
+are written to the MatPLC core and the process starts over.
+
+<p>For all non-latching relays, make sure an <code>OUT</code> or
+<code>OUTI</code> instruction is scanned on every scan. Otherwise relays
+are latching: unless an <code>OUT</code>, <code>OUTI</code>,
+<code>SET</code> or <code>RST</code> instruction changes them, they remain
+as they were.
+
+<h2>Instructions</h2>
+
+<dl>
+
+<dt><code>LD</code> <var>contact/register</var><dd>Start new rung with a
+normal contact or a register.</p>
+
+<dt><code>LDI</code> <var>contact</var><dd>Start new rung with an inverted
+contact.</p>
+
+<dt><code>K</code> <var>value</var><dd>Start new rung with the given value,
+which can be <code>on</code>, <code>off</code> or a number.</p>
+
+<dt><code>AND</code> <var>contact</var><dd>Add a contact on the end of the
+current rung (in series).</p>
+
+<dt><code>ANI</code> <var>contact</var><dd>Add an inverted contact on the
+end of the current rung (in series).</p>
+
+<dt><code>OR</code> <var>contact</var><dd>Add a contact in parallel with
+the current rung so far.</p>
+
+<dt><code>ORI</code> <var>contact</var><dd>Add an inverted contact in
+parallel with the current rung so far.</p>
+
+</p><dt><code>OUT</code> <var>coil/register</var><dd>Connect a relay coil
+to the rung. If the current rung is <strong>on</strong>, the relay turns
+on, if the current rung is <strong>off</strong>, the relay turns off. For
+numeric rungs, the value is written to the register.</p>
+
+<p>There should not normally be more than one <code>OUT</code> or
+<code>OUTI</code> for each coil (unless one or the other is skipped using a
+<code>JMP</code>). Having more than one is valid, but will mean that some
+rungs (between the first and second <code>OUT</code>) will use the value
+from the first <code>OUT</code>, while a different value (from the second
+<code>OUT</code>) will actually appear on the output. This effect can be
+quite useful, of course, as long as scan-order is taken into account.</p>
+
+<dt><code>OUTI</code> <var>coil</var><dd>Connect an inverted relay coil to
+the rung. If the current rung is <strong>on</strong>, the relay turns off,
+if the current rung is <strong>off</strong>, the relay turns on.</p>
+
+<p>Please see the remarks at the <code>OUT</code> instruction.</p>
+
+<dt><code>SET</code> <var>coil</var><dd>Connect the `set' coil of the relay
+to the rung. If the current rung is <strong>on</strong>, the relay turns
+on, otherwise no effect.</p>
+
+</p>
+
+<p>It is somewhat more sensible to have a <code>SET</code> or
+<code>RST</code> in combination with an <code>OUT</code> than it is to have
+two <code>OUT</code> instructions. For instance, an exception logic
+may wish to override a previous <code>OUT</code>, setting the relay on or
+off as appropriate. Nevertheless, care should be taken to avoid
+confusion.</p>
+
+<dt><code>RST</code> <var>coil</var><dd>Connect the `reset' coil of the
+relay to the rung. If the current rung is <strong>on</strong>, the relay
+turns off, otherwise no effect.</p>
+
+<p>Please see the remarks at the <code>SET</code> instruction.</p>
+
+<dt><code>LT</code> <var>register</var>
+<dt><code>LE</code> <var>register</var>
+<dt><code>GT</code> <var>register</var>
+<dt><code>GE</code> <var>register</var>
+<dd>Compare the current rung with the register numerically. The result will
+be <strong>on</strong> if the comparison is true, and <strong>off</strong>
+if it is false.</p>
+
+<dt><code>MCS</code><dd>Master Control start - the current rung becomes a
+new rail. All subsequent <code>LD</code>, <code>LDI</code> and
+<code>OR</code> instructions will use this rail until another
+<code>MCS</code> or a <code>MCE</code>.</p>
+
+<p>Warning: this instruction is not a substitute for hard-wired safety and
+emergency stop circuits.</p>
+
+<dt><code>MCE</code><dd>Master Control end - cancels all current
+<code>MCS</code>.</p>
+
+<dt><code>ANB</code><dd>And block - takes the current and previous rungs
+and connects them in series. This also converts them into a single rung for
+the purposes of subsequent ANBs and ORBs (up to 7 previous rungs may be
+used).</p>
+
+<p>Unless you know what you are doing, you probably shouldn't have had an
+<code>OUT</code> on the previous rung.</p>
+
+<dt><code>ORB</code><dd>Or block - takes the current and previous rungs and
+connects them in parallel. This also converts them into a single rung for
+the purposes of subsequent ANBs and ORBs (up to 7 previous rungs may be
+used).</p>
+
+<p>Unless you know what you are doing, you probably shouldn't have had an
+<code>OUT</code> on the previous rung.</p>
+
+<dt><code>LTB</code>
+<dt><code>LEB</code>
+<dt><code>GTB</code>
+<dt><code>GEB</code>
+<dd>Comparison block - takes the current and previous rungs and compares
+them numerically. This also converts them into a single rung for the
+purposes of subsequent ANBs and ORBs, which will be <strong>on</strong> if
+the comparison is true, and <strong>off</strong> if it is false.  (Up to 7
+previous rungs may be used at any time.)</p>
+
+<dt><code>END</code><dd>In main program, end program scan. In a subroutine,
+return. This can be used at the end of the program/subroutine, or in
+conjunction with <code>JMP</code> and <code>LBL</code>.</p>
+
+<dt><code>JMP</code> <var>label</var><dd>If the current rung is
+<strong>on</strong>, transfer scanning to a different part of the program.
+Jumps can be made in any direction, to any point in the program, but not
+into or out of a subroutine.</p>
+
+<p>It is valid to jump into the middle of a rung: before the jump the
+current rung (which is <strong>on</strong>) is discarded and the previous
+rung reinstated as the current rung (and so on).</p>
+
+<p>If the current rung is <strong>off</strong>, <code>JMP</code> has no
+effect and scanning continues as normal on the current rung.</p>
+
+<dt><code>LBL</code> <var>label</var><dd>Mark the location to which a JMP
+transfers scanning. When encountered, has no effect.</p>
+
+<dt><code>JSR</code> <var>subname</var><dd>If the current rung is
+<strong>on</strong>, transfer scanning to a subroutine. When the subroutine
+finishes, scanning will resume at this point in the program.</p>
+
+<p>Before the jump the current rung (which is <strong>on</strong>) is
+discarded and the previous rung reinstated as the current rung (and so on).
+This can be used to pass parameters to the subroutine.</p>
+
+<p>If the current rung is <strong>off</strong>, <code>JSR</code> has no
+effect and scanning continues as normal on the current rung.</p>
+
+<p>It is valid for a subroutine to <code>JSR</code> another, or even itself
+(directly or indirectly). In the latter case, care should be taken to avoid
+infinite recursion and ensure that the subroutine eventually returns.
+
+<dt><code>SUB</code> <var>subname</var><dd>Marks the beginning of a
+subroutine. The subroutine extends to the next <code>SUB</code> instruction
+or to the end of the program (though an <code>END</code> can be used to
+return from it prematurely).</p>
+
+<p>The <code>SUB</code> instruction always marks the end of the previous
+subroutine or the main program. If it is encountered in normal scan, it
+causes a subroutine return (in a subroutine) or a program scan end (in main
+program), just like an <code>END</code>.</p>
+
+<p>The only way to get into a subroutine is with a <code>JSR</code>. It is
+not valid to <code>JMP</code> in and out of subroutines or between
+different subroutines.</p>
+
+<dt><code>RET</code><dd>If the current rung is <strong>on</strong>, return
+(in a subroutine) or end program scan (in main program).
+
+<p>When this instruction results in a return from subroutine, the current
+rung (which is <strong>on</strong>) is discarded and the previous rung
+reinstated as the current rung (and so on). This can be used to return
+values from subroutines.</p>
+
+<p>If the current rung is <strong>off</strong>, <code>RET</code> has no
+effect and scanning continues as normal on the current rung.</p>
+
+<dt><code>POP</code><dd>Discard the current rung and reinstate the previous
+rung as the current rung (and so on up to 7 rungs back).</p>
+
+<dt><code>NOP</code><dd>No effect. May appear anywhere in the program.</p>
+
+</dl>
+
+<p>Instructions appear one to a line. The instructions may appear in upper
+or lower case (ie "LD" is the same as "ld") but the contacts, coils and
+labels must agree exactly (ie "X1" is not the same as "x1").
+
+<p>Comments must appear on their own lines. They are indicated with a hash
+(#) or semicolon (;) at the beginning of a line.
+
+<p>Both instructions and comments may be indented from the left by any
+number of spaces and any number of spaces or tabs may be used to separate
+an instruction and its contact, coil or label.
+
+<p>At the start of each scan, both the current rung and previous rungs have
+undefined values (which means they could be anything). This means that the
+first instruction (other than <code>LBL</code> or <code>NOP</code>) must be
+<code>LD</code> or <code>LDI</code> and similarly a sufficient number of
+<code>LD</code> or <code>LDI</code> instructions must be scanned before an
+<code>ANB</code> or an <code>ORB</code>.
+
+<p>
+<!--autolink--><a href="../logic/iec/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../logic/plc5.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</html>

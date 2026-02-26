@@ -1,0 +1,2 @@
+MatPLC uses some GNU-specific functions. In order not to depend on
+glibc, we include copies of them here, conditional upon ndef __GLIBC__.

@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>MAT manual - Custom modules - Tcl</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../lang/python.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/native.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Custom modules - Tcl</h1>
+
+<h2>Introduction</h2>
+
+<p>The Tcl language was designed to be a simple scripting language. Unless
+you're already familiar with it or have some other reason for using it,
+it's probably better to use <a href="python.html">python</a> instead.
+
+<h2>Installing</h2>
+
+The tcl interface has to be installed before it is used. After compiling
+the rest of the MatPLC, change to the <tt>lang/tcl</tt> directory and type
+<tt>autoconf; ./configure; make</tt> as usual, followed by <tt>make
+install</tt>
+
+<p>See the <tt>README</tt> file in the <tt>lang/tcl</tt> directory for more
+details.
+
+<h2>Commands and options</h2>
+
+<p>This page describes the Tcl commands implemented by the MatPLC
+extension; it assumes a working knowledge of Tcl programming and the MatPLC
+'C' language programming interface.
+
+<p>Load the module with an explicit <tt>load</tt> command, or with
+<tt>package require lplc</tt>.
+
+
+<p>The module implements a single new Tcl command, lplc, which has the
+form:
+
+<blockquote><code>lplc <em>subcommand [options...]</em></code></blockquote>
+
+
+<p>The following subcommands and options are implemented:
+
+<dl>
+<dt><code>lplc init [-module <em>string</em>] [-array <em>arrayname</em>]
+[<em>--PLCoptions</em>]</code><dd>
+
+	Attaches to a running MatPLC. Due to the nature of the plc_init()
+	routine in matplc.a, this call does not return until initialization
+	is successful.
+
+	<p>The default module for Tcl scripts is "TCL". This can be
+	overridden with the -module option.
+
+	<p>If an array name is specified, the init command creates an
+	associative array with the specified name, populated as follows:
+
+	<table>
+		<tr><td align="top"><code>array(count)</code></td><td
+		align="top">number of points</td></tr>
+
+		<tr><td align="top"><code>array(x,name)</code></td><td
+		align="top">name of point at index x (where 0 &lt;= x &lt;
+		count)
+
+		<p>If the point at index x is not valid (i.e. handle.valid
+		== 0), the name is INVALID. (this should not happen, as the
+		indeces are dictated by the configuration.)
+		</td></tr>
+	</table>
+
+	<p>The --PLC options specified by the <code>plc_init()</code>
+	routine can be passed on the command line as well. Note that this
+	list includes <code>--PLCmodule=<em>string</em></code>, another
+	method for overriding the default module.</p>
+
+
+<dt><code>lplc done</code><dd>Disconnects from the MatPLC.</p>
+
+<dt><code>lplc getpt [-name <em>pointname</em>]</code><dd>
+
+	Returns the current value of the named point.
+
+	<p>Generates a Tcl error if a handle to the named point could not
+	be got.
+
+	<p>Note: the getpt subcommand performs a <code>plc_update()</code>
+	and then a <code>plc_get()</code></p>
+
+<dt><code>lplc setpt [-name <em>pointname</em>] [-value
+<em>value</em>]</code><dd>
+
+	Sets the named point to the specified value.
+
+	<p>Generates a Tcl; error if a handle to the named point could not
+	be got.
+
+	<p>note: the setpt subcommand performs a <code>plc_set()</code> and
+	then a <code>plc_update()</code></p>
+
+<dt><code>lplc update [-array <em>arrayname</em>]</code><dd>
+
+	<p>Updates the module's copy of the MatPLC data.
+
+	<p>If an array name is specified, the array is populated as follows:
+
+	<table>
+		<tr><td align="top"><code>array(x,value)</code></td>
+		<td align="top">value of point at index x</td></tr>
+	</table>
+
+<p>
+<!--autolink--><a href="../lang/python.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/native.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</html>

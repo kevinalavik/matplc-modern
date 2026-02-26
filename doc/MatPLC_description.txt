@@ -1,0 +1,97 @@
+
+
+The MatPLC is an open source solution to the closed, proprietary world of PC
+ based controls.  It is released under the Gnu General Public License (GPL) 
+which means that it is freely available to the public.  It is our intention 
+that this be a publicly owned project, and that the public is free to use, 
+modify, extend, and do whatever it is that they want with the system.
+Anyone who feels that they are able to contribute to the project is more
+than welcome to join in.  There are no contracts, secret agreements,
+licensing, or other constraints found in most of the competing systems.  
+The problem with existing packages is that they tie you to a single vendor, 
+force upgrades to keep tech support, and are, with a few exceptions, 
+strictly Windows based.
+
+One advantage of Linux is that it can be custom-tooled by removing all
+components that are not necessary for performing the task at hand.  If an
+audio player, web browser or even the whole graphical interface is not
+required, it can be removed.  It is possible to get a linux system
+trimmed down to fit onto a floppy disk.  This customizability means that
+you can get excellent performance out of your hardware by eliminating
+anything that is not needed to perform your control task.  If this is not
+sufficient, the MatPLC is designed to be POSIX compliant, so it will be
+portable to other unix variations, including ones that support hard real
+time such as QNX, RTLinux, etc.
+
+By releasing the MatPLC under the same GNU General Public License (GPL) that
+Linux is released under, we can guarantee that the integrator and user will be
+able to use, update, and support their system in perpetuity, if they desire.
+Unlike current solutions, that stop providing support for their system once a
+new version is released, the GPL ensures that nobody will be forced to make
+drastic changes to their system just to continue to be allowed to use it.
+Anyone who has gone through the process of migrating a HMI or PC control system
+from Windows 95 to Windows NT, or even from one version of the HMI to the next,
+knows the problems involved.  But the only compelling reason to do this in the
+first place is because the vendor no longer supports the system that was
+originally sold. This is what we are trying to correct with the MatPLC.  By using
+the GPL, anyone can continue to use whatever version they like.
+
+One of the design decisions that was made early in the project's life was to keep
+ the entire system as modular as possible.  In this way, the final project will
+consist of only those modules that are required to perform the desired operation.
+
+The PLC core includes a shared memory manager that controls the access
+to the common data table.  I/O, analog signals, integer and floating point 
+variables, etc are all accessed through this memory manager.  By controlling 
+when each module synchronizes its data to the central table, we can 
+ensure that each process is working from a consistent data-set, and updates 
+are precisely predictable.
+
+Synchronization is also maintained through the PLC core.  Modules can be
+configured to simply run one after the other in lock stepped scan fashion, or
+complex relationships can be configured with modules running independent of
+each other, using a modified petri-net control design.
+
+Today, the MatPLC is approaching Beta-testing stages.  We have some I/O 
+modules, most recently a Modbus master.  We also have support for Hilscher
+cards (www.hilscher.com), which include DeviceNet, ASI, profibus support 
+and many other fieldbus networks.  We have the system core, including 
+the shared memory manager.  A system configurator is in development, 
+and We also have an instruction list logic engine operational, and an 
+HMI that is well underway.  We are in the process of absorbing a ladder 
+logic editor / solver into the project, and merging with a sister project.  
+This is one of the most powerful aspects of open source development.  
+There are other projects out there, being worked on by other people.  
+When we can get together with them, the ability to tie both of our projects 
+together into one makes for a very powerful development method.  Rather 
+than hiding from others, and trying to keep what we are doing a secret, 
+we can pool our resources, and everyone wins.
+
+Because of the design of the PC, the I/O control is best done using a
+fieldbus network.  One of our biggest challenges has been to convince the
+parties that control the fieldbus standards that they should allow us to support
+their protocols.  Many of them simply do not wish to allow their networks to be
+used in an open system environment, but want to keep them locked away from broad
+support.  We have gotten around this problem somewhat by using hardware that 
+implements the protocols in firmware, which lets us use the license from the
+hardware vendor to make our use legal, but it would be far better for the end
+user if we could implement these protocols natively.
+
+Our hope is that once we release a truly open system using Modbus, and I/O from
+other vendors that have helped us, some of the remaining networks will come on 
+board with us.  We are also working with a supplier of a rack based PC system
+that lives in a PLC-style chassis.  This is a system on the market today, and we
+are trying to get Linux to operate on that platform.  That would open up a wide
+array of I/O options to us, plus give us a semi-standard hardware platform to
+back it up.
+
+Another supporter of our project has been SixNet (www.sixnetio.com).  Their
+upcoming Linux RTU will be available with a small linux kernel embedded.  
+This devices ability to handle large amounts of I/O makes it an exceptional
+replacement for small PLC's, where more connectivity is needed than what is
+available on the Micro PLC's today.  SixNet has promised us a library that 
+will allow us to communicate to their I/O devices.  the library will be GPL
+compliant.  This is no small step for a system vendor.  We hope that others
+will see the positive results of this move, and come on board as well.  
+
+

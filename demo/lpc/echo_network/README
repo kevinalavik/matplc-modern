@@ -1,0 +1,33 @@
+README - echo
+
+Last Updates May 5, 2002
+
+------------------------------------------------------------------
+About:
+
+This is a program that tests remote IO by echoing received messages. It is the more advanced version of the echo demo that also handles the message connection. In this example it uses a network connection.
+------------------------------------------------------------------
+Use:
+
+1. Run the demo with
+      ./demo
+2. Open a second terminal window and type in the command below. The address '127.0.0.1' refers to the local machine. The port number '1236' is the default set for this demo.
+      telnet 127.0.0.1 1236
+3. Type in something, it should be echoes back from the PLC.
+4. If the connection sits idle too long it will timeout.
+5. When connected you can type QUIT to shut down the PLC.
+
+------------------------------------------------------------------
+Notes:
+
+------------------------------------------------------------------
+Todo:
+	- 
+
+------------------------------------------------------------------
+Bugs:
+
+------------------------------------------------------------------
+History:
+
+May 5, 2002 (Hugh Jack) - original program finalized

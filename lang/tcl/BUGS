@@ -1,0 +1,19 @@
+
+---------------------------------------------------------------------------
+ Any attempt to operate on the MatPLC (i.e. getpt, setpt) before executing
+"lplc init" causes the interpreter to exit.
+
+	this is an implementation issue in the linxuplc.a library
+
+---------------------------------------------------------------------------
+Any attempt to getpt, setpt, or update after executing "lplc done" results
+in a seg fault.  a seg fault also results from an attempt to re-init the MatPLC
+after executing "lplc done"
+
+		lplc init ;# succeeds
+		lplc done ;# succeeds
+		lplc init ;# seg fault
+
+	it is not yet known whether this is a bug in the interpreter or in the
+	MatPLC library
+

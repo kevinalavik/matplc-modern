@@ -1,0 +1,64 @@
+/*
+ * (c) 2003 Jiri Baum
+ *
+ * Offered to the public under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * This code is made available on the understanding that it will not be
+ * used in safety-critical situations without a full and competent review.
+ */
+
+digraph G {
+
+  node [width=0, height=0]
+
+  rankdir=LR
+
+  S -> device [minlen=0]
+  device -> colon
+  colon -> typeL [constraint=false]
+  typeR -> subdevice -> dot -> channel -> options
+  options -> E [minlen=2]
+
+  S -> typeL
+  typeR -> dot
+  subdevice -> options
+
+  S [shape = doublecircle]
+  E [shape = doublecircle]
+
+  typeL [shape = doublecircle, label=""]
+  typeR [shape = doublecircle, label=""]
+  options [shape = doublecircle, label=""]
+
+  colon [shape = box, label=":"]
+  dot [shape = box, label="."]
+  under [shape = box, label="_"]
+  slash [shape = box, label="/"]
+
+  I [shape = box]
+  O [shape = box]
+  Q [shape = box]
+  N [shape = box]
+  U [shape = box]
+  X [shape = box]
+  Y [shape = box]
+
+  typeL -> I -> typeR
+  typeL -> O -> typeR
+  typeL -> Q -> typeR
+  typeL -> N -> typeR
+  typeL -> U -> typeR
+  typeL -> X -> typeR
+  typeL -> Y -> typeR
+
+  options -> under -> aref -> options
+  options -> slash -> range -> options
+
+}

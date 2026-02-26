@@ -1,0 +1,57 @@
+
+
+
+PLC_PARPORT(4)            Special files            PLC_PARPORT(4)
+
+
+NNAAMMEE
+       plc_parport - passthrough parallel port devices
+                     (used by the MatPLC)
+
+SSYYNNOOPPSSIISS
+
+CCOONNFFIIGGUURRAATTIIOONN
+       ppllcc__ppaarrppoorrtt[0-2] are  character devices  for direct access
+       to the  parallel port;  they  have a major number  240 and
+       minor  numbers  0-2. Usually  they have  mode 666  and are
+       owned by root and group root.
+       If the driver  is built into  the kernel, it may be confi-
+       gured using:
+       plc_parport={parportx | none}[, ...]
+       Where the  minor number(s) will be bound to the correspon-
+       ding parport. Ex.:
+       plc_parport=parport0,none,parport1
+       will bind  minor number  0 to parport0,  leave minor 1 un-
+       bound, and bind minor number 2 to parport1.
+       If the driver is loaded as a module, similar functionality
+       is available  using module  parameters. The  equivalent to 
+       the above would be:
+       # insmod plc_parport parport=0,none,1
+
+       Writing to a device  controlled by  this driver will write
+       the bytes directly to the  parallel port. Reading from the
+       device  will read  directly  from the  parallel  port. The
+       byte in position 0 of the  virtual file is mapped onto the 
+       D register, while bytes 1 and 2 are  mapped onto the S and
+       C registers respectively.
+
+DDEESSCCRRIIPPTTIIOONN
+       No iiooccttll(2) calls are supported as yet.
+
+FFIILLEESS
+       /dev/plc_parport*
+
+AAUUTTHHOORRSS
+       The plc_parport driver was written by Mario de Sousa.
+
+SSEEEE AALLSSOO
+       mmkknnoodd(1), cchhoowwnn(1), cchhmmoodd(1)
+
+
+
+
+
+
+                         November 23, 2000                      1
+
+

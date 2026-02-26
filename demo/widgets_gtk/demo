@@ -1,0 +1,4 @@
+#!/bin/sh
+make ready
+../../tools/run/matplc -s
+../../tools/run/matplc -g

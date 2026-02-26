@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>MAT manual - config</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../general/concept/points.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/plc.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Config</h1>
+
+<p>The config file is traditionally called <code>matplc.conf</code> (though
+you can give it any name you like). It determines what modules are running
+and any tuning parameters the modules require as well as configuring the
+MatPLC core, its global memory map and the like.
+
+<p>As such, the <code>matplc.conf</code> file is effectively the `main'
+file in any installation: all options and settings are either in this file,
+or in some file it specifies.
+
+<p>The <a href="../../tools/config/intro.html">Configuration Editor</a>
+will be the easiest way to create and edit <code>matplc.conf</code>, once
+it is finished. For now, you will still have to do at least some editing
+with a text editor.
+
+<h2>Example</h2>
+
+There's an example config file in the <a
+href="../../appendix/matplc.conf.html">Appendix</a>. It may be useful to
+refer to it while reading this section.
+
+<h2>Syntax</h2>
+
+The config file is read line by line: for the most part, each line is
+interpreted separately, without regard to what's on the previous or
+following lines, with the exception of sections.
+
+<p>Lines that begin with <code>#</code> are comments, and are ignored.
+Comments may also be placed on the end of a line. To put a <code>#</code>
+into a value, enclose the whole value with quote marks, <code>"</code>
+
+<p>Quote marks may generally be used to enclose things that otherwise
+wouldn't be allowed in a value, like spaces or similar. Quotes may be
+included as <code>\"</code> and backslashes must then be <code>\\</code>
+
+<h3>First line</h3>
+
+We plan that in the future it'll be possible to make the config files
+executable scripts. This will be indicated on the first line with the usual
+<code>#!</code> magic. As far as the MatPLC itself is concerned, that's
+just a comment.
+
+<h3>Sections</h3>
+
+The config is divided into sections. There are two kinds of section names:
+one is simply prescribed, at present there's only one of those, named
+<code>PLC</code>. In addition, when a module is started, it is always given
+a name, and this name is used as the config section to retrieve all
+settings. In this way, two modules of the same kind (for instance two
+Modbus modules, to run on different serial ports) can be started at once
+without interfering with one another by giving them different names.
+
+<p>Sections are indicated in two ways: <ul><li>using a
+<code>[<em>section</em>]</code> header on its own line, which gives the
+section for the following lines up to the next
+<code>[<em>section</em>]</code> or the end of the file, or <li>by putting a
+<code><em>section</em>:</code> prefix on the beginning of a line, which
+overrides the section only for this line. The next line is back to the
+section indicated by the last <code>[<em>section</em>]</code>, unless it
+has its own prefix.</ul> Sections may be freely switched throughout the
+config files; the MatPLC sorts them out as it reads it from disk.
+
+<h3>Single values</h3>
+
+Single values are set in the config using the syntax:
+<blockquote><code><em>name</em> = <em>value</em></code></blockquote> In
+each section, each setting can only be given once, because it doesn't make
+sense to have two different settings for the same option. (Technically, it
+can be repeated, but only if they all have exactly the same value.)
+
+<h3>Tables</h3>
+
+Multiple values, known as "tables", are set using the syntax:
+<blockquote>
+<code><em>name</em> <em>value</em> <em>value</em>...<br>
+<em>name</em> <em>value</em> <em>value</em>...<br>
+...
+</code></blockquote>
+These may be interspersed with other settings and tables, even in separate
+pieces of a section or different files. When the config is read in, all the
+pieces of each table are joined together exactly as though it was given in
+one place.
+
+<p>Note that the first value in each row must start with an alphanumeric;
+if you need to start it with a punctuation symbol, enclose it in quotes.
+This is because the MatPLC needs to be able to distinguish tables from
+single values and so on.
+
+<h3>File inclusion</h3>
+
+Other files may be included in the config using the syntax
+<blockquote><code>*include <em>filename</em></code></blockquote> This
+allows one to separate the config into various logical pieces, for instance
+by module, or to have various configurations of options with common pieces
+being in common files.
+
+<p>The included files may themselves <code>*include</code> others, and so
+on. Even circular <code>*include</code>s are supported and handled
+sensibly: each file will only be read once.
+
+Shell expansion is also done, so <code><em>filename</em></code> may include
+wildcards, environment variable substitution, and so on (however, backticks
+are not allowed).
+
+<p>Sections do not continue from one file to another: each file must take
+care of its own sections. In effect, this basically means that each file
+must start with a <code>[<em>section</em>]</code> header, possibly after
+some comments.
+
+<p>
+<!--autolink--><a href="../../general/concept/points.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/plc.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:10 $</small>
+</body>
+</html>

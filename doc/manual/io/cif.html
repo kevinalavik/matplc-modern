@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>MAT CIF IO manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../io/abel.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/comedi.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>CIF I/O</h1>
+
+<h2>Introduction</h2>
+
+This MAT module, together with the corresponding kernel module (device
+driver), interfaces with CIF I/O cards.
+
+<p>These cards support the following networks and protocols (in
+alphabetical order): ASi, CANopen, ControlNet, DeviceNet, Interbus, ModBus
+Plus, PROFIBUS and Sercos.
+
+Hilscher implements the protocol and pays the license in their firmware.
+By using this as the interface to the bus, we can still use <a
+href="../appendix/gpl.html">GPL</a>-able code to talk to the firmware on
+the card and out through the network.
+
+<h2>Download note</h2>
+
+The CIF kernel driver is not included in some of the downloads, for
+instance the weekly tarball, because of its size. If you plan to use this
+module, make sure that you download a version which includes it.
+
+<h2>Mapping</h2>
+
+<p>The &lt;io_addr&gt; column of the map is a simple <em>offset.bit</em>
+format. The <em>offset</em> ranges from 0 to the process image size, and
+the <em>bit</em> ranges from 0 to 7.
+
+<p>Numbers may be given in decimal (58) or hexadecimal (0x3A). The
+<em>.bit</em> part may be omitted.
+
+<p>MatPLC points larger than 1 bit will be mapped starting at the given
+&lt;offset&gt;.&lt;bit&gt; location, and carry on from there. Note that
+this means that the data of a matplc point may also fall onto the
+subsequent bytes of the process image, if required.
+
+<p>Examples:
+<dl>
+
+<dt><code>map out 0.0 a_mat_1bit_point</code>
+<dd>the mat point will only fall on 0.0</p>
+
+<dt><code>map out 1.0 a_mat_16bit_point</code>
+<dd>the mat point will fall on 1.0 to 2.7</p>
+
+<dt><code>map out 3.0 a_mat_32bit_point</code>
+<dd>the mat point will fall on 3.0 to 6.7</p>
+
+<dt><code>map out 10.4 a_mat_8bit_point</code>
+<dd>the mat point will fall on 10.4 to 11.3</p>
+
+<dt><code>map out 20.6 a_mat_32bit_point</code>
+<dd>the mat point will fall on 20.6 to 24.5
+
+</dl>
+
+<h2>Configuration</h2>
+
+<dl>
+
+<dt><code>BoardID</code><dd>The CIF card BoardId. This is the ID the kernel
+module uses to identify the card we want to use.
+
+<p>The CIF module of the MatPLC does not directly access the CIF card. It
+does so through a kernel module (i.e. a device driver) specific for CIF
+cards. When this module is loaded, it finds every PCI based CIF card
+automatically. Cards on the ISA bus have to be explicitly specified on the
+command line when the device driver is loaded. Each card that the device
+driver can correctly access is given a unique number from 0..3. Since this
+module uses the device driver to control the CIF card, what the module
+needs is the number the device driver gave the CIF card.
+
+<p>Defaults to 0</p>
+
+<dt><code>DPMsize</code><dd>The DPM (Dual Port Memory) Size, in kBytes.
+
+<p>This is the size of the DPM on the card the module will be using.
+Actually this parameter is not very important, this is basically just to
+allow the CIF mofule to verify at configuration time if any plc point will
+be mapped onto an offset that falls outside the card's process image. The
+In and Out process images are disjoint, and do not overlap.  The size (in
+bytes) of each process image depends on the DPM size (in kBytes) and is
+given by: ((DPMsize * 1024) - 1024) / 2 
+
+<p>At runtime the module will verify if the card that it is using really
+does have a DPM the size the user says it should have.
+
+<P>Defaults to 8. Other possible value seems to be 2 (kBytes).</p>
+
+<dt><code>timeout</code><dd>Maximum timeout when trying to access the CIF
+card. Value is interpreted as ms, 0 means no timeout. Default is 100 (ms).
+
+</dl>
+
+
+<p>
+<!--autolink--><a href="../io/abel.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/comedi.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:10 $</small>
+</html>

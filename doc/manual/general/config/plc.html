@@ -1,0 +1,316 @@
+<HTML>
+<head>
+<title>MAT manual - config - PLC section</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../general/config/intro.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/common.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Config - PLC section</h2>
+
+The <code>[PLC]</code> section of the config is used to configure
+parameters related to the core which have to be the same in all the
+modules. Some other core-related parameters are module specific, and must
+be specified under those modules' sections - see the <a
+href="common.html">Common configuration</a> chapter.
+
+<h3>Module and point tables</h3>
+
+Almost every application will have to specify at the <code>module</code>
+and <code>point</code> tables. They are central to the functioning of the
+MatPLC.
+
+<dl>
+
+  <dt><code>module</code>
+
+    <dd>The <code>module</code> table defines which modules should be
+    started by the <a href="../../tools/matplc.html">matplc</a> program
+    when it's told to start up the MatPLC. See the <a
+    href="../concept/modules.html">modules chapter</a> for explanation of
+    modules.
+
+    <p>syntax: <br><code>module &lt;name&gt; &lt;file&gt; [&lt;options&gt;
+    ...]</code>
+
+  <p>where: <dl>
+
+    <dt><code>name</code> <dd>the name of the module. This name will be used
+    in sections, module synchronisation, etc...
+
+    <dt><code>file</code> <dd>the program that will be executed.
+
+    <dt><code>options</code> <dd>other command line options that need to pe
+    passed to the program.
+
+  </dl></p>
+
+  <dt><code>point</code>
+
+    <dd>The <code>point</code> table defines the named points in the plc.
+    See the <a href="../concept/points.html">points chapter</a> for
+    explanation of points.
+
+    <p>syntax:<br><code>point &lt;name&gt; &lt;full name&gt; &lt;owner&gt; [at
+    &lt;offset&gt;[.&lt;bit&gt;]] [[i|u|f]&lt;length&gt;] [init
+    &lt;init_val&gt;]</code>
+
+    <p>where:
+      <dl>
+
+      <dt><code>name</code> <dd>Name used to refer to the point throughout
+      the matPLC
+
+      <dt><code>full name</code> <dd>More extensive description of the
+      point. Currently, this is not used for anything; however, a
+      diagnostic tool could use it to describe points to the operator.
+      <!-- This information is not loaded into the confmap of the plc. -->
+
+      <dt><code>owner</code> <dd>Name of the module with write permission
+      on the point - that is, the module that is allowed to change it.
+
+      <dt><code>at</code> <dd>the word 'at'. This indicates that the
+      optional <code>&lt;offset&gt;</code> or
+      <code>&lt;offset&gt;.&lt;bit&gt;</code> specification follows.
+      Usually, this will be omitted and the MatPLC will allocate a slot for
+      the point automatically.
+      <dl>
+
+	<dt><code>offset</code> <dd>the word in the globalmap to be used
+
+	<dt><code>bit</code> <dd>the bit, in the word, that holds the
+	point. If <code>offset</code> is specified, but not
+	<code>bit</code>, <code>bit</code> defaults to 0. Note that a point
+	must not overflow onto the next offset position (i.e.
+	<code>bit</code> + <code>length</code>) &lt;= 32).
+
+      </dl>
+
+      <dt><code>i | u | f</code> <dd>one of the letters 'i', 'u' or 'f'.
+      These are used to specify the type of the data in the plc
+      point:<table border>
+
+      <tr><td><code>i</code><td>Signed integer, that is, whole numbers both
+      negative and positive.
+      <tr><td><code>u</code><td>Unsigned integer, that is, whole numbers
+      from zero up (no negative numbers).
+      <tr><td><code>f</code><td>Floating point; this really only makes
+      sense with 32-bit points, otherwise known as <code>f32</code>.
+      Floating point numbers use the standard IEEE representation.
+
+      </table>
+
+      <p>The type specification is optional. There is no default; if the
+      type is not specified, it is treated as unknown.
+
+      <p>At the moment this is only used by the MatPLC code to figure out
+      how to interpret the initial value of the point when parsing the
+      <code>init</code> parameter. If the type is unknown, autodetection is
+      attempted (as described below).
+
+      <dt><code>length</code> <dd>the size in bits of the point. The length
+      is optional, defaulting to: <ul> <li>1 bit normally, <li>32 bits if
+      <code>at &lt;offset&gt;</code> is used, and <li>1 bit if <code>at
+      &lt;offset&gt;.&lt;bit&gt;</code> is used.</ul>
+
+      <dt><code>init</code> <dd>the word 'init', indicating that the
+      optional initial value follows. If it is omitted, the initial value
+      will be 0 (off).<dl>
+
+	<dt><code>init_val</code> <dd>the initial value of the plc point.
+	Interpreted according to the <code>i | u | f</code> specification;
+	if the <code>i | u | f</code> is omitted, the initial value will be
+	interpreted as follows: <ul>
+
+	  <li>if it contains a decimal point (e.g. <code>1.1</code>) or an
+	  exponent (e.g. <code>1e9</code>), it will be taken as a a 32 bit
+	  float (<code>f32</code>);
+
+	  <li>otherwise, if it has a leading '+' or '-' character, it will
+	  be interpreted as a <code>length</code>-bit signed integer
+	  (<code>i</code>);
+
+	  <li>ohterwise, the value will be interpreted as a
+	  <code>length</code>-bit unsigned integer (<code>u</code>).
+
+	</ul>
+
+	Only 32 bit floats, integers or unsigned integers are currently
+	supported; however, shorter integers convert correctly.
+
+      </dl>
+    </dl></p>
+</dl>
+
+<h3>Point alias table</h3>
+
+The <code>point_alias</code> table defines aliases to the named
+points. It is optional - in many applications, there will be no need
+for aliases.
+
+<p>As far as the rest of the MatPLC is concerned, a point alias is
+exactly the same as a point. Aliases can be used for two purposes: <ol>
+<li>to have one point referred to by two names, and <li>to have one
+point refer to particular bit(s) of another. </ol>
+
+<p>syntax:
+<br><code>point_alias &lt;name&gt; &lt;full name&gt; &lt;orig_pt&gt;
+[&lt;bit&gt; [&lt;length&gt;]]</code>
+
+<p>where: <dl>
+
+  <dt><code>name</code> <dd>Name used to refer to the point alias
+  throughout the MatPLC.
+
+  <dt><code>full name</code> <dd>More extensive description of the
+  point alias - as for a normal point.
+
+  <dt><code>orig_pt</code> <dd>The name of the original point.
+
+  <dt><code>bit</code> <dd>The first bit of the original point that
+  this alias will reference. This is optional - by default, the alias
+  refers to the whole original point.
+
+  <dt><code>length</code> <dd>the size in bits of the alias point. The
+  alias must not overflow outside the original point, so that
+  <code>bit</code> + <code>length</code> &lt;= (length of
+  <code>orig_pt</code> point). The <code>length</code> is optional; if
+  <code>bit</code> is specified but <code>length</code> is not, the
+  alias will refer to that single bit (that is, <code>length</code>=1).
+  If neither is specified, the alias refers to the whole original
+  point.
+
+</dl>
+
+The owner and initial value are specified on the original point; they don't
+need to be set here.
+
+
+<h3>Single values</h3>
+
+All of these settings have reasonable defaults which will work for the vast
+majority of applications. <!-- Usually, you will only change them when the
+MatPLC compains that it's running out of config or gmm memory space (these
+are configured here), or when you need to run two MatPLCs on the same
+computer. -->
+
+<dl>
+
+  <dt><code>magic_bit_aliases</code>
+
+    <dd>This is a feature to simplify access to individual bits of
+    multi-bit points. By default it is off, to reduce confusion, but it can
+    be activated by setting it to 1. When active, any time you have a point
+    called <code>foo</code>, it will create aliases <code>foo.0</code>,
+    <code>foo.1</code> and so on up to the length of the point.
+
+    <p>This setting can also appear in the section of a particular module,
+    creating the bit aliases only for that module.
+
+  <dt><code>max_modules</code>
+
+    <dd>The maximum number of simultaneously active modules the MatPLC will
+    ever have.
+
+    <p>If this parameter is not specified, a default value <!--
+    STATE_MMC_DEF --> (currently 20) is used. Valid values are non-negative
+    integers. <!-- 0..MMC_MAX. MMC_MAX --> The allowable maximum depends on
+    the operating system currently being used and the number of places in
+    the synchronisation Petri Net (see the <a href="synch.html">synch
+    chapter</a>). For example, on a typical linux the total of
+    <code>max_modules</code>  plus number of places may be 250 maximum.
+    
+
+  <dt><code>confmap_key</code>
+
+    <dd>The key to use for the confmap shared memory. This is actually the
+    same parameter configured through --PLCplc_id=xxx. The command line
+    argument takes precedence over the value configured in this file. 
+
+    <p>If this parameter is not specified either way, the default value
+    <!-- DEF_CONFMAP_KEY --> (currenty = 23) is used.  Valid values are
+    positive integers or 0. If 0 is specified, then a random key is chosen.
+
+  <dt><code>confsem_key</code>
+
+    <dd>The id of the sempahore set used by the CMM.
+			
+    <p>If no value is specified, then the default <!-- GMM_DEF_SEM_KEY -->
+    is used (currently 0). Valid values are positive integers or 0. If 0 is
+    specified, then a random key is chosen.
+
+  <dt><code>confmap_size</code>
+
+    <dd>The size of the confmap given in bytes.
+
+    <p>If this value is left unspecified, the default value <!--
+    CMM_DEF_CONFMAP_PG --> (currently 8*1024) is used. 
+
+  <dt><code>globalmap_key</code>
+
+    <dd>The key to use for the globalmap shared memory segment.
+    
+    <p>If no value is specified, then the default <!-- DEF_GLOBALMAP_KEY
+    --> is used (currently 0). Valid values are positive integers or 0. If 0 is
+    specified, then a random key is chosen.
+
+  <dt><code>globalsem_key</code>
+
+    <dd>The key to use for the globalmap semaphore set used by the GMM.
+
+    <p>If no value is specified, then the default <!-- DEF_SEM_KEY --> is
+    used (currently 0). Valid values are positive integers or 0. If 0 is
+    specified, then a random key is chosen.
+
+  <dt><code>globalmap_size</code>
+
+    <dd>The size of the globalmap given in bytes.
+
+    <p>If this value is left unspecified, the default value <!--
+    GMM_DEF_CONFMAP_PG --> (currently 8*1024) is used.
+
+  <dt><code>synchsem_key</code>
+
+    <dd>The id of the sempahore set used by the SYNCH sub-system.
+
+    <p>If no value is specified, then the default <!-- DEF_SYNCH_SEM_KEY
+    --> is used (currently 0). Valid values are positive integers or 0. If
+    0 is specified, then a random key is chosen.
+
+</dl>
+
+<h3>Synch and Real-time</h3>
+
+Some of the synch config and real-time config are also in the PLC section;
+they are covered in the <a href="synch.html">Synch chapter</a> and <a
+href="rt.html">RT chapter</a> respectively.
+
+
+
+<h3>Examples</h3>
+
+Example 1: Absolute Minimum Configuration
+
+<pre>
+<font color="#CC0000">[PLC]</font>
+# we need some points:
+<font color="#CC0000">point P1  "full name 1" module1       </font># 1-bit point
+<font color="#CC0000">point P2  "full name 2" module1   5   </font># 5-bit point
+<font color="#CC0000">point P3  "full name 3" module2  32   </font># 32-bit point
+
+<font color="#CC0000">[PLC]</font>
+# We also need some module to execute:
+<font color="#CC0000">module module1 /matplc/logic/...</font>
+<font color="#CC0000">module module2 /matplc/logic/...</font>
+
+<font color="#CC0000">[module1]</font>
+# Here go the module-specific configurations for module1
+
+<font color="#CC0000">[module2]</font>
+# Here go the module-specific configurations for module2
+</pre>
+
+<p>
+<!--autolink--><a href="../../general/config/intro.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/common.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/05/23 09:47:13 $</small>
+</body>
+</html>

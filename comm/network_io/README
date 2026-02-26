@@ -1,0 +1,15 @@
+README - Last Update: January 15, 2001
+
+
+INTRODUCTION:
+This is a driver for TCP/IP network connections. It has been written to pass strings as a message oriented IO. The drivers communicates using the standard found in the documents section. It can act in either a server (Listener) or client (talker).
+
+
+ARGUMENTS:
+None
+
+
+EXAMPLE OF USE:
+The source code found in logic/echo_io will illustrate a simple client to use this driver.
+The standards page addresses the methods for interfacing to this and similar drivers.
+

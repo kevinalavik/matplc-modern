@@ -1,0 +1,20 @@
+digraph G {
+  g [label="global\nmap"];
+  subgraph cluster_m1 {
+    label = "module 1";
+    p1 [label = "private\nmap"];
+    color=black;
+  }
+  subgraph cluster_m2 {
+    label = "module 2";
+    p2 [label = "private\nmap"];
+  }
+  subgraph cluster_m3 {
+    label = "module 3";
+    p3 [label = "private\nmap"];
+  }
+  edge [arrowhead = vee, arrowtail = vee];
+  g -> p1;
+  g -> p2;
+  g -> p3;
+}

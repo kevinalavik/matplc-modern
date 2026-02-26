@@ -1,0 +1,529 @@
+<html>
+<head>
+<title>HMI-GTK manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../logic/orocos.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../mmi/curses.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>HMI GTK</h1>
+
+<h2><img src="http://www.ace-lab.com/jorozco/heater_ss.jpg" align="right"
+alt="[screenshot]">Preamble</h2>
+
+<p>This module is (c) 2001 Juan Carlos Orozco and is distributed under the
+GPL license.
+
+<h2>Introduction</h2>
+
+<p>The purpose of this module is to build a GUI (operator screen) to read
+and write MatPLC points.
+
+<p>The Glade program is used to build the screen.
+
+<p>In a few words, the HMI GTK module works as follows: Glade generates a
+<code>.glade</code> file (an XML file representing the GUI). HMI GTK module
+reads and interprets this <code>.glade</code> file and uses a naming
+convention to connect widgets with the MatPLC points.
+
+<h2>Naming of Widgets</h2>
+
+<p>The widgets are connected to the MatPLC points by giving them special
+names. The easiest way to construct these names is using the
+<code>widgetnamer</code> wizard.
+
+<h3>Using widgetnamer</h3>
+
+When <code>widgetnamer</code> starts, it will pop up a dialog box. Fill in
+the details as follows:
+
+<table>
+
+<tr><td valign="top"><code>point</code></td><td valign="top">The MATPLC
+point that should be connected to this widget.</td></tr> 
+
+<tr><td valign="top"><code>widget number</code></td><td
+valign="top">Normally, this will be 0. If you want several widgets showing
+the same point, you need to number them 0, 1, 2 etc</code></td></tr> 
+
+<tr><td valign="top"><code>type</code></td><td valign="top">The type of
+point to which we are connecting. For coils, this will be bool (on/off),
+for registers you have to check what type they are and pick appropriately.
+All the points used by DSP are f32 (floating-point
+number).</code></td></tr> 
+
+<tr><td valign="top"><code>parameter 1</code></td><td valign="top">This has
+different meanings depending on the type. For instance, for the bool type
+this will be the ON text or image.</code></td></tr> 
+
+<tr><td valign="top"><code>parameter 2</code></td><td valign="top">This has
+different meanings depending on the type. For instance, for the bool type
+this will be the OFF text or image.</td></tr> 
+
+</table>
+
+Note that for image names, no extension is required - a .xpm is added
+automatically.
+
+<p>Once you have filled it in, click the "Select" button (or press Enter
+in one of the text fields), then use the middle button to paste the name
+into glade. The entries can be cleared with the "Clear" button, or you can
+simply edit them to get the next widget name.
+
+<h3>Explanation of the widget names</h3>
+
+<p>The names are put together as follows:
+
+<br><code>_pointname[.number[.type][.parameter1[.parameter2]]]</code>
+
+<p>The <code>number</code> field is needed because every widget in a window
+must have a unique name. <code>type</code> can be bool, i32, i16, i8, u32,
+u16, u8 or f32. The default type is bool.
+
+<p>Example:
+<code>_left.0.bool.on.off</code>
+
+<p>This can be the name of a LabelWidget that will be displaying "on" or
+"off" depending on the state of the point named "left" at the matplc.conf
+file.
+
+<h2>Kinds of widgets</h2>
+
+<p>The widgets that are currently supported are:
+
+<dl>
+<dt>GtkLabel (Output)
+<dd>	Supports all types.
+<br>	param1 = on text message.
+<br>	param2 = off text message.
+
+<dt>GtkProgressBar (Output)
+<dd>	Supports f32.
+<dd>	Range is limited by the widget settings.
+
+<dt>GnomePixmap (Output)
+<dd>	Supports all types.
+<br>	param1 = on bitmap filename (.xpm extension is automatically added)
+<br>	param2 = off bitmap filename (.xpm extension is automatically added)
+
+<dt>GtkPlotCanvas (Output)
+<dd>	Supports f32.
+<br>	Additional information: see below
+
+<dt>GtkToggleButton (Input)
+<dd>	Supports bool type.
+<br>	Add Signal: toggled, Handler: update_value
+
+<dt>GtkRadioButton (Input)
+<dd>	Supports bool type.
+<br>	Add Signal: toggled, Handler: update_value
+<br>	Set the same Group-ID (eg. radio) to all connected Radio-Button's.
+
+<dt>GtkCheckButton (Input)
+<dd>	Supports bool type.
+<br>	Add Signal: toggled, Handler: update_value
+
+<dt>GtkButton (Input)
+<dd>	Supports bool type.
+<br>	Add signal: pressed, Handler: update_value
+<br>	Add signal: released, Handler: reset_value
+<br>	Note: One can make special set or reset buttons by just adding
+<br>		the pressed or released signal respectively.
+
+<dt>GtkEntry (Input)
+<dd>	Supports all types.
+<br>	Add Signal: activate or changed, Handler: update_value
+
+<dt>GtkHScale and GtkVScale (Input)
+<dd>	Supports f32, u32, u16, u8, i32, i16 and i8.
+<br>	Add Signal: button-release-event, Handler: update_value
+
+<dt>GtkSpinButton (Input)
+<dd>	Supports f32, u32, u16, u8, i32, i16 and i8.
+<br>	Add Signal: changed, Handler: update_value
+
+<dt>GtkOptionMenu (Input)
+<dd>	Supports i32.
+<br>	Add only one dummy-Item to the Itemlist eg. "---".
+
+<dt>GtkSocket (External)
+<dd>	Supports u32.
+<br>	Point gets XID of the socket window.
+<br>	With this XID you can plug from an external module.
+
+</dl>
+
+<br><b>Please take a look to demo/widgets_gtk how to use the widgets.</b>
+
+
+<h2>Odds and ends</h2>
+
+<p>In order for input widgets to work one must add a signal with handler =
+update_value.
+
+<p>In order to be able to write variables, they should be assigned to this
+module in the matplc.conf file. The default module name for the HMI module
+is hmi_gtk. 
+
+<p>One can place other widgets and they won't interfere with MatPLC as
+long as their names don't start with an underscore "_".
+
+
+<h2>Putting it all together</h2>
+
+<p>The suggested way of building a project is to create a project in glade
+named hmi_gtk. Then add a Gnome Application Window found on the Gnome
+palette. Delete unwanted menu options and toolbar options. The about menu
+option will automatically display this project credits. One can add widgets
+to this window and connect widgets to the MatPLC by following the
+previously described naming convention.
+
+<p>Closing main window with delete_event (from window-manager, e.g. X-Button): <br>
+The main window (app1) must connect the signal "delete_event" with
+the quit_handler. The quit_handler (when called by "delete_event")
+sets the point "quit_app1". <br>
+In matplc.conf you have to <ol>
+                               <li>create the point "quit_app1"</li>
+                               <li>assign the point "quit_app1" to plcshutdown.</li>
+                           </ol>
+
+<p>To build a multi window project one can then add normal Window Widgets
+found on the GTK+ basic palette of Glade. To open this additional windows we
+need to link a signal from a button, toolbar button or menu option. There
+are two ways to link windows to widgets (i.e. button):
+
+<p>One way is to use the 10 predefined names for windows,
+window1 to window10, each one with a predefined Handler
+function run_window1 to run_window10. When opening a window from a menu
+option this is the only way to call windows one just need to add the
+corresponding Handler name to the menu option (i.e. Handler: run_window5).
+This limits the number of additional windows to call from the menu options
+to this 10 predefined ones.
+
+<p>There is an alternative way of calling a window that can be used by
+other Widgets like the button widget. This method uses a common handler
+called run_window, this handler expects a window name in the Data parameter
+of the signal. This method does not impose a limit on the number of windows
+that the project can open. One could also call the predefined windows from
+this widgets by adding the window handler to the corresponding signal.
+
+<p>Example of connecting a button widget to a window.
+<ul><li>In the Signals tab of the button properties window write:
+<table>
+<tr><td>Signal:</td><td>clicked</td></tr>
+<tr><td>Handler:</td><td>run_window</td></tr>
+<tr><td>Data:</td><td>WindowName  (This has to be the name of the window in
+Glade)</td></tr>
+</table>
+<li>Then type Add.
+</ul>
+
+<p>Because of performance concerns, there is a feature in the program that
+only allows one version of each window to be open at one time.
+
+<p><strong>FIXME</strong>: How to close windows? <tt>ikeya</tt> wrote on
+the mailing list: "<i>... should use delet_event call back.</i>"
+
+<p>When saving the project from glade we will get a hmi_gtk.glade file,
+this file is what the HMI_GTK module uses to run the graphical HMI.
+
+<h2>GnomePixmap Widget</h2>
+With the GnomePixmap-widget you can display pictures in xpm-format according
+to the value of the associated plc-point.
+<p>There are two ways to pass the xpm-file filenames to hmi_gtk.
+<ol>
+	<li>As param1 and param2 of the widget-name.
+	<p>e.g. _abcd.0.bool.on.off
+	<p>plc-point = abcd, type = bool
+	<br>This will result in the behaviour:
+	<table border>
+	<tr><th>PLC-Point(s)</th><th>Value</th><th>Displayed Pixmap</th></tr>
+	<tr><td>abcd</td><td>== 0</td><td>off.xpm</td></tr>
+	<tr><td>abcd</td><td> > 0</td><td>on.xpm</td></tr>
+	</table>
+	</li>
+<br>
+	<li>Via definitions in matplc.conf under section [hmi_gtk]:
+	<p>Widget-name:
+	<p>e.g. _abcd.0.i32
+	<p>plc-point = abcd, type = i32
+	<pre>
+[hmi_gtk]
+GnomePixmap widgetpattern pixmap1 pixmap2 ...
+	</pre>
+	The widgetpattern can be the name of the widget (without _) or a namepattern
+	with wildcards (similar to filename-match) included (e.g. LED* -> all widgets
+	starting with LED). Note: The last pattern match is used. So the order is
+	important. If you have one widget LEDerrorXYZ and many widgets starting with LED
+	you can do the job like this:
+	<pre>
+[hmi_gtk]
+#           widgetpattern   value 0     1      2      3
+GnomePixmap LED*                grey  green  yellow  red
+GnomePixmap LEDerrorXYZ          off  error
+	</pre>
+	This will result in the behaviour:
+	<table border>
+	<tr><th>PLC-Point(s)</th><th>Value</th><th>Displayed Pixmap</th></tr>
+	<tr><td>LEDerrorXYZ</td><td>== 0</td><td>off.xpm</td></tr>
+	<tr><td>LEDerrorXYZ</td><td> > 0</td><td>error.xpm</td></tr>
+	<tr><td>LED*</td><td> == 0</td><td>grey.xpm</td></tr>
+	<tr><td>LED*</td><td> == 1</td><td>green.xpm</td></tr>
+	<tr><td>LED*</td><td> == 2</td><td>yellow.xpm</td></tr>
+	<tr><td>LED*</td><td> == 3</td><td>red.xpm</td></tr>
+	</table>
+</ol>
+
+<h2>GtkLabel Widget</h2>
+With the GtkLabel-widget you can display the
+value of the associated plc-point.
+<p>There are two ways to define the format:
+<ol>
+	<li>the format is chosen automatically according to the type of the plc-point.
+	</li>
+<br>
+	<li>Via definitions in matplc.conf under section [hmi_gtk]:
+	<pre>
+[hmi_gtk]
+GtkLabel widgetpattern "format"
+	</pre>
+	The widgetpattern can be the name of the widget (without _) or a namepattern
+	with wildcards (similar to filename-match) included (e.g. abc* -> all widgets
+	starting with abc). Note: The last pattern match is used. So the order is
+	important. If you have one widget beltSpeed and many widgets ending with Speed
+	you can do the job like this:
+	<pre>
+[hmi_gtk]
+#           widgetpattern   format
+GtkLabel  "*Speed"        "%5.2f km/h"
+GtkLabel  beltSpeed       "%7.3f m/s"
+	</pre>
+        Note:
+<p>        If the widgetpattern starts with "*" you have to enclose it in "".
+<p>        For valid format-definitions see the printf() documentation.
+</ol>
+
+<h2>GtkPlotCanvas Widget</h2>
+
+With the GtkPlotCanvas-widget you can draw on an plotting field in two modes.<br>
+<img src="../../images/GtkPlotCanvas.png" alt="Example of GtkPlotCanvas" width=508 height=554 border=0>
+<p>How to create:
+<ol>
+  <li> Add a new "custom widget". </li>
+  <li> Widgetname as before with leading underline (e.g. _name) </li>
+  <li> Creation Function for the "custom widget" is "hmi_GtkPlotCanvas".</li>
+</ol>
+
+<p> Definitions in matplc.conf under section [hmi_gtk]:
+<pre>
+[hmi_gtk]
+#---------------------------------------------------------------------------------------------
+#		- command -	- param 1 -	- param 2 -	- param 3 -	- param 4 -
+#---------------------------------------------------------------------------------------------
+widgetname	plotctrl	startpoint 	stoppoint       resetpoint
+widgetname	channel		y1point		y2point
+widgetname	mode		timer/plotxy
+
+# in plotxy-mode required
+widgetname	plotx 		xpoint
+
+#[optional] Default-Values see below
+widgetname	widget		xsize   	ysize
+widgetname	title		title	        x-axis	        y-axis
+widgetname	axis		xmin		xmax	        ymin		ymax
+widgetname	timer 		scantime
+
+widgetname	color		bg              plot_bg         legend_bg
+widgetname	channelcolor	red
+widgetname	symboltype	star
+widgetname	symbolstyle	opaque
+widgetname	symbolsize	2
+widgetname 	linestyle	solid
+widgetname	linewidth	1
+widgetname	pointconnect	straight
+
+</pre>
+
+<p><u>Explanation of the commands</u>
+<p>[REQUIRED]:
+<ul>
+  <li> plotctrl:
+        <ol>
+           <li> The point which will start plotting </li>
+           <li> The point which will stop  plotting </li>
+           <li> The point which will reset plotting </li>
+        </ol>
+  </li>
+  <li> channel: Channel points limited to 20. Name of the point will be printed in legend.</li>
+  <li> mode: current there are two modes
+        <ol>
+           <li> timer-mode: The channels will be scanned every scantime (set by timer-command). The
+                x-coordinate will be the scantime.
+           </li>
+           <li> plotxy: You have to set x-/y-coordinates. Every time the x-coordinate changes
+                the next points (all channels) will be drawn. You can plot the points in any direction.
+           </li>
+        </ol>
+  </li>
+</ul>
+<p>[REQUIRED (plotxy-mode)]:
+<ul>
+  <li> plotx: x-point in plotxy-mode.
+  </li>
+</ul>
+<p>[OPTIONAL]:
+<ul>
+  <li> widget:
+        <ol>
+           <li> Horizontal size of the widget in points (Default: 600)</li>
+           <li> Vertical size of the widget in points   (Default: 600)</li>
+        </ol>
+  </li>
+  <li> title:
+        <ol>
+           <li> Title of the plot       (Default: "Title")</li>
+           <li> Titling of the x-axis   (Default: "x")</li>
+           <li> Titling of the y-axis   (Default: "y")</li>
+        </ol>
+  </li>
+  <li> axis:
+        <ol>
+           <li> Startvalue for xmin   (Default:  0)</li>
+           <li> Startvalue for xmax   (Default: 20)</li>
+           <li> Startvalue for ymin   (Default:  0)</li>
+           <li> Startvalue for ymax   (Default: 20)</li>
+        </ol>
+  </li>
+  <li> timer: Scantime in sec (timer-mode) (Default:  0.5)</li>
+  <li> color:
+        <ol>
+           <li> Background color of the widget     (Default:  "light blue")</li>
+           <li> Background color of the plotfield  (Default:  "lightyellow")</li>
+           <li> Background color of the legend     (Default:  "white")</li>
+        </ol>
+  </li>
+  <li><dl>
+    <dt>channelcolor:</dt>
+    <dd>Color of the channel   (Default:  "red" for all channels)
+        You can specify a color for each channel.</dd>
+  </dl></li>
+
+  <li><dl><dt>symboltype:</dt>
+  <dd>Symbol type of each channel (Default: "star")<br>
+       Possible entries: "none", "square", "circle", "up_triangle", "down_triangle",
+        "right_triangle", "left_triangle", "diamond", "plus", "cross", "star", "dot","impulse"
+  </dl></li>
+
+  <li><dl><dt>symbolstyle:</dt>
+        <dd>Symbol style of each channel (Default: "opaque")<br>
+       Possible entries: "empty", "filled", "opaque"
+  </dl></li>
+  <li><dl><dt>symbolsize:</dt>
+        <dd>Symbol size of each channel in points (Default: 2)
+  </dl></li>
+  <li><dl><dt>linestyle:</dt>
+        <dd>Line style of each channel (Default: "solid")<br>
+       Possible entries: "none", "solid", "dotted",	"dashed", "dot_dash", "dot_dot_dash", "dot_dash_dash"
+  </dl></li>
+  <li><dl><dt>linewidth:</dt>
+        <dd>Line width of each channel in points (Default: 1)
+  </dl></li>
+  <li><dl><dt>pointconnect:</dt>
+        <dd>Connection of the points of each channel (Default: "straight")<br>
+       Possible entries: "none", "straight", "spline", "hv_step", "vh_step", "middle_step"
+  </dl></li>
+</ul>
+
+<h2>GtkOptionMenu Widget</h2>
+With the GtkOptionMenu-widget you can choose one item from a list of items.
+<br>The Itemlist and the associated points will be defined in the matplc.conf.
+<br>Please refer to the demo/widget_gtk example on how to use this widget.
+<br>
+<br>Definitions in matplc.conf:
+<pre>
+[plc]
+point widgetname "" hmi_gtk i32
+point p1         "" hmi_gtk i32
+point p2         "" hmi_gtk i32
+
+[hmi_gtk]
+widgetname p1 "item1" "item2" ...
+widgetname p2 "item11" "item12" ...
+</pre>
+<br>widgetname: Name of the widget as defined in "glade" without leading undersore.
+<br>p1...pn: Points which will be set by hmi with the corresponding value.
+<br>
+<br>If you select item "item1" p1 will be set to 1, p2 is set to 0.
+<br>If you select item "item2" p1 will be set to 2, p2 is set to 0.
+<br>If you select item "item11" p2 will be set to 1, p1 is set to 0.
+<br>If you select item "item12" p2 will be set to 2, p1 is set to 0.
+<br>
+<br>If the dummy-item (on top of the List) is selected all points are set to 0.
+<br>
+<br><b>Example:</b>
+<pre>
+[plc]
+point  menu1    "Menu 1" hmi_gtk i32
+point  p1       " " hmi_gtk i32
+point  p2       " " hmi_gtk i32
+
+[hmi_gtk]
+# widget   point  value: 1        2             3
+menu1      p1     "choice1 p1" "choice2 p1"  "choice3 p1"
+menu1      p2     "choice1 p2" "choice2 p2"  "choice3 p2"
+</pre>
+
+<h2>GtkSocket Widget</h2>
+Together with GtkPlug, GtkSocket provides the ability to embed widgets
+from your own module into the hmi_gtk module in a fashion that is transparent
+to the user.
+<br>
+<p>How to create:
+<ol>
+  <li> Add a new "custom widget". </li>
+  <li> Widgetname as before with leading underline (e.g. _name) </li>
+  <li> Creation Function for the "custom widget" is "hmi_GtkSocket".</li>
+</ol>
+
+The hmi_gtk passes the XID of that widget to the given point.
+<br>In your module you have to plug to the GtkSocket with the XID and then you can insert everything you
+want into the plugged window.
+<br>Please refer to the demo/widget_gtk example on how to use this widget.
+<br><br><br><br>
+
+<h2>WARNING:</h2>
+
+<p>Due to a bug in glade 0.6.2 and earlier versions, the GnomePixmap scaled state is not saved. This
+will cause the *.glade configuration file to loose this information each
+time a change is saved. In this demo the following line was inserted
+manually for each scaled widget:
+
+<code>&lt;scaled&gt;True&lt;/scaled&gt;</code>
+
+<p>This simple bug makes working with scaled GnomePixmap images
+uncomfortable. From glade version 0.6.3 this bug was corrected, this
+new version could be downloaded from:
+
+ftp://ftp.gnome.org/pub/GNOME/stable/sources/glade/glade-0.6.3.tar.bz2
+ftp://ftp.gnome.org/pub/GNOME/stable/sources/glade/glade-0.6.3.tar.gz
+
+<p>Libglade does not recognise the scaled state either, therefore an
+interim solution was implemented in hmi_gtk.c module. The inconvenience is
+that the name of the pixmap has to be placed on the name of the widget
+using the following format:
+
+<code>.filename.ext_id</code>
+
+<p>The widget is actually scaled to the size of the widget and not using
+the scale factors of the GnomePixbuf.
+
+<!--
+<p>The progressbar widget also has a similar problem but with the ranges
+and factors of the progress bar, this limits the versatility of this widget
+to scale the incoming signal. Right now it is only possible to display a
+0.0 to 100.0 value using this widget.
+-->
+
+<p>
+<!--autolink--><a href="../logic/orocos.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../mmi/curses.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/10/11 13:35:45 $</small>
+</html>
+

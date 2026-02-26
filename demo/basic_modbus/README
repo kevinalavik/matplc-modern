@@ -1,0 +1,31 @@
+This is an adaptation of the simple light-chasing demo, that besides running
+the simple basic demo, also transfers the state of the 'lights' to a modbus
+slave.
+
+By default, it is configured to send to output bits 1, 2, 3 and 4, of RTU slave
+with id 0, on the /dev/ttyS1 serial port (9600 baud, no parity, 8 data bits,
+1 stop bit).
+
+
+To start:
+	cd demo/basic_modbus; make
+
+To quit:
+	press `Q' on the keyboard
+
+
+It's controlled from the keyboard (module Kbd, kbd.c): the keys L, R and Q
+on the keyboard toggle the three points `left', `right' and `quit'.
+
+The Chaser module (chaser.c) is a primitive `light chasing' program. The
+direction of movement can be changed using the `left' and `right' points;
+these are notionally push-buttons, but in this demo they are controlled by
+the L and R keys. The speed of the chaser can be configured with the
+"delay" setting in the "Chaser" section of matplc.conf
+
+The demo terminates when the `quit' point comes on (keyboard Q).
+
+
+Buglet:
+	- assumes a linux terminal (hard coded escape codes).
+

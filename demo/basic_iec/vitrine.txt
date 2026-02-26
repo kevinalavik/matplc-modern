@@ -1,0 +1,24 @@
+			       Light chaser
+			       ============
+
+				  Lights:
+
+				1  2  3  4
+
+			      
+				  Buttons
+
+				    <->
+
+   This is a simple light-chasing demo, controlled from the keyboard. By
+intention, this demo requires no hardware or setup - not even X or svgalib.
+ Unlike the basic demo that uses a c program to do the light chasing, this
+ version has the chaser written in ST or IL, which as then compiled by our
+              iec compiler into a MatPLC binary module.
+
+		       Controls (from the keyboard)
+		       ----------------------------
+      - L and R - toggle the `left' and `right' points. Remember to
+	toggle them off again before trying the other direction :-)
+      - Q - toggles the `quit' point, which terminates the demo.
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+
+	<memory>
+		<bit value="0" number="0" name="Y1" />
+		<bit value="0" number="0" name="X2" />
+		<bit value="0" number="0" name="X1" />
+		<bit value="0" number="0" name="start" />
+		<integer value="1075404136" name="C" />
+		<integer value="3" name="B" />
+		<integer value="1" name="A" />
+
+	</memory>
+
+	<io>
+
+	</io>
+
+	<program>
+		<ladder location="2">
+			<line instruction="SOR"></line>
+			<line instruction="XIO X1"></line>
+			<line instruction="XIC X2"></line>
+			<line instruction="OTE Y1"></line>
+			<line instruction="EOR"></line>
+			<line instruction="SOR"></line>
+			<line instruction="XIC start"></line>
+			<line instruction="ADD A B C"></line>
+			<line instruction="EOR"></line>
+			<line instruction="SOR"></line>
+			<line instruction="END"></line>
+			<line instruction="EOR"></line>
+		</ladder>
+
+	</program>
+
+</plc>

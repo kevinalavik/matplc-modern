@@ -1,0 +1,29 @@
+README - vitrine
+
+Last Update: April 16, 2002
+
+-------------------------------------------------------
+About:
+
+This is a simple text based HMI that will display PLC points on the screen. 
+
+-------------------------------------------------------
+Notes:
+
+	- this uses two files 'vitrine.txt' for a background, and 'vitrine.conf' for the mapping from the LPCL to screen items.
+	- if it doesn't exit normally the screen can be returned to normal with the 'reset' command.
+
+-------------------------------------------------------
+Bugs:
+	- none known
+
+-------------------------------------------------------
+Todo:
+
+	- don't have any ideas right now.
+
+-------------------------------------------------------
+History:
+
+(originally) Jiri and Mario - wrote it and got things working
+April 16, 2002 (Hugh Jack) - did some minor modifications to interface it to the handler library

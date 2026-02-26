@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>MAT manual - System Requirements</title>
+</head>
+<!--autolink--><a href=".."><img src="../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="general/readers.html"><img src="../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="index.html"><img src="../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="safety.html"><img src="../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>System Requirements</h1>
+
+Because of the high modularity of the MatPLC, you do not necessarily
+need all the software listed below. No-one will ever use all the modules;
+if you do not need a module, you do not need its requirements.
+
+<h2>Common requirements</h2>
+
+As well as a basic Linux system, compiling and running the MatPLC
+system requires a few additional packages.
+
+<p>When we make a binary release, we will list here the packages required to
+run that release.
+
+<p>To compile and run the MatPLC, you'll need gcc, libtool, make and
+the other usual packages involved in compiling - header files, linkers,
+etc.
+
+<p>In addition, you will almost certainly need the <em>console-tools
+development</em> package. The basic demo depends on this, and it's usually
+not installed by default.
+
+<p>Note: the libraries that come with <strong>Debian potato</strong> are
+<u>missing</u> some of the functions that we use. One workaround is to
+update parts of the system to <strong>Debian woody</strong>, which is the
+new version of Debian - download the new <code>libc6-dev</code> and
+whatever it depends on (let <code>apt</code> or <code>dselect</code> do it
+for you).
+
+<p>Perl is used in various places in the project; it's perhaps not strictly
+necessary, but it'll be a hassle going without.
+
+<h2>Module requirements</h2>
+
+These are the requirements of the individual modules.
+
+<dl>
+
+<dt>doc<dd>To convert the manual to ps and pdf formats, you will need
+html2ps, ghostscript, ps2pdf and preferably also the LaTeX hyphenation
+files. The lca-2002 talk requires full LaTeX and netpbm, but it can be
+downloaded off the webpage instead.</p>
+
+<dt>logic/iec<dd>flex, bison</p>
+
+<dt>mmi/curses<dd>curses</p>
+
+<dt>mmi/hmi_gtk<dd>glade (with gnome support) development, gtkextra
+library; the <code>widgetnamer</code>wizard also requires python (with
+gtk)</p>
+
+<dt>linuxkbd<dd>console-tools development (note that this module is used by
+the basic demo)</p> 
+
+<dt>io/comedi<dd>comedi library
+
+</dl>
+
+<h2>Summary</h2>
+
+This section will contain the lists of packages for various distributions,
+corresponding to the above requirements lists, which can simply be fed to
+the appropriate installation tool (for instance, to Debian's <code>apt-get
+install</code>).
+
+<p>At present, it's rather incomplete.
+
+<dl>
+
+<dt>Debian<dd><code>console-tools-dev libcomedi-dev libgnome-dev libglade-gnome0-dev libgtkextra-dev</code>
+
+</dl>
+
+<p>
+<!--autolink--><a href="general/readers.html"><img src="../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="index.html"><img src="../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="safety.html"><img src="../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:31:58 $</small>
+
+</html>

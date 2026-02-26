@@ -1,0 +1,24 @@
+README - ladder basic test
+
+Last Updates June 10, 2002
+
+------------------------------------------------------------------------
+About:
+
+This is an adaptation of the chaser demo using that handler library. 
+
+------------------------------------------------------------------------
+Notes:
+
+------------------------------------------------------------------------
+Todo:
+
+------------------------------------------------------------------------
+Bugs:
+
+------------------------------------------------------------------------
+History:
+
+(original) the demo was written as a ladder logic engine
+June 10, 2002 (Hugh Jack) - the program was converted to the handler
+

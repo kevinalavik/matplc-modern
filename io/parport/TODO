@@ -1,0 +1,9 @@
+* -> Done
+
+
+* 1 Add support for multi-bit matplc points. For example, allow a 4 bit
+    point to be mapped onto D0-D3 with the simple config line
+    map out matplc_4_bit_point D0
+
+    The code automatically finds the length of the matplc point and does
+    all the rest. At the moment it assumes all points are 1 bit long.

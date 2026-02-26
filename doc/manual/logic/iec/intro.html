@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+  <title>MAT manual - IEC ST/IL compiler - introduction</title>
+  <meta name="generator" content="txt2html v1.28">
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../logic/dsp.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../logic/il.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>IEC ST/IL compiler</h1>
+<h2>Introduction</h2>
+One of the tools provided with the MatPLC is a compiler for the IEC
+61131-3 IL and ST textual languages. Basically, this tool transforms a
+program written in ST and/or IL into C++ code that, when further
+compiled and linked to the MatPLC libraries, becomes a MatPLC module.
+<p> To write an ST or IL program, use a text editor and save the file
+with
+whatever name you wish. We sugest you use &lt;prog_name&gt;.st or
+&lt;prog_name&gt;.il as this is the convention that has been followed
+in the
+MatPLC demo directories. The IEC 61131-3 standard simply uses files
+names &lt;prog_name&gt;.txt in their examples, so you may want to use
+that
+instead.
+</p>
+<h2>Turning the ST/IL file into a module</h2>
+The compiler accepts as its only parameter the name of the file to be
+compiled, using stdin if no filename is given. The resulting C++ code
+is
+sent to stdout. <br>
+e.g.:<br>
+<code>$iec2cc oven.st &gt; oven.cc</code><br>
+or<br>
+<code>$cat oven.st | iec2cc &gt; oven.cc</code>
+<p>The resulting C++ code will need to be further compiled by a C++
+compiler. Note that it needs to include the standard
+<code>$MATPLC/lib/plc.h</code> header file, as well as
+<code>$MATPLC/logic/iec/stage4/generate_cc/plciec.h</code>
+</p>
+<p> Once compiled, the resulting object code will have to be linked
+with
+the standard matplc library <code>$MATPLC/lib/matplc.[so|a]</code>. We
+sugest that you use the working demo programs and makefiles in the
+<code>$MATPLC/demo/basic_iec</code> directory as a starting point.
+</p>
+<p> The resulting executable code may be run as any other MatPLC
+module,
+including all the standard --PLC&lt;plc_option&gt; command line
+switches.
+</p>
+<p></p>
+<h2>The ST and IL languages</h2>
+Currently this manual does not include any description of the ST and IL
+languages. Users not familiar with the IL and ST programming languages
+are
+invited to read a book on these languages.
+<p>A useful on-line reference is
+<a href="http://www.fen-net.de/karlheinz.john/Bookview.htm">IEC
+61131-3:
+Programming Industrial Automation Systems</a>.
+</p>
+<p>Note, however, that most books currently available on programming
+with
+the IL and ST languages refer to the first version of these languages,
+whereas the iec2cc compiler was built based on the 2nd verion of the
+standard. More precisely, the publicly available draft version of the
+standard, dated 10th december 2001, was used. </p>
+<h2>Current State of the IEC Compiler</h2>
+The iec2cc compiler as it stands is still very incomplete. It currently
+parses the complete syntax of the IL and ST languages, so any syntax
+errors in the program being compiled are caught early on. Nevertheless,
+error messages have not yet been written, so if the iec2cc compiler
+stops or simply runs into an infinite loop, this is because you have a
+syntax error somewhere in your IL/ST code.
+<p> Note however that not all syntax is yet suported when generating
+the
+equivalent C++ code. Aditionally, semantic checking is not yet
+performed, so most semantic errors (e.g. storing a TRUE value in a
+variable of type INT) in your programs will not be caught by the iec2cc
+compiler. Many semantic errors will nevertheless result in semantic
+errors in the resulting C++ code, so they will probably be caught later
+on by gcc, but this is not guaranteed.
+</p>
+<h2>Writing an IL/ST Program</h2>
+Writing a MatPLC module in IL and/or ST for the iec2cc compiler is a
+question of merely writing all the program organization units (i.e
+functions, function blocks, programs and configurations) you require.
+<p> However, only the first configuration will be used by the iec2cc
+compiler. Remaining configurations will simply be ignored. Currently,
+this configuration may only contain a single program attributed to a
+single task.
+</p>
+<p>For e.g.
+</p>
+<pre>CONFIGURATION config1<br>  VAR_GLOBAL<br>    varint : INT := 99;<br>    varreal : REAL := 99.9;<br>  END_VAR<br><br>  TASK t1(INTERVAL := t#20ms, PRIORITY := 2);<br>  PROGRAM foo WITH t1: PROG1(param1 := varint, param2 := varreal);<br>END_CONFIGURATION<br></pre>
+<p> This implies that at the moment you will be writing a single
+program
+type, since a single instance of a single program type is currently
+supported.
+</p>
+<p> The remaining functions and function blocks may be written in
+either ST
+or IL, as long as each function or function block uses a single
+language. The iec2cc compiler automatically distinguishes which
+language
+is being used.
+</p>
+<p> Before calling a function, and before a function block or program
+instance is defined, the referenced function/function block/program
+must
+be defined. This means that when you can call a function, or create a
+function block instance, that function or function block instance must
+appear earlier in the file being compiled.
+</p>
+<p> Note that your program may be divided into several files. A file
+may
+include another anywhere in the code using the syntax:
+<code>(*#include "&lt;filename&gt;"*)</code>
+</p>
+<p> Note the lack of spaces between '(*' and '#include', as well as
+between
+the last '"' and '*)'. This syntax will be interpreted as a comment
+by other IL/ST compilers, but will probably nevertheless be
+changed to conform to the 'pragma' directive as defined in the IEC
+61131-3 standard.
+</p>
+<h2>Accessing MatPLC Points</h2>
+Accessing the MatPLC points from within IEC IL and ST programs is
+achieved
+using located variables. However, unlike the IEC standard that
+restricts the
+location of variables to names such as '%I.0.2', '%Q.9.34', etc., we
+allow the location
+to be any identifier that may also be used as a IL/ST variable name.
+For example,
+<p></p>
+<pre>VAR_GLOBAL<br>  leds AT %Lights : INT := 1;<br>  left_bt  AT %left_bt  : BOOL;<br>  right_bt AT %right_bt : BOOL;<br>END_VAR<br></pre>
+<p> From this declaration onwards, accessing the 'leds' variable from
+within the IL/ST
+program will directly access the 'lights' MatPLC point.
+</p>
+<p> If the MatPLC point is wider (has more bits) than the data type of
+the corresponding
+ST/IL variable, writing to this variable will set the unused bits to
+zero, while reading
+the variable will ignore the extra bits.
+</p>
+<p> Likewise, if the MatPLC point has less bits than the data type of
+the corresponding
+ST/IL variable, then writing to the variable will essentially discard
+the higher valued
+bits, while reading from the variable will set the higher valued bits
+to zero.
+</p>
+<p>Note however that MatPLC points may have names such as
+'temp__alarm', that are not valid ST/IL identifiers. In this case it is
+not yet possible to map them to ST/IL variables (this issue will be
+resolved at a later date), so we sugest that
+an alternative name is given to these MatPLC points, or an alias be
+established
+(see the 'alias' table in the [PLC] section of the matplc.conf file).
+</p>
+<h2>Limitations and extensions</h2>
+The IEC standard allows compilers to accept extensions as long as they
+are within pragmas, which for the IEC 61131-3 is any text delimited by
+'{' and '}'. We have therefore extended the accepted syntax to allow
+inclusion of files from within other files, by using the following
+syntax:<br>
+{#include "&lt;filename&gt;"}<br>
+where &lt;filename&gt; should be replaced by the name of the file to be
+included. File inclusion is only allowed outside the definition of IEC
+61131-3 Program Organization Units (i.e. outside Funtions, Funtion
+Blocks, Programs, Configurations).<br>
+<br>
+Our compiler also allows that C or C++ code be inserted inlined with ST
+or IL code. This is done by simply inserting any C or C++ code, within
+the two '{' and '}' delimiters, in ST or IL code. Note that this
+support is prelimenary and its syntax may change without notice (as
+everything else in this project, really...;-] )<br>
+<br>
+As stated previously, the IEC compiler is still at an embrionic stage,
+and does
+not yet support the full syntax and semantics of the IEC IL/ST
+languages.
+<p>Namely, the following elementary data types are not yet supported:
+TIME, DATE, TIME_OF_DAY, DATE_AND_TIME, STRING, WSTRING
+</p>
+<p>In addition, the following derived data types are also not yet
+supported:
+SUBRANGE. ENUMERATION and ARRAY.
+Note that STRUCTREs are supported.
+</p>
+<p>Standard functions and function blocks have not yet been written,
+except for tentative test functions/function blocks such as:
+BCD_TO_INT, INT_TO_BDC, SR, RS, CU, CD, CUD, R_TRIG, F_TRIG.
+</p>
+<p>Due to the way located variables are implemented, we do not yet
+support the passing of EXTERNAL
+variables, declared in programs or functions blocks, as OUT or IN_OUT
+parameters to functions.
+</p>
+<p>Another restriction is in the calling of function blocks using the
+formal syntax from within
+IL code. In this case, a parameter may not be given the value obtained
+from an embedded
+list of IL instructions. For example, consider the following function
+block call:
+</p>
+<pre>CAL fb_instance (<br>      param1 = var1,<br>      param2 = 45,<br>      param3 = (<br>                LD var2<br>                ADD var3<br>               ),<br>      param4 = var4<br>    )      <br></pre>
+In the above code sample, the embeded IL for 'param3' is not yet
+supported.
+<p><!--autolink--><a href="../../logic/dsp.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../logic/il.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+</p>
+<p><small>$Date: 2005/12/08 09:13:44 $</small>
+</p>
+</body>
+</html>

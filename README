@@ -1,0 +1,21 @@
+See the "Getting Started" section of the manual,
+doc/manual/getstarted.html
+
+To see the demoes, change to the demo/xxx directory, run make and then
+demo, like this:
+
+	cd demo/oven_gtk    # replace with whichever demo you want
+	make
+	./demo
+
+
+What do I need to compile MAT?
+
+See the "System Requirements" section of the manual,
+doc/manual/requirements.html
+
+Of the more unusual stuff, you'll need the GTK Extra development and Comedi
+development files. In Debian, these are libgtkextra-dev and libcomedi-dev.
+
+(If you don't want to use comedi, you can just comment that part out of the
+main Makefile.)

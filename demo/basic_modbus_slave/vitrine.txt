@@ -1,0 +1,23 @@
+			       Light chaser
+			       ============
+
+				  Lights:
+
+				1  2  3  4
+
+			      
+				  Buttons
+
+				    <->
+
+   This is a simple light-chasing demo, controlled from the keyboard. The
+  lights you see are available on a modbus slave (by default-> modbus RTU,
+     slave id=0, on output bits 1-4, /dev/ttyS1 serial port, 9600 baud,
+                 no parity, 8 data bits and 2 stop bits)
+
+		       Controls (from the keyboard)
+		       ----------------------------
+      - L and R - toggle the `left' and `right' points. Remember to
+	toggle them off again before trying the other direction :-)
+      - Q - toggles the `quit' point, which terminates the demo.
+

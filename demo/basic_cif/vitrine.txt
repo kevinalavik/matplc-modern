@@ -1,0 +1,23 @@
+			       Light chaser
+			       ============
+
+				  Lights:
+
+				1  2  3  4
+
+			      
+				  Buttons
+
+				    <->
+
+
+   This is a simple light-chasing demo, controlled from the keyboard. The
+lights you see are available (inverted) as TTL outputs on pins 6-9 of the DB25 
+parallel port connector. 
+
+		       Controls (from the keyboard)
+		       ----------------------------
+      - L and R - toggle the `left' and `right' points. Remember to
+	toggle them off again before trying the other direction :-)
+      - Q - toggles the `quit' point, which terminates the demo.
+

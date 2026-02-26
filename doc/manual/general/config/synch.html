@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>MAT manual - synch config</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../general/config/common.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/synch_advanced_example.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Configuration of synch</h2>
+
+This section of the manual is not yet written. It will explain how to
+configure the synch. Some of these are settings in the <tt>[PLC]</tt>
+section, others are common to all modules, but they're all collected here
+because they logically belong together.
+
+<h3>Introduction</h3>
+
+There is no "global cycle" in MatPLC unless the user specifically
+configures one. By default, all modules run asynchronously, with semaphores
+making sure they don't step on each others' toes.
+
+<p>Explanation from a PLC background: the MatPLC reduces scan time at the
+expense of latency - at the top/bottom of the scan, it simply uses the
+latest available values rather than waiting for fresh ones. This is by
+default.
+
+<p>Using synch, the user can configure a global scan which interleaves
+scans of the ladder with refreshing the I/O, classical PLC style.
+
+<p>For modules like a modbus slave, one would normally leave it
+asynchronous, serving requests as they come in.
+
+<p>Similarly for any other modules that don't really belong in the global
+cycle. Perhaps they might even have a mini-global-cycle of their own - for
+instance, an I/O module and a corresponding DSP module might be synched
+together but not to anything else.
+
+
+<h3>Option 1: no synch configuration</h3>
+
+Subsection not yet written.
+
+<h3>Option 2: simple synch configuration</h3>
+
+Subsection not yet written - see the comments in the example config file in
+<tt>demo/basic_synch</tt>.
+
+<h3>Option 3: advanced synch</h3>
+
+Subsection not yet written; however, there is <a
+href="synch_advanced_example.html">an example</a>, and some comments in the
+other example config file in <tt>demo/basic_synch</tt>.
+
+<p>
+<!--autolink--><a href="../../general/config/common.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/synch_advanced_example.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/12/08 09:13:44 $</small>
+</body>
+</html>

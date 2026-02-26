@@ -1,0 +1,3 @@
+conffile.o Makefile.depend: conffile.c conffile.h ../types.h ../log/log.h \
+ ../misc/ds_util.h ../misc/string_util.h ../misc/../types.h
+conffile_setup.o Makefile.depend: conffile_setup.c conffile.h ../types.h conffile_setup.h

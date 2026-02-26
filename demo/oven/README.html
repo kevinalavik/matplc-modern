@@ -1,0 +1,1217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+  <title>Demo Oven README</title>
+</head>
+<body>
+<h1>Thermal Fluid Oven Demo</h1>
+<p>&copy; 2001 Juan Carlos Orozco</p>
+<p>For MatPLC project. Uses GPL licence.</p>
+<h1><font face="Times New Roman, serif"><font size="4">Introduction</font></font></h1>
+<p>The purpose of this project is to demonstrate the capabilities of the
+MatPLC control using a realistic example. We will put more enphasis in
+the control part of the machine instead of the exact phisical properties.
+The project will include the simulation of the plant, for this we will use
+some simplified models for each part of the machine. The simulation part
+will also run on the MatPLC plataform.</p>
+<h1><font face="Times New Roman, serif"><font size="4">Machine Description</font></font></h1>
+<p>This oven is a 3 heating zone oven. The material to be heated is trasported
+with a belt that goes through the 3 heating zones. Each zone is heated using
+hot air that recirculates in each zone. The air is heated using radiators
+that radiate the heat of the thermal fluid that flows through the radiator
+pipes. The thermal fluid is heated using a gas combustion thermal liquid
+heater. The thermal fluid is continuosly flowing in a primary circuit, ech
+radiator has a three way valve that controls the flow in the secondary circuits
+that go through the radiators. Therefore we will have three secondary circuits
+one for each zone. This three way valves are the ones that control the heat
+in the recirculating air of each zone.</p>
+<p>We will need to control the temperature of the heater, the temperature
+of the the recirculating air in each zone and the speed of the belt.</p>
+<h1><font face="Times New Roman, serif"><font size="4">Actuators</font></font></h1>
+<ul>
+  <li>
+    <p><b>Oven</b></p>
+  </li>
+</ul>
+<ul>
+  <ul>
+    <li>
+      <p><i>Belt Motor</i>. This motor will have a speed drive system 		that
+receives a 0 to 10V command that is proportional to 0 to 		MaxSpeed.</p>
+    </li>
+    <li>
+      <p><i>Hot Air Blowers. </i><span style="font-style: normal; ">This 		Motors
+work in a On-Off mode.</span></p>
+    </li>
+    <li>
+      <p><i>Three Way Valves. </i><span style="font-style: normal; ">Proportional 
+		valves to control the thermal liquid flow through the radiators.</span></p>
+    </li>
+  </ul>
+  <li>
+    <p style="font-style: normal; "><b>Heater</b></p>
+    <ul>
+      <li>
+        <p><i>Primary Circuit Thermal Fluid Pump. </i><span style="font-style: normal; ">
+This 		motor will work in a On-Off mode.</span></p>
+      </li>
+      <li>
+        <p><i>Gas and Air Valve. </i><span style="font-style: normal; ">Proportional 
+		valve to controll the amount of gas and combustion air that will 		flow
+to the burner.</span></p>
+      </li>
+      <li>
+        <p><i>Combustion Air Fan. </i><span style="font-style: normal; ">
+This 		motor will work in a On-Off mode.</span></p>
+      </li>
+      <li>
+        <p><i>Ignition Spark. </i><span style="font-style: normal; ">To 		ignite
+the oven.</span></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h1><font face="Times New Roman, serif"><font size="4">Sensors</font></font></h1>
+<ul>
+  <li>
+    <p><b>Oven</b></p>
+  </li>
+</ul>
+<ul>
+  <ul>
+    <li>
+      <p><i>Belt Speed Feedback</i>. This reading is obtained from a 		anolog
+output of the belt drive.</p>
+    </li>
+    <li>
+      <p><i>Air Presure Sensors. </i><span style="font-style: normal; ">Each 
+		Zone has an Air Pressure sensor to monitor that the blower is 		working.</span></p>
+    </li>
+    <li>
+      <p><i>Zone Temperature Sensor. </i><span style="font-style: normal; ">
+Each 		zone has an air temperature sensor.</span></p>
+    </li>
+  </ul>
+  <li>
+    <p style="font-style: normal; "><b>Heater</b></p>
+    <ul>
+      <li>
+        <p><i>Primary Circuit Thermal Fluid Temperature.</i></p>
+      </li>
+      <li>
+        <p><i>Flame Detector. </i><span style="font-style: normal; ">For 		safety
+digital 1/0 output.</span></p>
+      </li>
+      <li>
+        <p><i>High Fluid Temperature Switch. </i><span style="font-style: normal; ">
+For 		safety digital 1/0 output.</span></p>
+      </li>
+      <li>
+        <p><i>Combustion Air Fan. </i><span style="font-style: normal; ">
+This 		motor will work in a On-Off mode.</span></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h1><font face="Times New Roman, serif"><font size="4">Variable Table</font></font></h1>
+<p>We will divide the project in four sections:</p>
+<ul>
+  <li>
+    <p style="margin-bottom: 0cm; ">Heater Control  	</p>
+  </li>
+  <li>
+    <p style="margin-bottom: 0cm; ">Oven Control  	</p>
+  </li>
+  <li>
+    <p style="margin-bottom: 0cm; ">Heater Simulation  	</p>
+  </li>
+  <li>
+    <p>Oven Simulation  	</p>
+  </li>
+</ul>
+<p style="margin-bottom: 0cm; ">To have less variable definitions, we will
+place the values of the sensors in the simulation section and the values
+of the actuators in the control section.  </p>
+<table width="100%" border="1" cellpadding="4" cellspacing="3">
+  <col width="50*"><col width="106*"><col width="46*"><col width="30*"><col width="24*"><thead><tr valign="Top">
+    <th width="20%">
+    <p>Name</p>
+    </th>
+    <th width="41%">
+    <p>Description</p>
+    </th>
+    <th width="18%">
+    <p>Type</p>
+    </th>
+    <th width="12%">
+    <p>Unit</p>
+    </th>
+    <th width="9%">
+    <p>Default</p>
+    </th>
+  </tr>
+  </thead><tbody>
+    <tr valign="Top">
+      <td width="20%">
+      <p><b>Heater Control</b></p>
+      </td>
+      <td width="41%">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%">
+      <p><br>
+      </p>
+      </td>
+      <td width="12%">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%">
+      <p><br>
+      </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ControlPeriod</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>The period of the control could be different than the period 				for
+the simulation. Normally the period for the simulation should 				be equal
+or smaller than this period.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>int</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>msec</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="200" sdnum="2058;">
+      <p align="Right">200</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ThermalFluidTempSP</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Set point for the thermal fluid temperature</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="350" sdnum="2058;">
+      <p align="Right">350</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>PrimCircuitFluidPump</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>GasAirValve</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>This is the throthle for the combustion. 0 is low flame (not 				shut
+down), 100 is maximum flame.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>%</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>CombustionAirFan</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>IgnitionSpark</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr valign="Top">
+      <td width="20%">
+      <p><b>Oven Control</b></p>
+      </td>
+      <td width="41%">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%">
+      <p><br>
+      </p>
+      </td>
+      <td width="12%">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%">
+      <p><br>
+      </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone1TempSP</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Set point for the temperature of the air in zone 1</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="100" sdnum="2058;">
+      <p align="Right">100</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone2TempSP</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Set point for the temperature of the air in zone 2</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="100" sdnum="2058;">
+      <p align="Right">100</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone3TempSP</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Set point for the temperature of the air in zone 3</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="150" sdnum="2058;">
+      <p align="Right">150</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>BeltMotorSpeed</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Speed command to the belt motor drive.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>m/sec</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>BeltMotorSpeedSP</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Set point for the speed of the belt.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>m/sec</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0.5" sdnum="2058;">
+      <p align="Right">0.5</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>HotAirBlowers</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z1ThreeWayValveFlow</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Thermal fluid flow rate to the radiator of zone 1.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>%</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z2ThreeWayValveFlow</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Thermal fluid flow rate to the radiator of zone2.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>%</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z3ThreeWayValveFlow</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Thermal fluid flow rate to the radiator of zone3.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>%</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr valign="Top">
+      <td width="20%">
+      <p><b>Heater Simulation</b></p>
+      </td>
+      <td width="41%">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%">
+      <p><br>
+      </p>
+      </td>
+      <td width="12%">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%">
+      <p><br>
+      </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>SimulationPeriod</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>The simulation will be executed in a discrete way using this 				period
+time to recalculate all the variables on the system.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>int</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>msec</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="200" sdnum="2058;">
+      <p align="Right">200</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ThermalFluidSpecificHeat</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/kg*C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0.2" sdnum="2058;">
+      <p align="Right">0.2</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ThermalFluidMass</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1600" sdnum="2058;">
+      <p align="Right">1600</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>MaxHeaterHeat</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="25000" sdnum="2058;">
+      <p align="Right">25000</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>MinHeaterHeat</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="2500" sdnum="2058;">
+      <p align="Right">2500</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>PrimCircuitToAmbHeatK</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Coeficient to calculate the heat loss of the thermal fluid 				primary
+circuit to the Ambient.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/(sec*C&ordm;)</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>AmbientTemperature</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="20" sdnum="2058;">
+      <p align="Right">20</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ThermalFluidTemp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>FlameDetector</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Used for safety.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>HighTempInFluidSwitch</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Used for safety.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr valign="Top">
+      <td width="20%">
+      <p><b>Oven Simulation</b></p>
+      </td>
+      <td width="41%">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%">
+      <p><br>
+      </p>
+      </td>
+      <td width="12%">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%">
+      <p><br>
+      </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>RadiatorFluidMass</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>The mass of the thermal fluid in each radiator.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="20" sdnum="2058;">
+      <p align="Right">20</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>MaxFlowRateRadiator</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Flow rate of thermal fluid to the radiator when the three way 				valve
+flow is 100%.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg/sec</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>AirSpecificHeat</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/kg*C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0.5" sdnum="2058;">
+      <p align="Right">0.5</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone1AirMass</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="10" sdnum="2058;">
+      <p align="Right">10</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone2AirMass</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="10" sdnum="2058;">
+      <p align="Right">10</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone3AirMass</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="10" sdnum="2058;">
+      <p align="Right">10</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ProductMass</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Mass of the product in each zone. Assuming continuous product.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kg</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="15" sdnum="2058;">
+      <p align="Right">15</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ProductSpecificHeat</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p align="Left"><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/kg*C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0.4" sdnum="2058;">
+      <p align="Right">0.4</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>RadiatorToAirHeatK</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Coeficient to calculate the heat transfer from the radiators 				to
+the recirculating air in each zone of the oven</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/(sec*C&ordm;)</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>AirToProductHeatK</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Coeficient to calculate the heat transfer from the hot air to 				the
+product.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/(sec*C&ordm;)</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z1AirToAmbientHeatK</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Coeficient to calculate the heat loss from the hot air inside 				the
+zone 1 to the ambient. We could use this factor also to take 				into consideration
+the hot air that goes into the ambient and is 				replaced by fresh air from
+the ambient.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/(sec*C&ordm;)</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z2AirToAmbientHeatK</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Coeficient to calculate the heat loss from the hot air inside 				the
+zone 2 to the ambient. We could use this factor also to take 				into consideration
+the hot air that goes into the ambient and is 				replaced by fresh air from
+the ambient.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/(sec*C&ordm;)</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z3AirToAmbientHeatK</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Coeficient to calculate the heat loss from the hot air inside 				the
+zone 3 to the ambient. We could use this factor also to take 				into consideration
+the hot air that goes into the ambient and is 				replaced by fresh air from
+the ambient.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float constant</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>kcal/(sec*C&ordm;)</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="1" sdnum="2058;">
+      <p align="Right">1</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ProductTempZone1</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ProductTempZone2</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>ProductTempZone3</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone1Temp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Temperature of the air in zone 1</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone2Temp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Temperature of the air in zone 2</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Zone3Temp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Temperature of the air in zone 3</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>BeltMotorSpeedFeedback</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Speed feedback from the belt motor drive.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom">
+      <p align="Right"><br>
+      </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z1RadiatorTemp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Temperature of the thermal fluid in the radiator at zone 1.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z2RadiatorTemp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Temperature of the thermal fluid in the radiator at zone 2.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z3RadiatorTemp</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Temperature of the thermal fluid in the radiator at zone 3.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Float</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p>C&ordm;</p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z1AirPressure</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Air presure switch from zone 1. Used for security.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z2AirPressure</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Air presure switch from zone 2. Used for security.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" valign="Top">
+      <p>Z3AirPressure</p>
+      </td>
+      <td width="41%" valign="Top">
+      <p>Air presure switch from zone 3. Used for security.</p>
+      </td>
+      <td width="18%" valign="Top">
+      <p>Bool</p>
+      </td>
+      <td width="12%" valign="Top">
+      <p><br>
+      </p>
+      </td>
+      <td width="9%" valign="Bottom" sdval="0" sdnum="2058;">
+      <p align="Right">0</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><br>
+<br>
+</p>
+<p style="margin-top: 0.42cm; page-break-after: avoid; "><font face="Times New Roman, serif"><font size="4">
+Mathematical Models</font></font></p>
+<p style="font-style: normal; ">The models are not based on real physical
+units and are used only to simulate in a simplified way the plant to be able
+to control it.</p>
+<p><span style="font-weight: medium"><span style="font-style: normal; ">Q 
+= m*c*DeltaT</span></span>. Where m - Mass, c - Specific heat.</p>
+<p>Heater x BTUs 1 BTU = 0.252 kcal</p>
+<p style="font-style: normal; ">Combustion Heat</p>
+<p style="font-style: normal; ">We will assume a linear response from the
+Gas Air Valve plus an offset to simulate that the low flame is not zero because
+the flame never shuts down.</p>
+<p style="font-style: normal; ">CombHeat = (GAValve * HeaterSpan + HeaterMin)
+* HeaterOn</p>
+<p style="font-style: normal; ">Not finished...</p>
+<p style="font-style: normal; "><font size="4">Files</font></p>
+<p><font size="3">README.html &#8211; This file.</font></p>
+<p><font size="3">README.txt &#8211; How to build and run. It contains a simple
+explanation of the keyboard functions that are actually implemented.</font></p>
+<p><font size="3">matplc.config</font> &#8211; Point definition, synchronization
+definition, dsp module definition (Heater).</p>
+<p>vitrine.config &#8211; Configuration for displaying the variables on the console.</p>
+<p>vitrine.txt &#8211; Background or static text for the console.</p>
+<p>constants.c &#8211; Assign values to all constants.</p>
+<p>extramath.c &#8211; Execution of math functions that could not be implemented
+in the dsp module at the moment.</p>
+<p>kbd.c &#8211; Implementation of the keyboard interface.  </p>
+<p>Makefile &#8211; To compile the project.</p>
+<p>demo &#8211; Perl script to execute the demo. This program executes all the
+individual modules that are needed for the demo.</p>
+<h3><font size="4">ToDo</font></h3>
+<ul>
+  <li>Program the GUI using GTK+.</li>
+</ul>
+<ul>
+  <li><font size="3">Split the dsp modules in HeaterControl, 	HeaterSimulation,
+OvenControl, OvenSimulatio.</font><br>
+  </li>
+  <li><font size="3">Finish the math formulas for the oven.</font><br>
+  </li>
+  <li><font size="3">Implement the extramath functions directly in 	the dsp
+modules.</font><br>
+  </li>
+  <li><font size="3">Implement the digital part of the Heater.</font><br>
+  </li>
+  <li><font size="3">Implement the numerical part of the Oven.</font><br>
+  </li>
+  <li><font size="3">Implement the digital part of the Oven.</font></li>
+</ul>
+<h3>WishList</h3>
+<ul>
+  <li>PID integral part clipping, 	enable and reset commands. Maybe also
+output clipping.<br>
+  </li>
+  <li>More math functions in the dsp 	module to implement extramath.c program
+in the dsp.<br>
+  </li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,94 @@
+MatPLC LPC process handler
+
+This is a wrapper for running LPC modules within the MatPLC. Any actual
+functionality should eventually be merged into the core MatPLC library, and
+is only present here as a transitional measure.
+
+-----------------------------------------------------------
+
+Last Updated: February 12, 2003
+
+-----------------------------------------------------------
+About:
+
+This is a 'wrapper' that will allow specially prepared libraries to be linked
+to the MAT PLC. It does/will deal with dynamically loading the libraries and running
+the appropriate routines.
+
+The main purpose for the handler program is to load and control a dynamically linked library to use the matplc. A major component of this is a message passing system that allows components to be passed to and from the library. These messages can then be interpreted by the handler, or passed on to other handler modules. The message passing mechanism runs asynchronously, as the kernel shares processor time with the handler process. When it is run it checks for messages to be passed. The realtime (actually soft realtime) control loop is handled using Unix signals. When the library is loaded the signals are setup to awaken at regular intervals. When this happens, the step_run or step_idle library functions are called. 
+
+The handler commands are fairly central to the process in general. These can be received by the handler by libraries passing messages, or by command files that have been loaded. A list of currently implemented messages are listed below.
+
+   MODULE name - the module name must be defined before we can connect to the PLC
+   LIBRARY file - will load the shared library file with the given name 'file'
+   RUN - if the module is loaded it will go into run mode
+   HALT - if the module is running it will be stopped
+   QUIT - if the module is running or halted it will quit
+   PARSE file - this will load commands from the text file called 'file'
+   SWAP file - will hot swap the currently running librarye with name 'file'
+   DELAY time - this will give the system delay time in microseconds
+   MESSAGE xxxx - a message with the format above will be sent to the system
+
+The basic states for the handler are given below, including transitions to other states. This model has not been strictly defined yet beyond what is described -> alas a task for later.
+1. (Initial state) MATPLC Not Initialized: In this state the MATPLC connection has not been established. This may occur when the 'MODULE' command has been used to move to 2.
+2. Library Not Loaded: The connection to the MATPLC has been made but the dynamic library is not loaded. The 'LIBRARY' cpmmand can be use to move to state 3.
+3. Active - Idle: The library is loaded and the connection to the MATPLC is active. In this state the 'step_idle' function is being called periodically. The 'RUN' command will move the library to state 4.
+4. Active - Run: The 'step_run' function is being called periodically. The 'HALT' command will move the library back to state 3.
+
+The libraries can have a few basic routines, as listed below. Some, or all of these may be defined. The module loading subroutines have hooks in place to be tolerant of variable library structures. This includes different versions, as well as contingencies for undefined routines.
+
+Functions called by the handler program;
+	int init() - this function is loaded when the library is loaded the
+		first time. This can be used to set up or initialize stuff.
+	int deinit() - this function will be called when the program is shutting
+		down (but it may not in some circumstances).
+	int run_step() - this is called when the controller should have active
+		outputs and responses.
+	int idle_step() - this is called when the controller is running, but
+		the outputs should not be active.
+	int message_receive(char *) - incoming messages are delivered by calling
+		this function.
+	char *argument_descriptions(int) - this allows a library to store and return
+		a list of descriptions of arguments it accepts. In other words
+		self contained documentation.
+
+Functions and local variables that the library can call are;
+	int send_message(char *text) - the library can send a message
+	char *get_argument(int number, char *text) - get an argument value
+	void error_log(int code, char* text) - generate messages for the error log
+
+
+-----------------------------------------------------------
+Usage:
+
+To try/test it, go to the ../../demos/lpc directory and use the programs there.
+
+-----------------------------------------------------------
+Bugs:
+
+	- the handler will exit with the message 'broken pipe' if a server/destination process has been killed. This occurs in the client_queue_t::writer function. It will eventually be fixed when a way is found to check the validity of a file descriptor.
+
+-----------------------------------------------------------
+Notes:
+
+	- DON'T EVER USE A SLEEP COMMAND
+	- if receiving messages keep in mind that the signal interrupts for
+		step_run or step_idle may occur while parsing the message. Routines
+		should be tolerant of these problems.
+	- all of the functions in the linked libraries should enter and exit quickly
+	- swapping processes should be used for debugging, but isn't suggested for
+		the average user.
+-----------------------------------------------------------
+Todo:
+
+	- create a structure that allows the handler to control multiple processes
+	- add an interprocess message passing system
+
+-----------------------------------------------------------
+History:
+
+Febrary 12, 2003 (Hugh) - added comments and documentation
+February 3, 2003 (Hugh) - changed the makefile and some header references to compile in the MATPLC tree.
+April 16, 2002 (Hugh Jack) - finished the first version of the program
+
+

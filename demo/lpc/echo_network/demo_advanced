@@ -1,0 +1,7 @@
+#!/bin/sh
+cp -f advanced.conf matplc.conf
+../../../tools/run/matplc -g
+../../../tools/run/handler -c tcpip.cmd &
+../../../tools/run/handler -c echo_advanced.cmd
+../../../tools/run/matplc -s
+#../../lib/ipcclean > /dev/null

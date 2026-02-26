@@ -1,0 +1,10 @@
+LIBMATPLC_1 {
+  global:
+    plc_*;
+    conffile_*;
+    strdup3;
+    sin_init_addr;
+    bind_socket;
+  local:
+    *;
+};

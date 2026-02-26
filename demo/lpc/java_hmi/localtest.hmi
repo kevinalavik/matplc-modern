@@ -1,0 +1,47 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "hmi.dtd">
+
+<hmi>
+	<remote location="127.0.0.1" port="1234" user="Huffin" pass="Puffin"/>
+	<screen>
+		<image label="  " action="none" url="test3.gif" x="0" y="0" width="50" height="50"/>
+		<image label="  " action="none" url="test4.gif" x="2" y="0" width="100" height="50"/>
+
+		<note label="An Adder:" action="none" x="0" y="1" color="blue"/>
+		<checkbox label="adder on" action="getput" memory="state" bit="0" x="0" y="2"/>
+		<note label="A=" action="none" x="0" y="3"/>
+		<note label="    " action="get" memory="A" x="1" y="3"/>
+		<text label="    " action="put" memory="A" x="2" y="3"/>
+		<note label="B=" action="none" x="0" y="4"/>
+		<note label="    " action="get" memory="B" x="1" y="4"/>
+		<text label="    " action="put" memory="B" x="2" y="4"/>
+		<note label="C=A+B=" action="none" x="0" y="5"/>
+		<note label="7" action="get" memory="C" x="1" y="5"/>
+
+		<note label="   " action="none" x="0" y="6"/>
+
+		<note label="A TON Timer:" action="none" x="0" y="7" color="blue"/>
+		<checkbox label="timer on" action="getput" memory="state" bit="1" x="0" y="8" color="green"/>
+		<checkbox label="timer reset" action="getput" memory="state" bit="2" x="0" y="9" color="red"/>
+		<note label="delay=" action="none" x="0" y="10"/>
+		<note label="    " action="get" memory="delay" x="1" y="10"/>
+		<text label="    " action="put" memory="delay" x="2" y="10"/>
+		<note label="acc=" action="none" x="0" y="11"/>
+		<note label="    " action="get" memory="acc" x="1" y="11"/>
+		<text label="    " action="put" memory="acc" x="2" y="11"/>
+		<note label="done bit=" action="none" x="0" y="12"/>
+		<note label="   " action="get" memory="state" bit="3" x="1" y="12"/>
+
+	</screen>
+</hmi>
+
+<plc>
+	<memory>
+		<integer name="state" value="0"/>
+		<integer name="A" value="5"/>
+		<integer name="B" value="3"/>
+		<integer name="C" value="0"/>
+		<real name="delay" value="10"/>
+		<real name="acc" value="0"/>
+	</memory>
+</plc>

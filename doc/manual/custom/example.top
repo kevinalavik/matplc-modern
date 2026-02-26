@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>MAT manual - example custom module</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/native.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/gmm.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a>
+<h2>Example custom module</h2>
+
+<!-- NOTE: example.html is put together from example.top, example.bottom
+and demo/basic/chaser.c - be sure to edit those three, rather than
+example.html, otherwise your changes will be lost. Be sure to invoke "make"
+afterwards, though, because it's not built automatically. -->
+
+This is the chaser module from the <a href="../demo/basic.html">basic
+demo</a>.
+
+<p>At the top there's a couple of helper functions, <a
+href="#get_pt"><code>get_pt()</code></a> and <a
+href="#get_delay"><code>get_delay()</code></a>, for getting handles and the
+time delay from the MatPLC and checking that no error is returned.
+
+<p>After that we come to the <a href="#chase"><code>chase()</code></a>
+function, which contains the bulk of the code. First it gets handles for
+the left and right buttons and all the lights, and then it gets the time
+delay value and starts up the timer. Then the main loop starts. Apart from
+the boiler-plate beginning and end of scan, it contains just two pieces of
+code: one to check the <code>left</code> and <code>right</code> buttons,
+and set the <code>dir</code> variable appropriately, and the other to move
+the light along one when the timer has expired.
+
+<p>The <a href="#main"><code>main()</code></a> function just initializes
+the library and calls <code>chase()</code>.
+
+<h3>Listing</h3>

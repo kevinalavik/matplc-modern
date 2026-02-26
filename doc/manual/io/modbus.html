@@ -1,0 +1,326 @@
+<html><head><title>MAT Modbus IO manual</title></head>
+<body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../io/comedi.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/parport.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Modbus I/O</h1>
+
+<h2>Modbus master</h2>
+
+<p>The modbus master is actually three modules, one each for Modbus/RTU,
+Modbus/ASCII and Modbus/TCP. When you're running the demo, don't forget to
+select the correct module in the <code>[PLC]</code> section of the config.
+
+<pre>
+<font color="#CC0000">[PLC]</font>
+# Uncomment the modbus protocol version you wish to run...
+<font color="#CC0000">module modbus_m "../../io/modbus/modbus_m_rtu"</font>
+#module modbus_m "../../io/modbus/modbus_m_asc"
+#module modbus_m "../../io/modbus/modbus_m_tcp"
+</pre>
+
+<h3>Configuration</h3>
+
+The configuration consists of three tables:
+<dl>
+<dt>network<dd>connection information (serial port or TCP address)
+<dt>node<dd>the devices connected to each network (modbus ID)
+<dt>map<dd>the usual mapping of actual I/O to MatPLC points (registers)
+</dl>
+
+<h4>Network configuration table</h4>
+
+This specifies the connection information - serial port or TCP address, and
+any associated settings. There can be any number of these - one module may
+talk to several serial ports or several TCP slaves; on the other hand,
+having a separate module for each port or each TCP address will allow the
+slaves to be contacted simultaneously rather than one by one.
+
+<p>The format of the table is:
+
+<br><code>network &lt;network_name&gt; &lt;protocol&gt;
+&lt;parameters&gt;</code>
+
+<dl>
+<dt><code>&lt;network_name&gt;</code><dd>The name used to refer to this
+network in the rest of this config.
+<dt><code>&lt;protocol&gt;</code><dd>{rtu | ascii | tcp}<br>This must agree
+with the module being used.
+
+<dt><code>&lt;parameters&gt;</code><dd>These depend on the type of
+network:<dl>
+<dt>For rtu and ascii networks
+<dd><pre>
+[device &lt;filename&gt;]
+[baudrate &lt;x&gt;]
+[parity {even|odd|none}]
+[data_bits &lt;x&gt;]
+[stop_bits &lt;x&gt;]
+[ignore_echo {true|false}]
+[timeout &lt;x&gt;]
+[send_retries &lt;x&gt;]
+</pre>
+
+<dt>For tcp networks<dd><dl>
+
+<dt><code>[host &lt;x&gt;]</code><dd>the IP address or DNS name of the
+slave
+
+<dt><code>[port &lt;x&gt;]</code><dd>x is either the port number on which
+the slave is listening, or the service name, which will be mapped onto the
+port number according the configuration in the /etc/services file
+(<strong>FIXME</strong> - what is the default?)
+
+<dt><code>[timeout &lt;x&gt;]</code>
+<dd>(<strong>FIXME</strong> - what does this do? what is the default?)
+
+<dt><code>[send_retries &lt;x&gt;]</code>
+<dd>(<strong>FIXME</strong> - what does this do? what is the default?)
+
+<dt><code>[TCP_close {true | false}]</code><dd><dl>
+
+  <dt>true<dd>(default) Close the connection after each scan. This is
+  slightly slower, as the connection must be re-established at the
+  beginning of the next scan.
+
+  <dt>false<dd>Keep the connection open between scans. However, some slaves
+  may only support a limited number of simultaneous masters, and this will
+  keep one of those limited slots occupied for as long as this module is
+  running, potentially blocking out other masters.
+
+</dl>
+
+<p>The openmodbus specification <u>sugests</u> that all TCP connections
+should be closed if they are going to stay idle for longer than 1 second,
+so that you should set <code>TCP_close</code> to <code>true</code> if the
+scan time for this module is longer than a second, and <code>false</code>
+if it's shorter. In practice, the important consideration will be how many
+masters are accessing this slave, compared with the slave's "maximum
+simultaneous masters" specification, and the relative priority between
+those masters.
+
+</dl></dl></dl>
+
+<pre>
+# Sample network configurations...
+<font color="#CC0000">network rtu_net         rtu   device /dev/ttyS1 baudrate 9600 parity none data_bits 8 stop_bits 1 ignore_echo false timeout 1.5 send_retries 2</font>
+<font color="#CC0000">network asc_net         ascii device /dev/ttyS1 baudrate 9600 parity none data_bits 8 stop_bits 1 ignore_echo false timeout 1.5 send_retries 2</font>
+<font color="#CC0000">network tcp_net         tcp   host   localhost  port 502  timeout .1 send_retries 1 TCP_close true</font>
+</pre><pre>
+
+</pre><h4>Node address table</h4>
+
+This is a fairly simple table, giving names to all the nodes based on their
+Modbus ID.
+
+Each line has the form:
+<br><code>node &lt;slave_name&gt; &lt;network_name&gt;
+&lt;slave_addr&gt;</code>
+
+<dl>
+<dt><code>&lt;slave_name&gt;</code><dd>The name used to refer to this slave
+node in the rest of the config.
+<dt><code>&lt;network_name&gt;</code><dd>The name of the network, as
+declared in the <code>network</code> table (above).
+<dt><code>&lt;slave_addr&gt;</code><dd>The modbus slave ID, 0..255
+</dl>
+
+<pre>
+# Sample slave configurations...
+<font color="#CC0000">node speed_drive    tcp_net 34</font>
+<font color="#CC0000">node digital_IO     rtu_net 0</font>
+<font color="#CC0000">node analog_IO      asc_net 23</font>
+</pre>
+
+<h4>Mapping table</h4>
+Each line has the form:
+<br><code>
+map [inv | invert] {in | out}
+&lt;slave&gt;.&lt;reg_type&gt;.&lt;reg_addr&gt;
+&lt;matplc point&gt;
+</code>
+
+<dl>
+<dt><code>inv</code>
+<br><code>invert</code><dd> (optional) invert the value being read
+from/writen to physical IO
+
+<dt><code>in</code><dd> copy from the Modbus device to the MatPLC point
+<dt><code>out</code><dd> copy the state of the MatPLC point to the Modbus
+device
+
+
+<dt><code>&lt;slave&gt;</code><dd> the name of the slave node, as it appears in the node address table.
+<dt><code>&lt;reg_type&gt;</code><dd>Which register type (data table) to
+access, according to this table:
+<table border>
+
+  <tr><th rowspan="2">type</th><th rowspan="2">data table</th><th
+  rowspan="2">long address</th><th rowspan="2">in/out</th><th
+  colspan="2">Modbus fn.  used</th><th rowspan="2" width="40%">Amount of
+  data read/written</th></tr>
+
+  <tr><th>in</th><th>out</th></tr>
+
+  <tr><td><code>in_bit</code></td><td>Discrete Input</td><td>1xxxx
+  </td><td>must be mapped <code>in</code></td><td>0x02</td><td
+  align="center">-</td><td rowspan="2">The number of bits transfered is the
+  same as the number of bits in the MatPLC point being mapped. The address
+  given in the mapping is the adress of the first bit.</td></tr>
+
+  <tr><td><code>out_bit</code></td><td>Coil</td><td>0xxxx</td><td>may be
+  mapped <code>in</code> or <code>out</code></td><td>0x01</td><td>0x0F
+  (15)</td></tr>
+
+  <tr><td><code>in_word</code></td><td>Input Register</td><td>3xxxx
+  </td><td>must be mapped <code>in</code></td><td>0x04</td><td
+  align="center">-</td><td rowspan="2">If MatPLC point being mapped has 16
+  or less bits, 1 word will be trnsferred. If it has between 17 and 32, 2
+  words will be transferred.  The address given in the mapping is the
+  adress of the first word.</td></tr>
+
+  <tr><td><code>out_word</code></td><td>Holding Register</td><td>4xxxx
+  </td><td>may be mapped <code>in</code> or
+  <code>out</code></td><td>0x03</td><td>0x10 (16)</td></tr>
+
+</table>
+
+
+<dt><code>
+&lt;reg_addr&gt;   
+</code>
+<dd>1..10000
+
+<br>Note that, as per the standard, <code>&lt;reg_addr&gt;</code> is 1-based.
+If your documentation lists Modbus addresses starting with 0, you will have
+to add 1 to each of them.
+
+<dt><code>&lt;matplc point&gt;</code><dd>the MatPLC point to map
+</dl>
+
+<pre>
+
+# Sample IO table
+<font color="#CC0000">map out digital_IO.out_bit.1 L1</font>
+<font color="#CC0000">map out digital_IO.out_bit.2 L2</font>
+<font color="#CC0000">map out digital_IO.out_bit.3 L3</font>
+<font color="#CC0000">map out digital_IO.out_bit.4 L4</font>
+</pre><pre>
+</pre>
+
+<h3>Error logging</h3>
+
+The first time an error occurs (timeout, received invalid response frame,
+received error frame, etc...) when communicating with a device, this will
+be logged as an error at level 2. All subsequent errors for the same device
+will be logged as an error at level 3. When a device comes back up, this
+will be logged as an error at level 2.
+
+<h2>Modbus slave</h2>
+
+The modbus slave module is partially implemented  and has not undergone serious testing.
+Currently, it supports TCP/IP transport only. Furthermore, functions
+0x03, 0x04, and 0x06 only are available.
+
+<p><strong> Access control of MatPLC points through Modbus slave is based on the standard MatPLC architectural concept: in order to write to a point the Modbus slave must be the owner of this point.</strong> 
+
+<p>The modbus slave module, whose default name is "modbus_s",  should be enabled in the MatPLC configuration
+with a "module" keyword and the path to the module's executable. <strong>Note that the ASCII AND RTU versions are not implemented yet and their instances below are for illustration only. </strong>
+<pre>
+<font color="#CC0000">[PLC]</font> 
+# Uncomment the modbus protocol version you wish to run... 
+<font color="#CC0000">module modbus_s "../../io/modbus/modbus_s_tcp"</font>
+#module modbus_s "../../io/modbus/modbus_s_asc"
+#module modbus_s "../../io/modbus/modbus_s_tru"
+</pre>
+
+<h3>Configuration</h3>
+
+The configuration consists of two tables:
+<dl>
+<dt>endpoint<dd>connection information 
+<dt>map<dd>the mapping of actual I/O to MatPLC points (registers)
+</dl>
+
+<h4>Endpoint configuration table</h4>
+
+This configures endpoints that MatPLC will listen on for incoming requests -  TCP address and any associated settings. There can be any number of these - one module may
+listen on several interfaces.
+
+<p>The format of the table is:
+
+<br><code>endpoint &lt;network_name&gt; &lt;protocol&gt;
+&lt;parameters&gt;</code>
+
+<dl>
+<dt><code>&lt;network_name&gt;</code><dd>The name used to refer to this
+network in the rest of this config.
+<dt><code>&lt;protocol&gt;</code><dd>{rtu | ascii | tcp}<br>This must agree
+with the module being used (tcp is the only option currently supported).
+
+<dt><code>&lt;parameters&gt;</code><dd>These depend on the type of
+network:<dl>
+
+<dt>For tcp networks<dd><dl>
+
+<dt><code>[host &lt;x&gt;]</code><dd>the IP address or DNS name of the
+interface to listen on. 0.0.0.0 stands for INADDR_ANY.
+
+<dt><code>[port &lt;x&gt;]</code><dd>x is either the port number on which
+the slave is listening, or the service name, which will be mapped onto the
+port number according the configuration in the /etc/services file
+(<strong>FIXME</strong> - what is the default?)
+
+<dt><code>[address &lt;x&gt;]</code>
+<dd>Modbus slave address.
+
+<dt><code>[connections &lt;x&gt;]</code>
+<dd>The number of simultaneous incomming connections to accept.
+
+<dt><code>[mode &lt;x&gt;]</code>
+<dd>The mode in which the slave is run: 0 - async, 1 - sync. The default value is 0
+</dl>
+</dl>
+</dl>
+
+<pre>
+# Sample endpoint configuration...
+<font color="#CC0000">endpoint tcp_net  tcp   host 0.0.0.0 port 5502  address 34 mode 0 connections 1
+</font>
+</pre>
+
+<h4>Mapping table</h4>
+<p>The object data size is determined by the invoked modbus function. For instance, if a coil reading is requested a single bit of the mapped MatPLC point will be transmitted. Likewise, in register operations, the data object size is 16 bits. Therefore, in order to transmit an entire MatPLC point of maximum size (32 bits) two register operations are needed. Alternatively, a multiple register function may be utilized (currently not supported).
+
+Each line has the form:
+<br><code>
+map slave
+&lt;shift&gt;.&lt;matplc point&gt;
+</code>
+
+
+<dt><code>&lt;shift&gt;</code><dd>The number of bits to shift a MatPLC point right before
+mapping it to a modbus type on reading or   the number of bits to shift a modbus type right before mapping it to a MatPLC point on writing. The following aliases are available: "high" for 16 and "low" for 0.
+
+<dt><code>&lt;matplc point&gt;</code><dd>the MatPLC point to map
+</dl>
+
+<h2>Useful links</h2>
+
+<dl>
+
+<dt><strong>Modbusfw</strong> - Modbus/TCP Filtering on Linux Firewalls
+
+<dd>A set of kernel patches for Linux Netfilter to allow firewall policy
+decisions (DROP, DENY, ALLOW, etc.) to be made based on Modbus/TCP header
+values including modbus function code, providing better access control than
+simply blocking port 502. However, as of Sep 2003 this is an initial
+prototype release and they've done only limited testing so any feedback,
+new feature requests, and/or help with development is appreciated. See <a
+href="http://modbusfw.sourceforge.net">http://modbusfw.sourceforge.net</a>
+for details. 
+
+</dl>
+
+<!--autolink--><a href="../io/comedi.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/parport.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</body></html>

@@ -1,0 +1,2 @@
+log.o Makefile.depend: log.c log.h
+log_setup.o Makefile.depend: log_setup.c log.h log_setup.h

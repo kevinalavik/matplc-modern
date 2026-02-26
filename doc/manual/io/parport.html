@@ -1,0 +1,107 @@
+<html>
+<head>
+<title>MAT Parallel port IO manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../io/modbus.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/pontech.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Parallel port I/O</h1>
+
+<h2>Introduction</h2>
+
+The parallel port has 17 usable bits of I/O, some of which can be
+configured either as input or as output. Up to 12 can be configured as
+outputs, and depending on the hardware and access method either 13 or all
+17 can be configured as inputs.
+
+<p>The parallel port can be accessed either directly (specify the
+<code>io_addr</code> variable, below) or through the kernel driver (specify
+<code>dev_file</code>).
+
+
+<p>The bits are arranged into three registers, D, S and C. Register D can
+be either input or output, S is always input. The C register is usually
+output, but it can be used as input if the port is accessed directly (not
+through the kernel driver) and the hardware supports it, which varies
+between manufacturers. The direction of these configurable registers is
+inferred from the mapping; or you can specify it directly.
+
+<p>The format of the <code>&lt;io_addr&gt;</code> column for the map is
+<code>R.x</code> where R is the register (D, S or C) and x is the bit
+number. The acceptable address ranges are listed in the table.</p>
+
+<table border>
+  <tr><th>Register</th><th>Range</th><th>Number</th><th>Direction</th>
+      <th>Note</th><th>Pins</th></tr>
+  <tr><th>D</th><td>D.0-D.7</td><td>8</td><td>output/input</td>
+      <td>LS TTL</td><td>2-9</td></tr>
+  <tr><th>S</th><td>S.3-S.7</td><td>5</td><td>input</td>
+      <td>LS TTL</td><td>15/13/12/10/11</td></tr>
+  <tr><th>C</th><td>C.0-C.3</td><td>4</td><td>usually output</td>
+      <td>TTL Open Collector</td><td>1/14/16/17</td></tr>
+</table>
+
+<p>Note that while some of the S and C bits are inverted by the parallel
+port hardware, this module re-inverts all these bits to present a coherent
+positive logic interface. However, you may wish to verify the boot-up
+status of those used as outputs to avoid unexpected actions during startup.
+
+<h2>Configuration</h2>
+
+<dl>
+
+<dt><code>io_addr</code><dd>The parallel ports base address. 0x378 is the
+default if no io_addr is specified. You may also like to try 0x278 if the
+first doesn't work.</p>
+
+<p>Example: <code>io_addr = 0x378</code></p>
+
+<p>NOTE: this is unrelated to the <code>&lt;io_addr&gt;</code> column of
+the map.</p>
+
+<dt><code>dev_file</code><dd>If you prefer to go though the kernel driver,
+then specify the device file.</p>
+
+<p>Example: <code>dev_file = /dev/plc_parport0</code></p>
+
+<p>NOTE: If both of the above methods of accessing the parallel port are
+configured, then the kernel driver will be used. Only if this method fails
+will it fall back to the direct access mode, using the specified (or
+default) io base address.</p>
+
+<dt><code>Ddir</code><dd>defines the direction {in | out} the D register
+should use. If this is omitted, it will be automatically inferred from
+the mapping.</p>
+<p>Example: <code>Ddir = out</code></p>
+
+<dt><code>Cdir</code><dd>defines the direction {in | out} the C register
+should use. If this is omitted, it will be automatically inferred from
+the mapping.</p>
+<p>Example: <code>Cdir = in</code></p>
+
+<p>See warnings above about using the C register for input.</p>
+
+</dl>
+
+<p>The S register is always input; its direction is not configurable.</p>
+
+<h2>Example</h2>
+
+<pre>
+# use this device
+dev_file = /dev/plc_parport0
+# fallback to this hardware address
+io_addr = 0x278
+
+# Use these four bits as outputs; they're wired to light up when the output
+# is low, so we invert them here.
+# This also automatically configures the D register for output.
+map inv out D.0 L1
+map inv out D.1 L2
+map inv out D.2 L3
+map inv out D.3 L4
+</pre>
+
+<p>
+<!--autolink--><a href="../io/modbus.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/pontech.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</html>

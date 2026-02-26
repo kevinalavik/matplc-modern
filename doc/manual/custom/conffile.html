@@ -1,0 +1,136 @@
+<html>
+<head>
+<title>MAT manual - custom modules - conffile reference</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/gmm.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/log.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Custom modules - conffile reference</h2>
+
+<p>The config file is the common mechanism for the user to specify settings
+and parameters. Pretty much everything should either be in there, or else
+in a file named by the config. It is strictly read-only; only the user may
+change the values in these files.
+
+<p>It is divided into sections: normally, each module will read data from
+its own section. However, it can also read other sections - for instance,
+every module looks in the <code>[PLC]</code> section for the semaphore keys
+and the list of points.
+
+<h3>Retrieving values</h3>
+
+There are numerous functions, to cover the various combinations of getting
+an ordinary value and a table value, default or explicit section, and
+conversions to numbers. The overall pattern of the function names is:
+
+<blockquote>
+<code>conffile_get_{value/table}[_sec][_<em>type</em>]</code>
+</blockquote>
+
+<p>The arguments are as follows:
+
+<p>If there is an explicit section (<code>_sec</code>), it comes first.
+
+<p>The next argument (or first, if there's no section) is the name of the
+variable or table to be retrieved.
+
+<p>In the case of a table, the next two arguments are the row and the
+column numbers. (In some languages, the whole table will be returned as a
+two-dimensional array instead.)
+
+<p>If the <code><em>type</em></code> mark is omitted, the value is returned
+as a string, allocated with <code>malloc()</code>, or NULL if the value is
+not found (no such variable or table, or not that many rows or columns).
+For the other type marks (<code>_i32</code>, <code>_u32</code>,
+<code>_f32</code> and <code>_d</code>), the function takes a further four
+arguments: a pointer to the variable where the result is to be stored, a
+minimum, a maximum, and the default value to be used if the variable is not
+found. The function then returns a zero if the variable could be converted
+or if it was not found and the default is used, and non-zero if there was a
+problem.
+
+<p>In weakly typed languages, the <code><em>type</em></code> mark will not
+be available and all values will be returned as strings. If exceptions are
+available, they will be used to signal nonexistent values, otherwise empty
+strings will be returned (or as conventional for the language).
+
+<p>There is an additional set of functions for tables, 
+<blockquote>
+<code>conffile_get_table_[rows/rowlen][_sec]</code>
+</blockquote>
+
+<p>These return the number of rows in a table, or the length of a
+particular row. They return zero if there's no such table or row. Languages
+that return the whole table as a 2-d array will not have these functions.
+
+<h3>Prototypes</h3>
+
+Here are the prototypes for all of the above.
+
+<pre>
+char *conffile_get_value(const char *name);
+int conffile_get_value_i32(const char *name,
+                           i32 *val, i32 min_val, i32 max_val, i32 def_val);
+int conffile_get_value_u32(const char *name,
+                           u32 *val, u32 min_val, u32 max_val, u32 def_val);
+int conffile_get_value_f32(const char *name,
+                           f32 *val, f32 min_val, f32 max_val, f32 def_val);
+int conffile_get_value_d  (const char *name,
+                           double *val, double min_val,
+                           double max_val, double def_val);
+
+char *conffile_get_value_sec(const char*section, const char *name);
+int conffile_get_value_sec_i32(const char *section, const char *name,
+                               i32 *val, i32 min_val, i32 max_val, i32 def_val);
+int conffile_get_value_sec_u32(const char *section, const char *name,
+                               u32 *val, u32 min_val, u32 max_val, u32 def_val);
+int conffile_get_value_sec_f32(const char *section, const char *name,
+                               f32 *val, f32 min_val, f32 max_val, f32 def_val);
+int conffile_get_value_sec_d  (const char *section, const char *name,
+                               double *val, double min_val,
+                               double max_val, double def_val);
+
+char *conffile_get_table(const char *name, int row, int col);
+int conffile_get_table_i32(const char *name, int row, int col, 
+                           i32 *val, i32 min_val, i32 max_val, i32 def_val);
+int conffile_get_table_u32(const char *name, int row, int col,
+                           u32 *val, u32 min_val, u32 max_val, u32 def_val);
+int conffile_get_table_f32(const char *name, int row, int col,
+                           f32 *val, f32 min_val, f32 max_val, f32 def_val);
+
+int conffile_get_table_rows(const char *name);
+int conffile_get_table_rowlen(const char *name, int row);
+
+char *conffile_get_table_sec(const char *section, const char *name,
+			     int row, int col);
+int conffile_get_table_sec_i32(const char *section, const char *name, 
+                               int row, int col, 
+                               i32 *val, i32 min_val, i32 max_val, i32 def_val);
+int conffile_get_table_sec_u32(const char *section, const char *name, 
+                               int row, int col, 
+                               u32 *val, u32 min_val, u32 max_val, u32 def_val);
+int conffile_get_table_sec_f32(const char *section, const char *name, 
+                               int row, int col, 
+                               f32 *val, f32 min_val, f32 max_val, f32 def_val);
+
+int conffile_get_table_rows_sec(const char *section, const char *name);
+int conffile_get_table_rowlen_sec(const char *section, const char *name,
+				   int row);
+</pre>
+
+<h3>Other conffile functions</h3>
+
+The functions <code>conffile_init()</code> and <code>conffile_done()</code>
+are called by the global <code>plc_init()</code> and
+<code>plc_done()</code>, so they generally shouldn't be called explicitly.
+
+<p>It's also possible to obtain the name of the <em>n</em>th variable in
+the config, using <code>conffile_var_by_index()</code>. For debugging, the
+config can be dumped with <code>conffile_dump()</code>.
+
+<p>I have no idea what the <code>conffile_parse_i32()</code> function is or
+how it differs from <code>conffile_get_value_i32()</code>.
+
+<p>
+<!--autolink--><a href="../custom/gmm.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/log.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:09 $</small>
+</html>

@@ -1,0 +1,7 @@
+#!/bin/sh
+../../../tools/run/matplc -g
+../../../tools/run/handler -c das08.cmd & 
+../../../tools/run/handler -c logic.cmd
+sleep 1
+../../../tools/run/matplc -s
+

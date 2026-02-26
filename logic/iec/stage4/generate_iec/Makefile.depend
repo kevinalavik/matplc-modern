@@ -1,0 +1,3 @@
+generate_iec.o Makefile.depend: generate_iec.cc generate_iec.hh ../../absyntax/visitor.hh \
+ ../../absyntax/absyntax.hh ../../absyntax/absyntax.def ../stage4.hh \
+ ../../absyntax/absyntax.hh

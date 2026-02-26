@@ -1,0 +1,73 @@
+
+
+The MatPLC is an open source solution to the closed, proprietary world of PC
+ based controls.  The goal of the MatPLC is to offer users a PC based control
+system that is truly open, extendable, and maintanable by the user.  The problem
+with existing packages is that they tie you to a single vendor, force upgrades
+to keep tech support, and are, with a few exceptions, strictly windows based.
+
+We feel that the windows based solution is less than optimal because windows is
+designed to be a consumer grade operating system.  This leads to problems caused
+by things like audio players, web browsers, and other consumer oriented
+components that are deeply embedded into the operating system.  These components
+are all vying for the processors time, and are all executing code that can cause
+slowdowns, hang ups, or security problems, with no possible method of removing
+them.
+
+Linux, by comparison, can be custom tooled by removing all components that are
+not necessary for performing the task at hand.  It is possible to get a linux
+system trimmed down to fit onto a floppy disk.  This customizability means that
+you can get excellent performance out of your hardware by eliminating anything
+that is not needed to perform your control task.
+
+By releasing the MatPLC under the same GNU General Public License (GPL) that
+Linux is released under, we can guarantee that the integrator and user will be
+able to use, update, and support their system in perpetuity, if they desire.
+Unlike current solutions, that stop providing support for their system once a
+new version is released, the GPL insures that nobody will be forced to make
+drastic changes to their system just to continue to be allowed to use it.
+Anyone who has gone through the process of migrating a HMI or PC control system
+from Windows 95 to Windows NT, or even from one version of the HMI to the next,
+knows the problems involved.  But the only compelling reason to do this in the
+first place is because the vendor no longer supports the system that was
+originally sold. This is what we are trying to correct with the MatPLC.  By using
+the GPL, anyone can continue to use whatever version they like.
+
+One of the design decisions that was made early in the projects life was to keep
+ the entire system as modular as possible.  In this way, the final project will
+consist of only those parts that are required to perform the desired operation.
+A shared memory manager controls most of the inter-process communication.  I/O,
+analog signals, integer and floating point variables, etc are all accessed
+through this memory manager.  By controlling when each process synchronizes its
+process to the central table, we can insure that each process is working from a
+consistent data-set, and updates are precisely predictable.
+
+Synchronization is also maintained through the PLC core.  Components can be
+configured to simply run one after the other in lock stepped scan fashion, or
+complex relationships can be configured with processes running independent of
+each other, using a modified petri-net control design.
+
+Today, the MatPLC is approaching Beta-testing stages.  We have some I/O modules,
+most recently a Modbus master.  We have the system core, including the shared
+memory manager.  A system configurator is in development, and we are in the
+process of absorbing a ladder logic editor / solver into the project.  We also
+have an instruction list logic engine operational, and an HMI that is well
+underway.
+
+Things to finish before we are ready to release it for beta testing include
+finishing the items listed above, plus trying to gain more support for I/O
+networks.  Becuase of the design of the PC, the I/O control is best done using a
+fieldbus network.  One of our biggest challenges has been to convince the
+parties that control the fieldbus standards that they should allow us to support
+their protocols.  Many of them simply do not wish to allow their networks to be
+used in an open system environment, but want to keep them locked away from broad
+support.
+
+Our hope is that once we release a truly open system using Modbus, and I/O from
+other vendors that have helped us, some of the remaining networks will come on 
+board with us.  We are also working with a supplier of a rack based PC system
+that lives in a PLC-style chassis.  This is a system on the market today, and we
+are trying to get Linux to operate on that platform.  That would open up a wide
+array of I/O options to us, plus give us a semi-standard hardware platform to
+back it up.
+

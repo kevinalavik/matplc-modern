@@ -1,0 +1,779 @@
+%% Slides for linux.conf.au MatPLC talk Feb 2002
+%% based on the slides for end-of-probationary-period talk Mar 1999
+%% based on the slides for PRICAI talk Nov 1998
+%% Ann Nicholson and Jiri Baum
+%% $Id: talkslides.ltx,v 1.3 2002/04/24 10:02:54 mjsousa Exp $
+
+\documentstyle[slideformat,12pt,colordvi,graphicx]{article}
+%\usepackage{graphicx}
+
+%\let\li\labelitemi
+%\renewcommand\labelitemi{\MidnightBlue{\li}}
+%\let\lii\labelitemii
+%\renewcommand\labelitemi{\RoyalBlue{\lii}}
+%\let\liii\labelitemiii
+%\renewcommand\labelitemi{\BlueViolet{\liii}}
+%\let\liv\labelitemiv
+%\renewcommand\labelitemi{\Plum{\liv}}
+
+%\renewcommand{\includegraphics}[2][1cm]{\fbox{#1}}
+
+\newcommand{\foottitle}{%
+\raisebox{-3pt}{\includegraphics[height=12pt]{enlarged-logo.eps}}
+%\raisebox{-3pt}{\includegraphics[height=12pt]{MAT-linux-h100.eps}}
+MatPLC%
+}
+\newcommand{\footdate}{{\tt linux.conf.au} 2002}
+
+\newcommand{\ignore}[1]{} %comment out a whole block
+\newcommand{\say}[1]{} %same, but perhaps print out as speaker's notes
+
+% Definition of simplfied commands
+\newcommand{\subhead}[3]{\vspace{#1}\bc{\em #3}\ec\vspace{#2}}
+\setlength{\parindent}{0cm}
+
+\let\footcolor\Black
+
+%\input{psfig}
+\input{mydefs}
+%\input epsf
+
+%\providecommand{\here}[1]{\makebox[0pt][l]{\raisebox{0pt}[0pt]{#1}}}
+%\newcommand{\at}[3]{\here{\raisebox{#2}{\rule{#1}{0pt}\here{#3}}}}
+
+%\newcommand{\figDCad}[1]{\at{-6cm}{-9cm}{\psfig{figure=#1,width=400mm}}}
+%\newcommand{\myfigDCad}[1]{\at{-6cm}{-75mm}{\psfig{figure=#1,width=400mm}}}
+%\newcommand{\polfigDCad}[1]{\at{-4cm}{-6cm}{\psfig{figure=#1,width=300mm}}}
+
+%to avoid giving a page a number, put this just after the \newpage:
+%\thispagestyle{empty}\advance \count 0 by -1
+
+\begin{document}
+%Preamble%slidetitle [for the ./count script]
+\bc
+~\vspace{1in}
+
+{
+\def\/{\\\vfill}
+{\Huge\bf
+%
+\Blue{Machine Automation Tools \/ Programmable Logic Controller}
+\/
+http:{\LARGE //}mat.sf.net
+\/
+}
+%
+%\rule{0mm}{7cm}
+%\includegraphics[height=7cm,width=6.68cm]{enlarged-logo.pcx}
+\includegraphics[height=7cm]{enlarged-logo.eps}
+%bb = 0 0 h w
+\/
+\Large
+\begin{tabular}{ll}
+Project Leader: & Curt Wuollet (U.S.A.) \\
+Main contributors: & Juan Orozco (Mexico) \\
+                   & M\'ario de Sousa (Portugal) \\
+                   & Ji\v r\'{\i} Baum (Australia)
+\end{tabular}
+~
+\/
+%
+\LARGE
+{\tt linux.conf.au}\\
+\large
+Brisbane, Australia --- February 2002
+\/
+\huge
+%
+Ji\v r\'{\i} Baum 
+$<$jiri{\Large @}baum.com.au$>$
+%\\[0.3in]
+%
+}
+\ec
+
+\huge
+
+\newpage
+\slidetitle{Outline} %Preamble
+
+\bi
+\item PLCs and Industrial Automation
+\bi
+\item Specialized computer for industrial control
+\item Sometimes connected to expensive or dangerous things
+\item Balkanized commercial market
+\ei
+\item Overview of the MatPLC
+\bi
+\item Goals
+\item Architecture
+\item Library
+\item Modules
+\item Programming (in C)
+\ei
+\item Hugh Jack's LPC
+\ei
+
+\newpage
+\slidetitle{What is a PLC?} %PLC
+
+\bi
+\item Programmable Logic Controller
+\item Developed in the 1960s
+\item Originally replaced relay-based controls
+\item Reads input signals from sensors and switches
+\item Turns outputs on and off based on inputs and logic
+\ei
+\vfill
+\hfill\hfill{\includegraphics[width=0.5\textwidth]{b-prd-index-plc.eps}\hfill~
+\newpage
+\slidetitle{Advantages of PLCs over relays} %PLC
+
+\bi
+\item More flexible and powerful\bi
+\item Arithmetics etc
+\item Easier to modify logic
+\item Networkable
+\ei
+\item Simpler implementation (much less wiring)
+\item Possibly more reliable
+\item Smaller than relay equivalent
+\ei
+
+\newpage
+\slidetitle{Networkability} %PLC
+
+\bi
+\item Enables integration of the whole plant
+\item Better control over whole process
+\item Centralized reporting, control (SCADA --- Supervisory, Control and
+Data Acquisition), and/or
+\item Decentralization --- logic can be placed closer without sacrificing
+integration
+\ei
+
+\newpage
+\slidetitle{Ladder logic} %PLC
+
+\bi
+\item Emulates physical relays
+\bi \item half-heartedly \ei
+\item Relay diagram, but \bi
+\item Left-to-right, top-to-bottom, cyclic
+\item Reads inputs only at top, writes outputs only at bottom
+\ei
+% \item Stack language but only 8 deep
+\item No data abstraction, very little code abstraction
+\ei
+
+\centerline{\includegraphics[width=0.5\textwidth]{difulad.eps}}
+
+\newpage
+\slidetitle{Other languages} %PLC
+
+\bi
+\item Statement list
+\bi
+\item Not much higher than ladder
+\item Some variants are structured
+\item Still little or no data abstraction
+\ei
+\item State-based
+\hfill\raisebox{-125mm}[0cm][0cm]{\includegraphics[width=0.4\textwidth]{grafcet.eps}}
+\bi
+\item \parbox[t]{0.45\textwidth}{Annotated finite state machine}\\
+\item \parbox[t]{0.45\textwidth}{Usually annotated with ladder}\\
+\item \parbox[t]{0.45\textwidth}{Often translated to statement list or ladder}\\
+\ei
+\ei
+
+\newpage
+\slidetitle{Commercial Industrial Control Market} %PLC
+
+\bi
+\item Balkanized
+\bi
+\item Each vendor has solutions incompatible with all others
+\bi \item sometimes with their own \ei
+\item A recent standard had 8 different options (IEC~61158)
+\bi \item not counting vendors' variants\ldots \ei
+\ei
+\item Much inefficiency and duplication
+\item Tower of Babel
+\ei
+
+\newpage
+\slidetitle{Tower of Babel} %PLC
+
+\bi
+\item A few examples
+\bi
+\item BACnet
+\item CAN
+\item ControlNet
+\item DeviceNet
+\item EIA 709.1 (Lonworks)
+\item Fieldbus (various)
+% \item GPIB (data capture protocol)
+\item IEC61850
+\item Manufacturing Automation Protocol (MAP)
+\item Modbus
+\item OPC (based on Microsoft's DCOM)
+\item Profibus
+\item SPI
+% \item Wiegand (security protocol)
+\item[\vdots]
+\ei
+\ei
+
+\newpage
+\slidetitle{SoftPLC} %PLC
+
+\bi
+\item The software version of the PLC
+\item Runs on a PC, does the job of a PLC
+\item Commercial example --- AutomationX
+\item Properly, that's what MatPLC is
+\bi
+\item Or, at least, that's one use
+\ei
+\item Pros and cons \bi
+\item Graphical screen included by default
+\item More flexible / more complex programming
+\item Typically less rugged / reliable
+\ei
+\ei
+
+\newpage
+\slidetitle{Timing} %PLC
+
+\bi
+\item Significant stated concern
+\item PLC cycle usu. measured in ms
+\item Regularity and predictability more important than speed
+\bi \item Timing glitches hard to debug \ei
+\ei
+
+\newpage
+\slidetitle{Reliability} %PLC
+
+\bi
+\item Failure is stated ``not an option''
+\item Obviously, things still fail (valves stick etc)
+\item Downtime can be very expensive
+\item Sometimes directly affects safety
+\item Preferably not at 3am (Murphy's law)
+\ei
+
+\newpage
+\slidetitle{Maintenance} %PLC
+
+\bi
+\item Accessibility to personnel
+\bi \item Often non-programming, hence the ladder\ei
+\item Long-term availability of spares
+\bi
+\item Preferably same version number \bi \item Advantage of Open Source \ei
+\ei
+\item 3am, expensive downtime
+\ei
+
+\newpage
+\slidetitle{PC-based control --- Labview-style} %PLC
+
+\bi
+\item Graphical-based programming (connect-a-box)
+\item Little scope for abstraction
+\item Data-flow, but imperative under a thin skin
+\ei
+
+\centerline{\includegraphics[width=0.7\textwidth]{labview.eps}}
+\bi
+\item AutomationX another example
+\ei
+
+\newpage
+\slidetitle{PC-based control --- custom program} %PLC
+
+\bi
+\item Control program written in a general purpose language
+\bi \item C \item Visual Basic \item Delphi\ei
+\item Lot of work
+\item Not particularly suitable \bi
+\item Parallelism
+\item Jumping in and out of sequence
+\item Reliability
+\bi \item OS, programming language not designed for purpose \ei
+\ei
+\ei
+
+\newpage
+\slidetitle{Two-layer system} %PLC
+
+\bi
+\item A two-part system \bi
+\item PLC for reliability
+\item PC for flexibility
+\ei
+\item PLC wired to PC's reset or power
+\ei
+
+\newpage
+\slidetitle{H/W interfacing} %PLC
+
+\bi
+\item Cards in PC
+\bi \item With external isolation board \ei
+\item RS232 or bus to a dumb (or smart) PLC
+\bi \item via one of the many different busses \ei
+\item Ready-made embedded boxes
+\ei
+
+\newpage
+\slidetitle{Embedded linux boxes} %MAT
+
+\bi
+\item Beginning to appear
+\item Supplied with linux as standard
+\item Might run our s/w
+\item Simplifies use
+\item Avoids impression of PC-ness
+\ei
+
+\newpage
+\slidetitle{Microsoft} %PLC
+
+\bi
+\item Programming tools and uploaders
+\bi \item often only available for MS \ei
+\item Sometimes MS Windows box in control directly
+\bi \item security \item reliability \item long-term availability\ei
+\item Legacy of impression of unreliability
+\ei
+
+\newpage
+\slidetitle{PLC --- summary} %PLC
+\bi
+\item Specialized computer for industrial control
+\item More flexible and powerful than relays
+\item Can be connected to expensive or dangerous things $\to$ reliability
+required
+\item Balkanized commercial market
+\item SoftPLC is a PLC running on a generic PC
+\ei
+
+\newpage
+\slidetitle{Why MatPLC} %MAT
+\bi
+\item Truly open platform for automation
+\bi
+\item Helps avoid lock-in
+\item Facilitates integration of disparate systems
+\item More flexible than closed-source SoftPLC
+\item Gives power to integrator and end-user
+\ei
+\item Engender cooperation and interoperability
+\item Avoid duplication of effort
+\ei
+
+\newpage
+\slidetitle{MatPLC --- technical details} %MAT
+
+\bi
+\item Architecture
+\item Modules
+\item Library
+\item Programming (in C)
+\item Hugh Jack's LPC
+\item Summary and to-do list
+\ei
+
+\newpage
+\slidetitle{MatPLC Architecture} %MAT
+
+\bi
+\item Highly modular
+\bi
+\item Modules are separate processes
+\item Shared library ({\tt.so})
+\item Shared memory, protected by a semaphore
+\ei
+\ei
+\includegraphics[width=\textwidth]{lplc-article-fig1.eps}
+
+\newpage
+\slidetitle{Top-level setup} %MAT
+
+\bi
+\item {\tt matplc.conf} specifies \bi
+\item Modules to run
+\item Points (inter-module variables)
+\item Parameters for modules
+\item Other files containing info
+\ei
+\item Some modules need compilation / translation before starting (use {\tt
+make})
+\ei
+
+\newpage
+\slidetitle{Module groups} %MAT
+
+\bi
+\item Modules divided into three broad groups
+\bi
+\item Logic engines --- the actual calculations and decisions
+\item I/O and comms --- contact with the Real World
+\bi
+\item input signals from sensors and switches
+\item outputs to motors, hydraulics, pneumatics, lights etc
+\ei
+\item Human-Machine Interface --- interaction with humans (screen display,
+keyboard/mouse)
+\bi \item control panels (buttons, lights etc) go through normal I/O, not
+HMI \ei
+\ei
+\item Orientation only, no intrinsic difference
+\ei
+
+\newpage
+\slidetitle{Module types} %MAT
+
+\bi
+\item Generic --- used directly as they come
+\bi \item eg DSP, classicladder, most I/O \ei
+\item Specific --- generated by tools included
+\bi
+\item eg the mnemonics translator
+\item need to be compiled before starting ({\tt make})
+\ei
+\item Custom-made --- written directly in C
+\ei
+
+\newpage
+\slidetitle{Execution model} %MAT
+
+\bi
+\item Most modules run an infinite loop
+\bi
+\item PLC-style
+\item up to the module
+\hfill\raisebox{0cm}[7cm][-1cm]{\includegraphics[width=0.5\textwidth]{scan4.eps}}
+\ei
+\item Default asynchronous, each at its own speed
+\bi \item semaphore gives atomic updates \ei
+\item Additional synchronization optional
+\bi
+\item But must either synch or set scan period or be I/O bound, otherwise
+hogs CPU
+\bi \item linux scheduling issue --- may be better with new kernels\ei
+\ei
+\ei
+
+\newpage
+\slidetitle{Synch} %MAT
+
+\bi
+\item Petri net --- or simplified syntax 
+\item Synch points
+\bi
+\item Normally at top and bottom of loop
+\item May have more
+\ei
+\ei
+\includegraphics[width=\textwidth]{lplc-article-fig2.eps}
+
+
+\newpage
+\slidetitle{Global map} %MAT
+
+\bi
+\item All data in `points', in a global map in shared memory
+\item Each point 0-32 bits (typically 1 bit)
+\item No distinction between input, output, internal
+\item Each point writeable by exactly one module
+\item A point may be both input and output 
+\bi \item `traffic cop' with no logic module \ei
+\ei
+
+\newpage
+\slidetitle{Global map --- updates} %MAT
+
+\bi
+\item PLC-like semantics for updates
+\bi
+\item Global map updated only at end of scan
+\item Buffered in local map in each module
+\item Semaphore for atomic updates
+\item PLC skills transfer over
+\ei
+\item Optionally isolated for stray pointer protection
+\ei
+
+\newpage
+\slidetitle{Shared library} %MAT
+
+\bi
+\item GMM (global map)
+\item CMM (config map)
+\item config (parses config)
+\item synch (provides synchronization)
+\item period (set scan period)
+\item state (manage module state)
+\item log (uniform logging)
+\ei
+
+\newpage
+\slidetitle{I/O modules} %MAT
+
+\bi
+\item Somewhat lacking\ldots
+\item 8255 chip --- most cards use this
+\item Modbus --- one of the bus protocols
+\item CIF --- a card from Hilscher
+\item Parallel port direct access
+\ei
+
+\newpage
+\slidetitle{Logic engines} %MAT
+
+\bi
+\item Ladder --- graphical --- Marc Le Dourain's `classicladder' project
+\item Ladder --- mnemonics --- a simple Perl script
+\item DSP (Digital Signal Processing) \bi
+\item typeconv, add, mult, pow, filter, ramp, nonlinear, alarm, multiplexor
+\item PID
+\ei
+\ei
+
+\newpage
+\slidetitle{classicladder} %MAT
+
+\bi
+\item Traditional stepladder
+\item GUI-only
+\item (Lacks a non-graphical executive)
+\item Nicely animated for ease of debugging
+\ei
+
+\includegraphics[width=\textwidth]{classicladder_snapshot1.eps}
+
+\newpage
+\slidetitle{DSP} %MAT
+
+\bi
+\item Sequence of blocks \bi
+\item typeconv --- convert to and from the float the other blocks use
+\item add, mult, pow --- standard mathematical functions
+\item filter, ramp, nonlinear --- misc filters and transforms
+\item alarm, multiplexor --- comparison, selection
+\item PID --- Proportional-Integral-Derivative closed-loop control
+\ei
+\ei
+
+\newpage
+\slidetitle{Human-Machine Interface} %MAT
+
+\bi
+\item Gtk \bi
+\item Glade for layout
+\ei
+\centerline{\includegraphics[width=\textwidth]{heater_ss.eps}}
+\item Text-based (curses, kbd)
+\bi \item Sometimes X is over-kill and imposes load on the CPU, disk,
+memory etc \ei
+\ei
+\newpage
+\slidetitle{Simple Demo} %MAT
+
+\bi
+\item Simple light-chasing --- the equivalent of `hello world'
+\item Modules: \bi
+\item Keyboard input (linux console or stdin)
+\item Chaser (written in C)
+\item Curses display
+\item Shutdown
+\ei
+\ei
+
+{\textOliveGreen
+\normalsize\setlength{\baselineskip}{12pt}
+\begin{verbatim}
+                                 Light chaser
+                                 ============
+
+                                    Lights:
+
+                                  1  2  3  4
+                                  -  *  -  -
+
+                                    Buttons
+
+                                      <->
+
+
+     This is a simple light-chasing demo, controlled from the keyboard. By
+  intention, this demo requires no hardware or setup - not even X or svgalib.
+   That's why it looks the way it does - see the other demo directories for
+                       more impressive demonstrations...
+
+                         Controls (from the keyboard)
+                         ----------------------------
+        - L and R - toggle the `left' and `right' points. Remember to
+          toggle them off again before trying the other direction :-)
+        - Q - toggles the `quit' point, which terminates the demo.
+\end{verbatim}
+\textBlack}
+
+\newpage
+\slidetitle{Oven Demo} %MAT
+
+\bi
+\item Simulates a simple continuous process
+\item Manual/automatic mode, setpoints
+\item Modules:
+\bi
+\item DSP for simulation of heater
+\item DSP for oven control
+\item Gtk gui (or curses)
+\item Shutdown
+\ei
+\ei
+
+\includegraphics[width=0.5\textwidth]{heater_ss.eps}
+\vfill
+\hfill\includegraphics[width=0.5\textwidth]{oven_ss.eps}
+\newpage
+\slidetitle{Typical module} %MAT
+
+\bi
+\item Algorithm:
+
+{\obeycr\renewcommand\indent{\rule{1cm}{0pt}}%
+{\tt plc\_init(\ldots)}
+{\it grab handles to points}
+{\tt while(1)}
+\indent {\tt plc\_scan\_beg()}
+\indent {\tt plc\_update()}
+\indent {\it logic} 
+\indent {\tt plc\_update()}
+\indent {\tt plc\_scan\_end()}
+}
+\ei
+
+\newpage
+\slidetitle{Initialization} %MAT
+
+\bi
+\item {\tt plc\_init(\ldots)} initializes the library
+\item Get handles to points \bi
+\item Look up in config
+\item Check access mode
+\item Make access real-time
+\ei
+\item Anything else from the config file
+\item Any other init (eg hardware for I/O modules)
+\ei
+
+\newpage
+\slidetitle{Main Loop} %MAT
+
+\bi
+\item
+{\obeycr\renewcommand\indent{\rule{1cm}{0pt}}%
+{\tt while(1)}
+\indent {\tt plc\_scan\_beg()}
+\indent {\tt plc\_update()}
+\indent {\it logic} 
+\indent {\tt plc\_update()}
+\indent {\tt plc\_scan\_end()}
+}
+\item {\tt plc\_scan\_beg()} and {\tt plc\_scan\_end()} contain default
+synch points, scan period, etc
+\item {\tt plc\_update()} updates the local and global maps
+\item Logic uses {\tt plc\_get({\it point})} and {\tt plc\_set({\it
+point, value})} to get and set points
+\ei
+
+\newpage
+\slidetitle{I/O module library} %MAT
+
+\bi
+\item Simplifies and streamlines writing
+\item Makes config of I/O more uniform
+\item Includes main() and the entire framework
+\item Only the actual h/w specific parts need be written
+\ei
+
+\newpage
+\slidetitle{Hugh Jack's LPC} %MAT
+
+\bi
+\item Linux Programmable Controller
+\item Similar project \bi
+\item Same goals
+\item Highly modular
+\item etc
+\ei
+\item Plan to merge
+%\bi
+%\item needs message passing between modules
+%\item and some interface glue
+%\ei
+\ei
+
+\newpage
+\slidetitle{Hugh Jack's architecture} %MAT
+
+\bi
+\item Modules \bi
+\item Run as threads
+\item Dynamically loaded
+\ei
+\item Interact via \bi
+\item Global variables (similar to MAT points)
+\item Local/remote variables
+\item Messages
+\ei
+\ei
+
+\newpage
+\slidetitle{Hugh Jack's modules} %MAT
+
+\bi
+\item Ladder logic
+\item Telnet server and java clients\bi
+\item Monitor
+\item HMI
+\item Ladder programming
+\ei
+\item Serial port
+\item Devicenet
+\item DAS08 board (I/O)
+\item E-mail sending
+\ei
+
+\newpage
+\slidetitle{MAT --- summary} %MAT
+
+\bi
+\item SoftPLC for Linux
+\item Modular architecture
+\item Work is in progress \bi
+\item Infrastructure is in place
+\item Modules being written
+\ei
+\ei
+
+\newpage
+\slidetitle{MAT To do list} %MAT
+
+\bi
+\item Documentation
+\item Merging with LPC
+\item More I/O modules
+\item More/better logic and HMI modules
+\item Take over the world
+\ei
+
+\end{document}

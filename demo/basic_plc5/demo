@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+sub start($);
+
+system "make ready";
+
+# make cursor invisible (should use terminfo civis / cnorm)
+print "\e[?25l\n";
+
+system "../../tools/run/matplc -g";
+
+$SIG{CHLD}='IGNORE'; #no zombies, please
+
+start "../../logic/plc5/plc5 --PLCmodule=plc5";
+start "../../mmi/curses/vitrine";
+start "./kbd";
+$quit = start "../../tools/run/plctest -u quit --PLCmodule=quitcheck -q";
+
+while (kill 0, $quit) {
+  #sleep for 0.01s - don't hog the CPU
+  select(undef, undef, undef, 0.01); #sub-second sleep - perlfunc manpage
+}
+
+for $child (@children) {
+  kill TERM => $child;
+}
+
+system "../../tools/run/matplc -s";
+
+# make cursor visible
+print "\e[?25h";
+
+
+##########################
+# subroutine definitions #
+##########################
+
+sub start($) { my ($cmd) = @_;
+
+  my $child_pid = fork;
+
+  if ($child_pid) {
+    push @children, $child_pid;
+    return $child_pid;
+  } else {
+    exec $cmd;
+    die "$0: exec $cmd failed";
+  }
+}

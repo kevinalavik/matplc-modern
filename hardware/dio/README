@@ -1,0 +1,36 @@
+Industrial Translator Board for the DIO48
+
+This board, in combination with a DIO48 card will provide:
+
+24 optoisolated inputs that can be strapped in groups of 8 for either
+sinking or sourcing applications.
+
+24 optoisolated .5 ADC OC sinking outputs in groups of 8 with suppresion
+diodes.
+
+This board can be built in quantities of 10 for about $60.00 US
+With the DIO card this is about $3.33 per point.
+
+The copyrights are assigned to the MatPLC project and the materials can
+be used for any purpose provided that the MatPLC text is not removed from
+the board and accreditation is given to the project.
+
+The materials are released in this way as there is no hardware/artwork
+license comparable to the GPL. This may change and is negotiable if for
+some reason this small restriction causes a problem. 
+
+THe board was designed by Curt Wuollet, Owner, Wide Open Technologies and
+questions can be posted to the MatPLC mailing list matplc@matplc.org or
+sent to wideopen@ecenet.com and I will forward them to the list.
+
+This archive will be added to as I get the time.
+
+This material is provided without any warranty whatsoever and by using
+the materials, you agree to this. The entire responsibility for determining
+suitability of this board for any purpose rest with the user.
+
+
+Regards
+
+cww
+

@@ -1,0 +1,3 @@
+ - configuring the board from the config file
+
+ - verify errors in exchangeIO() when doing reads and writes to the card

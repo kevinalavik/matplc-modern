@@ -1,0 +1,21 @@
+README - Last Update June 9, 2002
+
+NOTE: This requires extensive work
+
+INFORMATION:
+This is an instruction interpreter that is well suited to ladder logic programs (in mnemonic form). More details will be provided later. It is based on the previous logic engine, but it should be much faster. Other features listed below.
+- an error handling routine
+- kernel status features
+- easy to add new functions (by programming)
+- 
+
+
+ARGUMENTS:
+The first argument is a test number, and the following arguments may or may not be used.
+1 = configuration file (in XML) (default is 'test.plc'
+2 = main program name (default is "main") 
+
+
+HOW TO USE:
+
+--------

@@ -1,0 +1,35 @@
+This is a simple light-chasing demo, controlled from the keyboard, in which
+the matplc points reflecting the state of the lights are copied onto
+the cif card's output process image, and from there to whatever hardware
+you may be using...
+
+Remember that the cif module requires that the cif device driver (i.e. the cif
+kernel module) be loaded. Change into drivers/cif and unzip
+the kernel device driver version 1.003 for kernels 2.2.x, or driver
+version 2.000 for kernels 2.4.x.
+Find the cif_load executable file, and run it as root to install the 
+device driver.
+After having configured the cif card, you are then ready to run the demo.
+
+To start:
+	cd demo/basic_cif; make
+
+To quit:
+	press `Q' on the keyboard
+
+
+It's controlled from the keyboard (module Kbd, kbd.c): the keys L, R and Q
+on the keyboard toggle the three points `left', `right' and `quit'.
+
+The Chaser module (chaser.c) is a primitive `light chasing' program. The
+direction of movement can be changed using the `left' and `right' points;
+these are notionally push-buttons, but in this demo they are controlled by
+the L and R keys. The speed of the chaser can be configured with the
+"delay" setting in the "Chaser" section of matplc.conf
+
+The demo terminates when the `quit' point comes on (keyboard Q).
+
+
+Buglet:
+	- assumes a linux terminal (hard coded escape codes).
+

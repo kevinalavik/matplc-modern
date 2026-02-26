@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>MAT manual - Program Engineering - HMI</title>
+</head>
+  <body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../program/specs.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/tests.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>HMI</h2>
+
+Every control system has to fulfil the requirements of its working cycle
+but there are another two members of the "essential trio" - HMI and <a
+href="../safety.html">Safety</a>. They are always present, even when
+ignored by the author of the system.
+
+<p>Even the simplest control systems have to provide some form of Human
+Machine Interface. A few LEDs connected in parallel to output loads (or the
+sound of clicking relays) are a crude form of HMI. For anything a bit more
+complex - or anything that is to be used professionally - the HMI needs to
+be designed carefully. For many designs it may be biggest part of the
+project. It is also the part which sells, because it is visible.
+
+<p>It often helps if the HMI layout and function is designed in parallel
+with the control algorithm. The HMI has to be able to interface to the
+operation itself, but the design of HMI often reveals some aspects of
+operation which need to be controlled and which may not be otherwise
+obvious at early stages of the project.
+
+<p>A good HMI: <ul>
+
+    <li>is easy to understand,
+
+    <li>contributes to the safe and efficient running of the machine,
+    
+    <li>is self documenting,
+
+    <li>includes on-line help (provides background information to
+    operator),
+
+    <li>provides at least some data logging (you will be the first to need
+    it - for debugging),
+
+    <li>may allow retrieving of logged data on screen or even replaying of
+    logged cycle, and
+
+    <li>provides troubleshooting functions, to facilitate tracing of
+    problems - the plant technician should never need to go to lower levels
+    of software simply to find out which sensor burned out.
+
+</ul>
+
+<p>A good HMI should provide on-screen all information needed for control
+of operation, but low priority data may not be always visible. It is
+important to prioritize data for complex systems. Failure scenarios in
+particular have to be assessed, and the HMI should provide clear
+descriptions of problems and preferably offer possible solutions to the
+operator.
+
+</p>
+
+<!--autolink--><a href="../program/specs.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/tests.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+ 
+<p><small>$Date: 2004/12/28 05:32:12 $</small> </p>
+ <br>
+ <br>
+</body>
+</html>
+

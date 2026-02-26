@@ -1,0 +1,28 @@
+G04 Title: DIO482, silkscreen solder side *
+G04 Creator: pcb 1.6.3 *
+G04 CreationDate: Wed Apr  4 02:40:36 2001 UTC *
+G04 For: root *
+G04 Format: Gerber/RS-274X *
+G04 PCB-Dimensions: 6500 5000 *
+G04 PCB-Coordinate-Origin: lower left *
+G04 Color: R0 G0 B0 *
+*
+%FSLAX23Y23*%
+%MOIN*%
+%ADD11C,0.010*%
+%ADD12C,0.070*%
+%ADD13C,0.040*%
+%ADD14C,0.030*%
+%ADD15C,0.020*%
+%ADD16R,0.060X0.060*%
+%ADD17R,0.090X0.090*%
+%ADD18C,0.060*%
+%ADD19C,0.090*%
+%ADD20R,0.070X0.070*%
+%ADD21R,0.100X0.100*%
+%ADD22C,0.100*%
+%ADD23C,0.130*%
+%IPPOS*%
+G01*
+D02*
+M02*

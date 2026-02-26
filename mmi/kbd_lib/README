@@ -1,0 +1,29 @@
+README - kbd
+
+Last Updates April 16, 2002
+
+--------------------------------------------------------
+About:
+
+This is a program that will map keystrokes to points in the PLC memory. Right now it is only configured for the chaser demo.
+
+-------------------------------------------------------- 
+Notes:
+
+	- changes can be made by changing the source code.
+
+--------------------------------------------------------
+Bugs:
+
+	- none known
+
+--------------------------------------------------------
+Todo:
+
+	- make this versatile to load kay mappings from a file.
+
+--------------------------------------------------------
+History:
+
+(original) Mario and Jiri - the original program was written as a quick fix for the normal KBD module that didn't work on all platforms.
+April 16, 2002 (Hugh Jack) - rewritten so that it would use the process handler

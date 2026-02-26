@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>MAT manual - synch config - advanced example</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../general/config/synch.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/rt.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h3>Configuration of synch - advanced example</h3>
+
+This section gives an example of advanced synch configuration. Most readers
+will probably want to skip this section.
+
+<p><b>Description</b>
+
+<p>In this example, there are three modules: 1, 2 and 3. Module 1 is always
+active, but modules 2 and 3 are not. Module 1 triggers one scan of modules
+2 and 3 when required.
+
+<p>This is set up in the <tt>matplc.conf</tt> file and in the code of module 1.
+Modules 2 and 3 are written as normal - MatPLC will suspend them at the
+beginning of the scan until module 1 triggers them.
+
+<p><b>In the <tt>matplc.conf</tt> file:</b>
+
+<pre>
+<font color="#CC0000">[PLC]</font>
+# We need two places...
+# (places hold tokens)
+<font color="#CC0000">place P_module2 </font>
+<font color="#CC0000">place P_module3        </font>
+
+# ... and three transitions.
+# (when fired, transitions remove and insert tokens from/into places)
+<font color="#CC0000">transition  T_module2_beg</font>
+<font color="#CC0000">transition  T_module3_beg</font>
+<font color="#CC0000">transition  T_launch_modules</font>
+
+# Remove a token from P_module2 when firing the T_module2_beg transition...
+<font color="#CC0000">arc P_module2     -&gt; T_module2_beg</font>
+
+# Remove a token from P_module3 when firing the T_module3_beg transition...
+<font color="#CC0000">arc P_module3     -&gt; T_module3_beg</font>
+
+# Insert a token into P_module2,
+# and another into P_module3
+# when firing the T_launch_modules transition...
+<font color="#CC0000">arc T_launch_modules -&gt; P_module2</font>
+<font color="#CC0000">arc T_launch_modules -&gt; P_module3</font>
+
+# The only thing left is to tell each module what transitions to use for
+#  the beginning and of the scan.
+<font color="#CC0000">module2:  scan_beg = T_module2_beg</font>
+<font color="#CC0000">module3:  scan_beg = T_module3_beg</font>
+
+</pre>
+
+<p><b>In the C source code of module1:</b>
+
+<p>In the initialisation:
+
+<pre>
+        /* initialise handle to the synchronisation point... */
+        /* Don't forget to add code to check for errors when calling the 
+         * following functions:
+         *  - If the transition doesn't exist, INVALID_TRANSITION will be returned.
+         *  - In case of errors when creating the synchpt, an 
+         *     INVALID_SYNCHPT will be returned.
+         */ 
+<font color="#CC0000">        plc_transition_t transition = plc_transition_by_name("T_launch_modules");
+        plc_synchpt_t synchpt = plc_synchpt_new(transition, 0, plc_synchpt_blocking);</font>
+</pre>
+
+<p>In the body of the scan (or as appropriate):
+
+<pre>
+        /* If condition occurs, fire the T_launch_modules transition */
+<font color="#CC0000">        if (</font>???????<font color="#CC0000">)
+          plc_synch(synchpt);</font>
+</pre> 
+
+<p>
+<!--autolink--><a href="../../general/config/synch.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/rt.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/12/08 09:13:44 $</small>
+</body>
+</html>

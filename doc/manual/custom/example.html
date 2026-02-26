@@ -1,0 +1,183 @@
+<html>
+<head>
+<title>MAT manual - example custom module</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/basic.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/general.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Example custom module</h2>
+
+<!-- NOTE: example.html is put together from example.top, example.bottom
+and demo/basic/chaser.c - be sure to edit those three, rather than
+example.html, otherwise your changes will be lost. Be sure to invoke "make"
+afterwards, though, because it's not built automatically. -->
+
+This is the chaser module from the <a href="../demo/basic.html">basic
+demo</a>.
+
+<p>At the top there's a couple of helper functions, <a
+href="#get_pt"><code>get_pt()</code></a> and <a
+href="#get_delay"><code>get_delay()</code></a>, for getting handles and the
+time delay from the MatPLC and checking that no error is returned.
+
+<p>After that we come to the <a href="#chase"><code>chase()</code></a>
+function, which contains the bulk of the code. First it gets handles for
+the left and right buttons and all the lights, and then it gets the time
+delay value and starts up the timer. Then the main loop starts. Apart from
+the boiler-plate beginning and end of scan, it contains just two pieces of
+code: one to check the <code>left</code> and <code>right</code> buttons,
+and set the <code>dir</code> variable appropriately, and the other to move
+the light along one when the timer has expired.
+
+<p>The <a href="#main"><code>main()</code></a> function just initializes
+the library and calls <code>chase()</code>.
+
+<h3>Listing</h3>
+<pre width="80"><font color="#B22222">/*
+ * (c) 2000 Jiri Baum
+ *
+ * Offered to the public under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * This code is made available on the understanding that it will not be
+ * used in safety-critical situations without a full and competent review.
+ */</font>
+
+
+<font color="#B22222">/*
+ * light chaser - sample code 
+ */</font>
+
+<font color="#A020F0">#include &lt;stdio.h&gt;</font>
+<font color="#A020F0">#include &lt;math.h&gt;</font>
+
+<font color="#A020F0">#include &lt;plc.h&gt;</font>
+<font color="#A020F0">#include &lt;logic/timer.h&gt;</font>
+
+const int num_lights = 4; <font color="#B22222">/* how many lights in the chase, max 9 */</font> 
+
+<font color="#B22222">/* 
+ * Get a handle to a point, checking that it's valid. Abort if the handle
+ * could not be obtained.
+ */</font>
+<strong><font color="#4169E1"><a name="get_pt"></a>plc_pt_t get_pt(const char *pt_name)</font></strong>
+{
+  plc_pt_t pt_handle;
+
+  pt_handle = plc_pt_by_name(pt_name);
+
+  <font color="#4169E1">if</font> (!pt_handle.valid) {
+    plc_log_errmsg(1, <font color="#666666">"Could not get handle to %s, aborting."</font>, pt_name);
+    printf(<font color="#666666">"Could not get valid handle to %s.\n"</font>, pt_name);
+    exit(1);
+  }
+
+  <font color="#4169E1">return</font> pt_handle;
+}
+
+<font color="#B22222">/* Obtain the chasing delay from the config, default 0.5 seconds. */</font>
+<strong><font color="#4169E1"><a name="get_delay"></a>double get_delay(void)</font></strong>
+{
+  double res;
+
+  <font color="#B22222">/* 
+   * Get the value "delay", of type double, into res.
+   * Minimum 0, maximum HUGE_VAL (ie, no maximum), default 0.5
+   */</font>
+  <font color="#4169E1">if</font> (conffile_get_value_d(<font color="#666666">"delay"</font>, &amp;res, 0, HUGE_VAL, 0.5) == 0) {
+    <font color="#B22222">/* a return value of 0 means OK - return the value obtained */</font>
+    <font color="#4169E1">return</font> res;
+  }
+
+  <font color="#B22222">/* some sort of problem - log it, and use half a second */</font>
+  plc_log_wrnmsg(1, <font color="#666666">"Could not get delay from config, using 0.5s"</font>);
+
+  <font color="#4169E1">return</font> 0.5;
+}
+
+<strong><font color="#4169E1"><a name="chase"></a>void chase(void)</font></strong>
+{
+  plc_pt_t left, right, L[num_lights];
+  char Lname[] = <font color="#666666">"Ln"</font>;
+  int i, dir=1, cur=num_lights-1;
+  double delay;
+  plc_timer_t timer;
+
+  <font color="#B22222">/* get the point handles */</font>
+  left = get_pt(<font color="#666666">"left"</font>);
+  right = get_pt(<font color="#666666">"right"</font>);
+  <font color="#4169E1">for</font>(i=0;i&lt;num_lights;i++) {
+    Lname[1] = '1'+i;
+    L[i]=get_pt(Lname);
+  }
+  
+  <font color="#B22222">/* get the delay from the config */</font>
+  delay = get_delay();
+  <font color="#B22222">/* start the timer ticking */</font>
+  plc_timer_start(timer);
+
+  <font color="#B22222">/* now chase! */</font>
+  <font color="#4169E1">while</font> (1) {
+    <font color="#B22222">/* beginning of scan */</font>
+    plc_scan_beg();
+    plc_update();
+
+    <font color="#B22222">/* check for change of direction */</font>
+    <font color="#4169E1">if</font> (plc_get(left) &amp;&amp; !plc_get(right)) {
+      dir = -1;
+    } <font color="#4169E1">else</font> <font color="#4169E1">if</font> (plc_get(right)) {
+      dir = 1;
+    }
+
+    <font color="#B22222">/* has delay elapsed? */</font>
+    <font color="#4169E1">if</font> (plc_timer_done(timer, delay)) {
+      <font color="#B22222">/* move the light along */</font>
+      plc_set(L[cur],0);
+      cur=(cur+dir+num_lights) % num_lights; <font color="#B22222">/* be careful about -1 % n */</font>
+      plc_set(L[cur],1);
+
+      <font color="#B22222">/* set timer back by delay; this avoids loss of precision */</font>
+      plc_timer_add(timer, -delay);
+    }
+
+    <font color="#B22222">/* end of scan */</font>
+    plc_update();
+    plc_scan_end();
+  }
+}
+
+<strong><font color="#4169E1"><a name="main"></a>int main(int argc, char **argv)</font></strong>
+{
+  <font color="#B22222">/* initialise the MatPLC library */</font>
+  <font color="#4169E1">if</font> (plc_init(<font color="#666666">"Chaser"</font>, argc, argv) &lt; 0) {
+    printf(<font color="#666666">"Error initializing PLC\n"</font>);
+    <font color="#4169E1">return</font> -1;
+  }
+
+  chase();
+
+  <font color="#4169E1">return</font> 0;
+}
+</pre>
+<h3>Notes</h3>
+
+If a module does just one thing, it does not need a timer - it can use the
+<code>scan_period</code> setting instead. For instance, the <a
+href="../io/logger.html">Data logger</a> works this way - it just writes
+the values to file or to the database as fast as it can, and the MatPLC
+library slows it down to the speed requested by the Application Builder.
+Most of the generic modules work this way.
+
+<p>The chaser needs a timer because it does two things at different time
+scales: it checks the left and right buttons as often as possible, but it
+only moves the light along a couple of times per second.
+
+<p>
+<!--autolink--><a href="../custom/basic.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/general.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/05/15 09:37:00 $</small>
+</html>

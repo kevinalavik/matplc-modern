@@ -1,0 +1,735 @@
+<HTML>
+<HEAD><TITLE>MatPLC Frequently Asked Questions</TITLE></HEAD>
+<body text="#000000" bgcolor="#FFFFFF"
+link="#000088" alink="#880000" vlink="#660066"
+>
+<!-- navbar more-or-less like on the SourceForge page -->
+<HR SIZE="1" NoShade>
+<A href="https://sourceforge.net/projects/mat/">Summary</A> |
+<A href="https://sourceforge.net/project/admin/?group_id=29758">Admin</A> |
+<A href="http://mat.sourceforge.net">Home Page</A> |
+<A href="https://sourceforge.net/forum/?group_id=29758">Forums</A> |
+<A href="https://sourceforge.net/tracker/?group_id=29758">Tracker</A> |
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397247">Bugs</A> |
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397248">Support</A> |
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397249">Patches</A> |
+<A href="https://sourceforge.net/mail/?group_id=29758">Lists</A> |
+<A href="https://sourceforge.net/pm/?group_id=29758">Tasks</A> |
+<A href="https://sourceforge.net/docman/?group_id=29758">Docs</A> |
+<A href="https://sourceforge.net/survey/?group_id=29758">Surveys</A> |
+<A href="https://sourceforge.net/news/?group_id=29758">News</A> |
+<A class=tabs href="https://sourceforge.net/cvs/?group_id=29758">CVS</A> |
+<A class=tabs href="https://sourceforge.net/project/showfiles.php?group_id=29758">Files</A><HR SIZE="1" NoShade>
+
+<H2>Frequently Asked Questions</h2>
+<dl>
+
+<p><dt><strong>Q. I'm new here. Where do I start?</strong>
+
+<dd><strong>A.</strong> Probably best to start with the <a
+href="manual">draft manual</a> Please let us know if there's anything
+unclear in there - the manual is intended for new users, so anything
+unclear is a problem we need to fix.</p>
+
+<p><dt><strong>Q. I'm new here. How do I contribute?</strong>
+
+<dd><strong>A.</strong> See the <a
+href="manual/general/contribute/intro.html">Contributing to the MatPLC</a>
+chapter of the manual. Initially, you should probably contribute by testing
+or by writing a module or two - this will help you gain familiarity with
+the project. Interfacing with an I/O library is one good option, as it's
+usually a clear objective.
+
+<p><dt><strong>Q. Has the MatPLC ever been used to control anything
+"real"?</strong>
+
+<dd><strong>A.</strong> Not yet.
+
+<p><a href="http://www.ace-lab.com/SCADA/demo.html"><img
+src="images/robix.jpg" WIDTH="160" HEIGHT="112" alt="[Juan's demo robot]"
+align="right" border=0></a>One of the developers, Juan, has <a
+href="http://www.ace-lab.com/SCADA/demo.html">a physical demo</a>
+accessible over the web. There is a tank with level control and a simple
+three-axis robotic arm, with a webcam so you can see what's happening.
+(The tank and the trend functions require Java; if you don't have Java,
+you'll only be able to play with the robot arm.)
+
+<!--
+<p>Another of the developers is planning to have a small, crude
+pick-and-place robot that plays checkers ready by Q1-Q2 2003.  </p>
+-->
+
+<p><dt><strong>Q. We have a super-secret algorithm in our plant. How would that
+work with the GPL?</strong>
+
+<dd><strong>A.</strong> For internal development, it doesn't matter - GPL only
+covers distribution. For consulting, there's a bit of asymmetry: the consultant
+can be subject to an NDA, but not the client.
+
+<p>This is because one of the purposes of the GPL is to protect the client,
+so the consultant is not allowed to restrict the client. There's no problem
+having the restriction the other way, protecting the client's IP.
+
+<p>Here's <a
+href="http://www.gnu.org/licenses/gpl-faq.html#DevelopChangesUnderNDA">what
+the GNU FAQ has to say on the topic</a>.</p>
+
+<p><dt><strong>Q. What are modules?</strong>
+
+<dd><strong>A.</strong>
+Modules are individual pieces of the MatPLC. Several modules work
+together to provide a useful application. For instance, a Modbus module
+might connect with the real world, a logic module might do control logic
+while a HMI module interacts with the user, all within the one
+application.
+
+If you run the basic demo, you'll see that there are four modules: one
+doing the actual logic (such as it is), one handling the keyboard, one
+handling the screen, and one taking care of the shutdown.</p>
+
+<p>See also the <a href="manual/general/concept/modules.html">Module
+section of the manual</a>.
+
+<p><dt><strong>Q. Does that mean we have to write modules to
+create an application, or do we simply use the existing modules?</strong>
+
+<dd><strong>A.</strong>
+Either. Some modules are supplied with the MatPLC, and they may be
+sufficient for your purposes. If they aren't, you can write your own
+modules. Often, you might use a mixture - most of the application being
+done by the off-the-shelf modules, with a couple of special functions
+written in C or python.
+We are currently working on an iec61131 IL and ST compiler. It should
+reach a useful stage by Q2 2003.
+
+<p><dt><strong>Q. I'm writing to a file from one of my modules; how do I
+protect myself from a sudden shutdown?</strong>
+
+<dd><strong>A.</strong>
+This is a multi-part question, really... <ul>
+
+<li>Files are automatically closed (by Linux) when a process ends. Thus,
+leaving a file open is not, in itself, a problem.
+
+<li>It's possible to have a function called when a process ends, using the
+<tt>atexit(3)</tt> function. Note that the MatPLC also takes advantage of
+this, so if you want your cleanup funtion to be called <ol> <li> before the
+MatPLC closes down, call <tt>atexit()</tt> after the call to
+<tt>plcinit()</tt> <li> after the MatPLC closes down, call
+<tt>atexit()</tt> before the call to <tt>plcinit()</tt>.</ol>
+
+<li>The functions <tt>fflush(3)</tt> and <tt>fsync(2)</tt> or
+<tt>fdatasync(2)</tt> may help, as may the <tt>O_SYNC</tt> flag on the
+<tt>open(2)</tt> call. Their limitations are listed in the relevant man
+pages.
+
+<li>Closing and re-opening the file is possible, but not necessarily
+effective as a precaution against power (110V/220V) loss, since data may
+still be in the (Linux) cache. This is particularly easy to see with floppy
+disks, which are slow, noisy and smaller than the cache, so it's visible
+when the file is closed and - later - data is written to disk.
+
+<ul><li>Closing and re-opening the file can be useful if another program is
+to re-name the file while the module is running. As long as the file
+remains open, the module will keep writing to it even if it is renamed or
+even deleted. If it is then closed and re-opened, a new file will be
+created with the original name.</ul>
+
+<li>As far as power (110V/220V) loss is concerned, another problem is that
+there may also be a cache in the hard disk controller itself, and Linux may
+or may not be able to do anything to flush that.
+
+</ul>
+</p>
+
+
+</dl>
+
+<p><HR>
+<table border=0 cellspacing=0><tr>
+<td width="24%" align=top valign=top>
+<font size=-1>
+<A HREF="#1.0">1.0) Introduction</A><BR>
+</P>
+<A HREF="#2.0">2.0) Using a Linux PC with IO modules to act as a PLC</A><BR>
+2.1) Supported hardware<BR>
+2.2) Kernel issues<BR>
+<A HREF="#2.3">2.3) Low level programming API</a><BR>
+</P>
+3.0) Programming languages for PLC<BR>
+<A HREF="#3.1">3.1) IEC 61131-3</A><BR>
+3.1.1) Ladder logic (aka LD)<BR>
+3.1.2) Instruction language (aka IL)<BR>
+3.1.3) Structured language (aka ST)<BR>
+3.1.4) Function Block (aka FBD)<BR>
+<A HREF="#3.2">3.2) MAT IL language</A><BR>
+3.3) Language editors<BR>
+</P>
+4.0) Data acquisition<BR>
+4.1) Simple historian<BR>
+4.2) SCADA historian<BR>
+4.3) Advanced historian<BR>
+</P>
+5.0) Man machine interface<BR>
+5.1) Simple snapshot interface<BR>
+5.2) Web interface<BR>
+</P>
+6.0) "Hardware discusion"<BR>
+</P>
+<A HREF="#7.0">7.0) Comunications to PLC devices</A><BR>
+<A HREF="#7.1">7.1) Hardware communication methods</A><BR>
+<A HREF="#7.1.1">7.1.1) Serial communications</A><BR>
+<A HREF="#7.1.2">7.1.2) Ethernet communications</A><BR>
+<A HREF="#7.2">7.2) "Open protocols"</A><BR>
+<A HREF="#7.2.1">7.2.1) MODBUS</A><BR>
+<A HREF="#7.3">7.3) Proprietry procotols</A><BR>
+</P>
+</td>
+<td width="1%">&nbsp;</td>
+<td width="75%">
+<IMG src="images/MAT-linux-h100.gif" WIDTH="95" HEIGHT="100" alt="[logo]"
+align="right">
+
+<H2>Old text (mostly belongs elsewhere)</h2>
+<P>The MatPLC (previously also known as the PuffinPLC) is an effort
+to produce a working PLC-like program runing on Linux, with a GUI for
+configuring and viewing its current state. The GUI will not be limited to
+Linux, but hopefuly also run on Windows, Web browsers, etc...</P>
+
+<P>We intend to take advantage of the fact that we have an underlying
+Operating System (OS) and therefore we will use its features to try and make
+the MatPLC modular, allowing for parallel code development.</P>
+
+<P>A running MatPLC consists of modules runing in an infinite loop, and
+accessing the common MatPLC memory/state. The common MatPLC memory/state is
+limited to points that can be from 0 to 32 bits wide. One module could be a
+PID loop, using two points for its input, and a third point for its output.
+Another possible module could be a plc5 emulator, that executes plc5 code,
+but using MatPLC points as its variables. Yet another possible module would be
+an I/O board driver, that would copy the state of some MatPLC points to its
+outputs, and copy the state of its inputs to other MatPLC points.</P>
+
+<P>As already stated, taking advantage of the underlying OS, each module will
+run as an independent process. This means that each module can be developed
+independently of each other, in whatever programming language the coder
+chooses. Access to the common MatPLC memory/state is done through a matplc.a
+library of functions, written in C, and with C header files available. The
+plc_set() function that Jiri has just explained, falls into the group of
+functions that give access to this common memory/state.</P>
+
+<P>The matplc.a library currently also supports synchronisation between
+modules. For example, say we have an I/O module and a PID module running.
+For the PID module to produce correct results, it must run in lock-step with
+the I/O module. With the synchronisation between modules, we can guarantee
+that the PID and I/O modules will run their scanning loops intermingled
+(i.e. I/O - PID - I/O - PID - ...). This is achieved without any explicit
+programming effort on the part of the module programmer, other than calling
+a specific plc funtion at the begining of the scan, and another at the end.</P>
+
+<P>Although not yet implemented, we intend to support online changes to the
+PLC, such as adding a module, removing a module, replacing a module (and
+guaranteeing that the new module will only start executing once the module
+being replaced has finished its scan), etc... This has not yet been
+completely thought out, so the supported semantics may change compared to
+what I have described.</P>
+
+<P>As you may have already noticed, for the MatPLC to work it requires
+common resources so the modules/processes can communicate and synchronise
+between them. This is done using shared memmory and semaphores. The use of
+these IPC (inter-process communication) mechanisms is hidden from the
+module coders by the matplc.a library. The shared memories and semaphores
+need to be setup before any module can start executing. This is done by the
+matplc utility (previously named smm-mgr) with the -g parameter. To
+shutdown the MatPLC (i.e. delete the common shared memmory and semaphore
+resources) use the -s parameter. If you want to exercise the MatPLC at a
+very low level, you may use the plctest utility.</P>
+
+
+<H3>The structure of the cvs server:</H3>
+<HR>
+  <table border=1>
+
+  <tr><td valign="top"><CODE><B>/doc</B></CODE></td>
+	<td valign="top">Documentation directory including a main page, this FAQ and other information.
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/doc/ape</B></CODE></td>
+			<td>an empty directory</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/doc/hwcompat</B></CODE></td>
+			<td>hardware compatibility</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/doc/images</B></CODE></td>
+			<td>general usage images</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/doc/manual</B></CODE></td>
+			<td>manufal pages for users and developers</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/doc/smm</B></CODE></td>
+			<td>a basic tutorial on the core memory</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/doc/talks</B></CODE></td>
+			<td>talks given by project developers</td>
+		</tr>
+
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/demo</B></CODE></td>
+	<td valign="top">Demo programs. See the <a
+	href="manual/demo/intro.html">demo section of the manual</a>.
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/tools</B></CODE></td>
+	<td valign="top">the main location for executable, library and configuration files.
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/tools/run</B></CODE></td>
+			<td>global executable files</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/tools/lib</B></CODE></td>
+			<td>LPC library files</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/tools/config</B></CODE></td>
+			<td>configuration files</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+
+  <tr><td valign="top"><CODE><B>/lib</B></CODE></td>
+	<td valign="top">This is where the matplc.a library and source code reside.
+		Please read the <A HREF="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/mat/lib/README">README</a> and check the header files to better understand this code.
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/lib/cmm</B></CODE></td>
+			<td>The configuration memory manager library</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/conffile</B></CODE></td>
+			<td>The configuration file parse library</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/gmm</B></CODE></td>
+			<td>The global memory manager library (a <a
+   				 href="manual/custom/gmm.html">description</a> and a <a
+  				  href="smm/tutorial.txt">tutorial</a> are available)</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/gnu</B></CODE></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/io</B></CODE></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/log</B></CODE></td>
+			<td>The common logging services library</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/logic</B></CODE></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/lpc</B></CODE></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/misc</B></CODE></td>
+			<td>Miscelaneous libraries used without the other
+        libraries (shared memory, internet sockets, semaphores, string handling,
+        data structures, ...)</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/period</B></CODE></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/smm</B></CODE></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/synch</B></CODE></td>
+			<td>The synchronisation library</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lib/util</B></CODE></td>
+			<td>Old location of the smm-mgr and plctest utilities, now
+    in <code>/tools/run</code>. Still contains their source code.</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/logic</B></CODE></td>
+	<td valign="top">logic interpreters and compilers
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/logic/classicladder</B></CODE></td>
+			<td>a GUI based ladder logic editing, simulation and execution</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/logic/dsp</B></CODE></td>
+			<td>A digital signal processing module. Currently I
+     			   only have the main framework implemented, and a very basic PID function.
+    			    Hoping other more PID knowlegeable people are willing to help me out
+    			    with this. I have some well defined header files you can write
+     			   standard C (OS independent code) for this. Please email me if you are
+      				willing to help out.</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/logic/iec</B></CODE></td>
+			<td>the begining of an IEC61131 compiler (not fully functional)</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/logic/il</B></CODE></td>
+			<td>A basic instruction language compiler, that
+				generates a MatPLC module. Written in perl. A <a
+				href="manual/logic/il.html">language manual</a> is
+				available.</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/logic/ladder_lib</B></CODE></td>
+			<td>LPC ladder logic engine library</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/logic/plc5</B></CODE></td>
+			<td>a PLC5 ladder logic engine</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/mmi</B></CODE></td>
+	<td valign="top">man-machine interface utilities
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/mmi/curses</B></CODE></td>
+			<td>basic ASCII screen interface also known as the vitrine.</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/mmi/curses_lib</B></CODE></td>
+			<td>LPC library for the curses interface</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/mmi/hmi_gtk</B></CODE></td>
+			<td>a GTK basic GUI</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/mmi/kbd</B></CODE></td>
+			<td>low level keyboard interface</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/mmi/kbd_lib</B></CODE></td>
+			<td>LPC library for kbd</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/mmi/tcl</B></CODE></td>
+			<td>a TCL GUI</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/drivers</B></CODE></td>
+	<td valign="top">kernel level dirvers for various devices
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/drivers/8255</B></CODE></td>
+			<td>a basic parallel IO chip found on many digital IO boards</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/drivers/modbus</B></CODE></td>
+			<td>a sensor networking network</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/comm/plc_parport</B></CODE></td>
+			<td>parallel port driver</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/io</B></CODE></td>
+	<td valign="top">drivers for basic IO (point oriented) hardware
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/io/cif</B></CODE></td>
+			<td>drivers for a variety of sensor networks; devicenet, profibus, etc.</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/io/das08</B></CODE></td>
+			<td>a basic IO board with digital, analog and counter IO</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/io/das08_lib</B></CODE></td>
+			<td>LPC library for the DAS08 card</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/io/logger</B></CODE></td>
+			<td>a logger for basic PLC events</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/io/modbus</B></CODE></td>
+			<td>modbus drivers</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/io/parport</B></CODE></td>
+			<td>parallel port IO</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/io/simple-udp</td>
+			<td>network based communication to point IO</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/comm</B></CODE></td>
+	<td valign="top">This directory contins drivers oriented to data communication
+		(not to be confused with point oriented IO).
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/comm/network_io</B></CODE></td>
+			<td>basic wrappers for tcp/ip networking</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/comm/rs232c_lib</B></CODE></td>
+			<td>lpc library for serial interfacing
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/comm/tcpip_lib</B></CODE></td>
+			<td>lpc library for network interfacing</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/service</B></CODE></td>
+	<td valign="top">communication based services
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/service/email_lib</B></CODE></td>
+			<td>LPC library for sending email</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/service/matd_lib</B></CODE></td>
+			<td>LPC library for a network interface accessible via telnet</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/lang</B></CODE></td>
+	<td valign="top">code for using other languages
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/lang/python</B></CODE></td>
+			<td>a powerful scripting language</td>
+		</tr>
+		<tr>
+			<td valign="top"><BODE><B>/lang/tcl</B></CODE></td>
+			<td>a graphics oriented language language</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/scada</B></CODE></td>
+	<td valign="top">tools for remotely monitoring controllers
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/scada/visualview</B></CODE></td>
+			<td>a python based tool</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+  <tr><td valign="top"><CODE><B>/hardware</B></CODE></td>
+	<td valign="top">This directory contains designs for actual (open source) hardware
+		<table border=1>
+		<tr>
+			<td valign="top"><BODE><B>/hardware/dio</B></CODE></td>
+			<td>a digital IO board with optoisolation</td>
+		</tr>
+		</table>
+	</td>
+  </tr>
+
+</table>
+
+<HR>
+<A name="1.0">
+<H4>1.0) Introduction</H4>
+<HR>
+<H4>2.0) Using a Linux PC with IO modules to act as a PLC</H4>
+<H4>2.1) Supported hardware</H4>
+<H4>2.2) Kernel issues</H4>
+<HR>
+<A name="2.3"><H4>2.3) Low level programming API</H4>
+
+<table>
+  <tr><td>
+The global map is the common data area for the MatPLC. It contains all of
+the data that is used by all parts of the MatPLC, including physical I/O,
+internal coils, and any data to be shared between modules. This is how data
+is shared between logic engines, IO, HMI modules, debugging tools, etc.</P>
+
+<P>Each module, upon being started, is given a private copy of the global
+memory map. All functions performed by a module are done to this private
+memory map which is then synchronized back to the global memory map through
+a function call in the MatPLC library. This synchronization is
+semaphore controlled, which provides atomic updates. When run with a single
+logic engine, this allows the MatPLC to mimic the behaviour of a
+traditional PLC.</P>
+
+<p>The library contains various functions for access to the private and
+global memory maps, a few of which are listed on the right. Consult the <a
+href="manual/custom/gmm.html">detailed description</a> and the <a
+href="smm/tutorial.txt">tutorial</a> for more details.
+
+  </td>
+  <td valign="bottom">
+  <table border="1">
+    <tr><td><font size=-1><code>plc_init()</code></td>
+    <td><font size=-1>Connect to PLC</td></tr>
+    <tr><td><font size=-1><code>plc_done()</code></td>
+    <td><font size=-1>Disconnect from PLC</td></tr>
+    <tr><td><font size=-1><code>plc_pt_by_name()</code></td>
+    <td><font size=-1>Obtain point handle</td></tr>
+    <tr><td><font size=-1><code>plc_get()</code></td>
+    <td><font size=-1>Read a value from a point</td></tr>
+    <tr><td><font size=-1><code>plc_set()</code></td>
+    <td><font size=-1>Write a value to a point</td></tr>
+    <tr><td><font size=-1><code>plc_update()</code></td>
+    <td><font size=-1>Sync PLC memory maps</td></tr>
+  </table>
+</td></tr></table>
+
+<HR>
+<H4>3.0) Programming languages for PLC</H4>
+<A name="3.1">
+<H4>3.1) IEC 61131-3</H4>
+In the MatPLC CVS tree under the <CODE>/logic/iec</CODE> directory is the
+first workings of a program to translate IEC 61131-3 Instruction list (IL) and
+Structured Text (ST) files into a form that can be integrated with MatPLC.</P>
+
+The code at this stage is strictly "under-development", there is no
+guarantee that even simple programs will even translate, let alone generate
+correct code.</P>
+
+For more info on the IEC 61131-3 standard you could check
+<A HREF=" ftp://ftp.cle.ab.com/stds/iec/sc65bwg7tf3/document/">
+ftp://ftp.cle.ab.com/stds/iec/sc65bwg7tf3/document/</A> for an old draft
+when they last revised the standard (eg: use this at your own risk).</P>
+<H4>3.1.1) Ladder logic (aka LD)</H4>
+<H4>3.1.2) Instruction List language (aka IL)</H4>
+<I>Work in progress</I>
+<H4>3.1.3) Structured Text language (aka ST)</H4>
+<I>Work in progress</I>
+<H4>3.1.4) Function Block (aka FBD)</H4>
+<A NAME="3.2"><H4>3.2) MAT IL language</H4>
+<table border=0 cellpadding=0><tr><td valign="top">
+This is a simple Instruction List style language. The program is written in
+a plain text file with the extension <samp>.il</samp> and compiled into a
+full-fledged MatPLC module. As the language is compiled rather than
+interpreted, execution is very efficient.
+
+<p>The language is described in a <a href="manual/logic/il.html">language
+manual</a>.
+</td><td><table border=0 cellpadding=0>
+<tr><td><code> LD </code></td><td><code>X001</code></td></tr>
+<tr><td><code> AND </code></td><td><code>Y002</code></td></tr>
+<tr><td><code> LD </code></td><td><code>X002</code></td></tr>
+<tr><td><code> ANI </code></td><td><code>Y001</code></td></tr>
+<tr><td><code> ORB </code></td></tr>
+<tr><td><code> OUT </code></td><td><code>Y004</code></td></tr>
+</table></td></tr></table>
+<H4>3.3) Language editors</H4>
+<HR>
+<H4>4.0) Data acquisition (data historian)</H4>
+<H4>4.1) Simple historian ("snapshots")</H4>
+<H4>4.2) SCADA historian (snapshots, averages, archiving)</H4>
+<H4>4.3) Advanced historian (above + MMI + trending +...+<etc>)</H4>
+<HR>
+<H4>5.0) Man machine interface</H4>
+<H4>5.1) Simple snapshot interface</H4>
+<H4>5.2) Web interface</H4>
+<HR>
+<H4>6.0) "Hardware discusion"</H4>
+<HR>
+<A name="7.0">
+<H4>7.0) Comunications to PLC devices</H4>
+<p>This section covers as many aspects as possible when attempting
+to communicate to a PLC device. A quick bit of network theory
+is required first before we launch into the discussion. The ISO/OSI
+model of a network is as follows:</P>
+<table border="1">
+<tr><td><B>Layer</B></td><td><B>Description</B></td><td><B>FAQ Section</B></td></tr>
+<tr><td>Physical</td><td>Transmits and receives bits over the physical media</td><td>Hardware</td></tr>
+<tr><td>Data link</td><td>Adds error-checking information and organizes bits into frames</td><td>Hardware</td></tr>
+<tr><td>Network</td><td>Handles internetwork sequencing, addressing and routing</td><td>Hardware</td></tr>
+<tr><td>Transport</td><td>Adds identifiers to processes and deals with error-handling information</td><td>Protocol</td></tr>
+<tr><td>Session</td><td>Sets up and tears down connections or sessions. Administers sessions.</td><td>Protocol</td></tr>
+<tr><td>Presentation</td><td>Translates data formats and adds encryption</td><td>User Interface</td></tr>
+<tr><td>Application</td><td>Provides services that directly support user applications</td><td>User Interface</td></tr>
+</table>
+
+<A name="7.1">
+<H4>7.1) Hardware communication methods</H4>
+<A name="7.1.1">
+<H4>7.1.1) Serial communications</H4>
+<A name="7.1.2">
+<H4>7.1.2) Ethernet communications</H4>
+<A name="7.2">
+<H4>7.2) "Open Protocols"</H4>
+This section is dedicated to various protocols which are widely
+used and the specifications are available in the public domain.
+This does not mean the protocol is not "proprietry" (the copyright
+is still held by a company, consortium or standards body), it just
+means that a web search or literature search in a library (*gasp*,
+yes, paper books) you will find the definition of the protocol.
+<A name="7.2.1">
+<H4>7.2.1) MODBUS</H4>
+Wayne Johnston wrote:</BR>
+<CODE>
+Anyone interested in Modbus can find specifications at</BR>
+<A HREF="http://www.modicon.com/techpubs/TechPubNew/index.html">
+http://www.modicon.com/techpubs/TechPubNew/index.html</A>.</BR>
+</BR>
+The serial protocols are described in</BR>
+<A HREF="http://www.modicon.com/techpubs/TechPubNew/PI_MBUS_300.pdf">
+http://www.modicon.com/techpubs/TechPubNew/PI_MBUS_300.pdf</A></BR>
+</BR>
+The Modbus/TCP protocol is described in</BR>
+<A HREF="http://www.modicon.com/openmbus/">http://www.modicon.com/openmbus/</A></BR>
+</BR>
+BTW: there are two serial protocols called ASCII and RTU. They differ only</BR>
+at what you might call the data link layer. The higher layers are the same.</BR>
+(Though you won't find any description of layers in the protocol</BR>
+specification, it can be implemented as a layered protocol.)</BR>
+</BR>
+ASCII is easier to implement, but RTU is about twice as efficient. As a</BR>
+result most low bandwidth applications use the RTU protocol. I'd recommend</BR>
+implementing both, but if you have to choose, pick the RTU protocol.
+</CODE>
+<A name="7.3">
+<H4>7.3) Proprietry procotols</H4>
+<HR>
+
+<p><small>$Date: 2006/05/13 05:23:29 $</small>
+
+</BODY>
+</HTML>

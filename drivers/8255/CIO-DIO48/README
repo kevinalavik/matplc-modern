@@ -1,0 +1,223 @@
+
+                      CIO-DIO48 Version 1.0
+                      ----------------------
+
+ Linux loadable module for the Computer Boards CIO-DIO48 Digital I/O
+ ------------------------------------------------------------------------
+
+Introduction:
+-------------
+
+This driver was adapted from another driver written for the Computer Boards
+CIO-DAS 16/330 A/D converter, written by Warren J. Jasper and Sam Moore at
+North Carolina State University.  Adaptations were made for the CIO-DIO48
+board by Tim Edwards at the Johns Hopkins University, Baltimore, Maryland.
+
+This drivers will also work with the CIO-DIO48H, CIO-DIO96, and CIO-DIO192
+boards (see Makefile for details)
+
+All questions about this driver should be directed to tim@bach.ece.jhu.edu
+(Tim Edwards)
+
+Distribution contents:
+----------------------
+
+README         - this file
+Makefile       - Makefile to compile and install the driver
+ciodio48.c     - CIO-DIO48 (etc.) Driver source.
+dio48.h        - User and driver definitions and constants.
+test/diotest.c - Test program.
+
+Building and installing the driver:
+-----------------------------------
+
+1. Uncompress the downloaded file:
+
+   gunzip CIO-DIO48.tar.gz
+
+2. Untar the tar file:
+
+   tar xvf CIO-DIO48.tar
+
+3. This should create the following directory:
+
+   CIO-DIO48/
+
+4. If the major device number 31 is in use the edit the following line
+   in the Makefile.
+
+	MAJOR_DEV=31
+
+5. If the board is configured for a different base I/O address than
+   the default of $300, edit the following line in the Makefile:
+
+	BASE_ADDR=0x300
+
+6. If you are compiling for a board other than the CIO-DIO48, change the
+   ID line in the Makefile to one of the following:
+
+	ID=CIO_DIO48H
+	ID=CIO_DIO96	or
+	ID=CIO_DIO192
+
+7. Set the number of channels.  For the DIO48 and 48H, this is 2.  For
+   the DIO96 it is 4, and for the DIO192, 6.
+
+	CHANNELS=2
+
+8. To compile, type:
+
+   make
+
+9. To make the appropriate devices:
+ 
+   make devices
+
+10. To install the driver type:
+
+    make install
+
+11. To test run the test program 'diotest'.  This is a simple
+    internal test with will latch a value to the DIO board
+    outputs and attempt to read the same value back.
+
+    test/diotest
+
+Having the driver install automatically at boot time:
+-----------------------------------------------------
+
+Under Slackware Linux, in /etc/rc.d/rc.modules, you should add:
+
+/sbin/modprobe dio48
+
+and the file dio48.o should be moved to the directory
+
+/lib/modules/$LINUX_VERSION/misc/dio48.o
+
+where modprobe can find it.  If this does not work or your version
+of linux does not have "modprobe", you can put the following in
+one of the startup scripts, say, /etc/rc.d/rc.M instead:
+
+if [ -x /sbin/insmod ]; then
+        echo -n " DIO"
+        /sbin/insmod $DIRECTORY_YOU_CREATED/dio48.o
+fi
+
+How the driver works:
+---------------------
+
+Each 82C55 chip, with its set of ports A, B, and C, has its own
+minor device number and thus can be opened, read, and write
+separately from the others.  Each set of ports, or individual 
+minor device, will be referred to henceforth as a "channel".
+There is only one major number for the board.
+
+#define DEFAULT_MAJOR_DEV  31    /* Default Major Device Number */
+#define CHANNELS            2    /* Number of minor devices */
+#define BASE_REG        0x300    /* base address for CIO-DIO board */
+
+Make sure that these numbers are not being used on your system.  The
+Base address must also be set with DIP switch on the board.
+Note that major device number 31 is sometimes used by GPIB board
+drivers;  if so, you may want to use number 60 (reserved for
+experimental use.  See /usr/src/linux/Documentation/devices.txt,
+for instance, in the slackware linux distribution).
+
+Programming with the driver:
+----------------------------
+
+Programs should include the following to enable the definitions
+explained below.
+
+#include<dio48.h>
+
+(Running "make install" will copy this file to /usr/local/include.)
+
+Open a digital channel using
+ 
+  int fd;
+  fd = open("/dev/dio48/dio0", O_RDWR);
+
+for channel 0, or use the device name for the desired channel.
+
+To read all ports from a channel, use:
+
+  int bytesRead;
+  unsigned long data;
+
+  bytesRead = read( fd, &data, 3);
+
+The first byte of data will be Port A, the second Port B, and the
+third Port C.  For reading and writing bytes to individual ports,
+see the section on ioctl() calls below.  The returned value
+bytesRead should be 3.
+
+Writing is implemented similarly:
+
+  unsigned long data;
+   .
+   .
+   .
+  write( fd, &data, 3);
+
+The following ioctl() functions have been implemented (see dio48.h):
+
+1. ioctl(fd, DIO_SET_MODE, value); 
+
+   Sets the mode of the 82C55.  The 8th bit (mode_set) is automatically
+   set, so the high bit of "value" is ignored.  The port mode "value" can
+   be set to the following values:
+
+	OUTPUT		(all channels configured for output)
+	CNTL_A		(Port A configured for input)
+	CNTL_B		(Port B configured for input)
+	CNTL_C		(Port C configured for input)
+	CNTL_CL		(Port CL (C, low 4 bits) configured for input)
+	CNTL_CH		(Port CH (C, high 4 bits) configured for input)
+
+   These may be OR'd together for an arbitrary input/output
+   configuration.  The board defaults to all ports configured for
+   input.
+
+   Also available are the modes for strobed I/O and bidirectional
+   bus (see data sheets on the 82C55 for details).
+
+	GRPA_MODE0	(normal I/O)
+	GRPA_MODE1	(strobed I/O)
+	GRPA_MODE2	(bi-directional bus)
+	GRPB_MODE0	(normal I/O)
+	GRPB_MODE1	(strobed I/O)
+
+   Group-A (GRPA) controls the mode of ports A and CH.  Group-B
+   (GRPB) controls the mode of ports B and CL.  Normal I/O is the
+   default on startup of the board and does not need to be
+   specifically set.
+
+2. ioctl(fd, DIO_GET_MODE, &value);
+
+   Returns the current mode of the 82C55 chip.
+
+3. ioctl(fd, DIO_SETA, value);
+
+   Sets Port A to the given (byte) value.
+
+4. ioctl(fd, DIO_SETB, value);
+
+   Sets Port B to the given (byte) value.
+
+5. ioctl(fd, DIO_SETC, value);
+
+   Sets Port C to the given (byte) value.
+
+6. ioctl(fd, DIO_GETA, &value);
+
+   Reads the value of Port A into the variable "value".
+
+7. ioctl(fd, DIO_GETB, &value);
+
+   Reads the value of Port A into the variable "value".
+
+9. ioctl(fd, DIO_GETC, &value);
+
+   Reads the value of Port A into the variable "value".
+

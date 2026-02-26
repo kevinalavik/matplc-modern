@@ -1,0 +1,12 @@
+parport.o Makefile.depend: parport.c parport.h ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h \
+ parport_util.h ../../lib/types.h ../../lib/../lib/misc/string_util.h \
+ ../../lib/../lib/misc/../types.h ../../lib/../lib/io/io_hw.h \
+ ../../lib/../lib/io/../../lib/plc.h
+parport_util.o Makefile.depend: parport_util.c parport_util.h ../../lib/types.h

@@ -1,0 +1,10 @@
+#!/bin/sh
+make ready
+echo "Trying to stop a previously ecuting matplc."
+#echo "(Error closing down the plc means no matplc was running)"
+echo ""
+../../tools/run/matplc -s > /dev/null
+rm -r matplc.log
+echo ""
+echo "Executing the demo."
+../../tools/run/matplc -g

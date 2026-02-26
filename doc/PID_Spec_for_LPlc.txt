@@ -1,0 +1,257 @@
+PID Block Specification
+=======================
+
+Signal Conditioning - All External Blocks
+-----------------------------------------
+1) Filtering - External Block
+a) 1st Order Low Pass
+b) 2nd Order Butterworth
+
+2) Square Root Extraction
+This is required for Flow measurements from Diff. Pressure devices such as 
+Orifice plates. When filtering is also applied Square root extraction should 
+be performed first.
+
+Process Variable (PV) - Measured Variable - Controlled Variable
+---------------------------------------------------------------
+1) High Scale in Engg. Units (EU) corresponding to 100 % of input signal.
+
+2) Low Scale in EU corresponding to 100 % of input signal.
+
+3) EU description in string (character) format for MMI display.
+
+4) High-High (HH) Alarm on PV in EU or %.
+
+5) High (H) Alarm on PV in EU or %.
+
+6) Low (L) Alarm on PV in EU or %.
+
+7) Low-Low (LL) Alarm on PV in EU or %.
+
+8) Deviation Alarm Absolute of (Setpoint - PV) in EU or %.
+
+9) Alarm Deadband in EU or %.
+
+10) Transmitter Failure High Value in %.
+
+11) Transmitter Failure Low Value in %.
+
+12) Hold Last Output on Transmitter Failure enable. DIscrete selection. 
+Boolean 1 enables this selection.
+
+13) Transmitter Failure Output Value. If above selection is not enabled this 
+value will be used when transmitter fails.
+
+14) Hold Last Mode on Transmitter Failure enable. DIscrete selection. 
+Boolean 1 enables this selection.
+
+15) Transmitter Failure Mode. If above selection is not enabled this 
+Mode will be used when transmitter fails.
+
+16) PV Rate-Of-Change Alarm in EU per minute. When the PV is moving in a certain 
+direction at or above the specified velocity this alarm will be set.
+
+A boolean will be set when the transmitter fails for MMI Display. A separate 
+Boolean will be set for each of the alarms described above.
+
+Setpoint (SP)
+-------------
+1) Ramping - External Block 
+In EU per minute.
+
+2) SP High Limit in EU.
+
+3) SP Low Limit in EU.
+
+4) SP Tracks PV in Manual enable. Discrete selection. 
+Boolean 1 enables this selection. This provides bumpless transfer from Manual 
+to Auto mode.
+
+5) SP Tracks PV in DDC (Direct Digital Control) enable. Discrete selection. 
+Boolean 1 enables this selection. This provides bumpless transfer from DDC 
+to Auto mode.
+
+6) Restart from Last SP enable. Discrete selection. 
+Boolean 1 enables this selection. This selection is activated when the 
+controller comes back online from a Power Failure. (Do we need this?)
+
+7) Restart SP. If above selection is not enabled this 
+SP will be used on Power Failure.
+
+A boolean will be set when the Setpoint is in Limit condition for MMI Display. 
+This is a useful feature for Cascade loops.
+
+Modes of Operation
+------------------
+1) Manual - In this mode the Operator entered value is substituted for the 
+Calculated Valve Position (CVP). This is then subjected to Output Limits 
+etc. same as the CVP from the PID algorithm in Auto Mode.
+
+2) Auto<matic> - In this mode the PID Algorithm calculates the CVP.
+
+3) Sup<ervisory> - In this mode the Setpoint is set by another PID Block or 
+external program. All functions similar to Auto. Mainly for indication to 
+Operator that he/she is not in control.
+
+4) DDC - In this mode the CVP is set by an external program. All functions 
+similar to Manual. Mainly for indication to Operator that he/she 
+is not in control.
+
+5) Restart from Last SP enable. Discrete selection. 
+Boolean 1 enables this selection. This selection is activated when the 
+controller comes back online from a Power Failure. (Do we need this?)
+
+6) Restart SP. If above selection is not enabled this 
+SP will be used on Power Failure.
+
+Output
+------
+
+1) Output High Limit in % - This is the maximum value that can be sent to the 
+Output Card. When this limit is reached the Integral action will be frozen 
+until the CVP will bring the output off the limit.
+
+2) Output Low Limit in %- This is the minimum value that can be sent to the 
+Output Card. When this limit is reached the Integral action will be frozen 
+until the CVP will bring the output off the limit.
+
+3) Anti-Reset-Windup (ARW) High Limit in % - This is the value at which the 
+Integral action is Frozen until the calculated Integral term will bring the 
+CVP below this limit. Note that the CVP will continue to be written to the 
+Output as long it is below the Output High Limit. If the ARW and Output High 
+Limits as set at the same value this action is effectively disabled.
+
+4) ARW Low Limit in % - This is the value at which the 
+Integral action is Frozen until the calculated Integral term will bring the 
+CVP above this limit. Note that the CVP will continue to be written to the 
+Output as long it is above the Output Low Limit. If the ARW and Output Low 
+Limits as set at the same value this action is effectively disabled.
+
+5) Output Ramp Enable - Discrete selection. Boolean 1 enables this 
+selection. This allows the Output to be ramped from the Last Output 
+to the CVP when the mode is changed from Man/DDC to Auto 
+(SP tracks PV is disabled) or when the Loop comes out of Output Tracking.
+
+6) Output Ramp Time in minutes - If above selection is enabled this is 
+the time within which the Output will be ramped to the CVP.
+
+7) Output Tracking Enable - Discrete selction. Boolean 1 enables this 
+selection. This enables an external signal to be substituted for the 
+CVP. This signal may be from any source.
+
+5) Restart from Last Output enable - Discrete selection. 
+Boolean 1 enables this selection. This selection is activated when the 
+controller comes back online from a Power Failure. (Do we need this?)
+
+6) Restart SP - If above selection is not enabled this 
+Output will be used on Power Failure.
+
+7) Fail Open Valve - Discrete selction. Boolean 1 enables this 
+selection. This selection causes the Output to be inverted (100 - 0 %) 
+before being written to the Output channel.
+
+8) Feed Forward block - External
+An external Feed Forward block will be created to enable Feed Forwarding. 
+This block will have the capability of applying Gain and Lag on a signal. 
+This block will also have a selection for Control Action (Direct/Reverse) 
+and Fail Open Valve. (Should these be internally transferred from the Loop?)
+
+9) Fail-Safe Output enable - Discrete selection. Boolean 1 enables this 
+selection. This selection sets a Fail-Safe setting on the Output I/O board 
+to be used in case of controller failure. (Is this possible with the current 
+Boards? If not should we leave this in for future?)
+
+10) Fail-Safe Output - If above selection is enabled this value is used.
+
+PID Algorithm (Here's the meat)
+-------------------------------
+
+1) Controller Action (Direct/Reverse) - Discrete selection. Boolean 1 
+indicates Direct Acting.
+
+2) Proportional Setting - In terms of Gain or Proportional Band. 
+Gain Range set at 0.01 to 100. 
+Proportional Range set at 1 to 10,000.
+
+3) Integral Setting - In terms of Repeats/Minute (Reset Rate) or 
+Minutes/Repeat (Reset Time). 
+Reset Rate range set at 0.001 to 500 Repeats/Minute. 
+Reset Time range set at 0.002 to 1000 Minutes.
+
+4) Derivative Setting - In Minutes. Range set at 0 to 500 Minutes.
+
+5) Derivative Filter Time - ????
+
+6) PID Settings check disable - Discrete selction. Boolean 1 enables this 
+selection. This selection causes the algorithm to only check for non-negative 
+numbers for the 3 settings.
+
+7) Proportional Action on PV or Error - Discrete selection. Boolean 1 
+indicates PV.
+
+8) Derivative Action on PV or Error - Discrete selection. Boolean 1 
+indicates PV.
+
+9) PID Algorithm is Positional (Absolute) or Incremental (Delta / Velocity)
+Discrete selection. Boolean 1 indicates incremental.
+
+10) PID Algorithm is Modified-Parallel (MP) or Parallel (P) or Series (S)
+Analog Selection. 0 is MP, 1 is P and 2 is S.
+
+11) Sampling time or execution time of controller in milliseconds in 
+100 ms increments. Configuration utility could allow values to be 
+entered in ms or seconds or minutes.
+
+Following Algorithms represented in Discrete form in the Time-Domain
+and shown in Positional Form
+====================================================================
+
+1) Modified-Parallel
+
+CVP = Kc * [e(t) + ( Tr * Ts * Sum(e(t)) ) + ( Td * (de(t)) / Ts )]
+
+2) Parallel
+
+CVP = [Kp * e(t)] + [Tr * Ts * Sum(e(t)) ] + [ Td * (e(t) - e(t-1)) / Ts ]
+
+3) Series
+
+CVP = Kc * [e(t) + ( Tr * Ts * Sum(e(t)) )] * [1 + ( Td * (e(t) - e(t-1)) / Ts )]
+
+Where
+Kc = Controller Gain
+e(t) = Error = (SP-PV) for reverse acting and (PV-SP) for direct acting
+If Proportional or Derivative is on PV only remove the Sp term from the error 
+term above.
+To convert to incremental form change e(t) to (e(t) - e(t-1)). Note this changes 
+e(t-1) term to (e(t-1) - e(t-1)). Also CVP now changes to 
+CVP = CVPlast + CVPcalc
+Tr - Reset rate in repeats per minute
+Ts - Sampling time or execution time of controller
+Td - Derivative Time in Minutes
+Kp - Proportional Gain.
+
+4) Derivative Filtering
+
+Not finalized yet. Any input is welcome. Please include Dicrete Time-Domain 
+Form with your comments.
+
+5) Dead-Time compensation
+
+Not finalized yet. Any input is welcome. Please include Dicrete Time-Domain 
+Form with your comments.
+
+
+PID Execution Sequence
+======================
+
+Signal Consitioning
+PV processing (Alarms, ranges etc.)
+Mode Processing
+Setpoint processing
+PID Calculation processing
+Output processing
+Feed-Forward processing
+
+
+

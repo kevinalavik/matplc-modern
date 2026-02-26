@@ -1,0 +1,6 @@
+#!/bin/sh
+../../../tools/run/matplc -g
+#../../../lib/util/matplc -r
+../../../tools/run/handler -c handler.cmd
+../../../tools/run/matplc -s
+#../../lib/ipcclean > /dev/null

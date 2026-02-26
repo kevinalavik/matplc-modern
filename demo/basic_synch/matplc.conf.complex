@@ -1,0 +1,233 @@
+#
+# matplc.conf - configuration file
+#
+
+# the speed of the light-chasing (interval in seconds)
+Chaser: delay = 0.3
+
+# I could have also written that like this:
+# 	[Chaser]
+# 	delay = 0.3
+#
+# The section:variable syntax is convenient when there is only one variable
+# to be set, possibly in the middle of some other section.
+
+# shared memory map section
+
+[PLC]
+ 
+
+# run the modules!!!
+#
+# Note: the Kbd module cannot run as a deamon, as it reads the
+#       terminal's keyboard. It is therefore launched in the demo script.
+#module Kbd ../basic//kbd
+module Chaser "../basic/chaser"
+module vitrine "../../mmi/curses/vitrine"
+module plcshutdown "../../lib/util/plcshutdown"
+
+
+
+#   P O I N T S
+#   -----------
+#
+# These are also specified in the PLC section. However, it's not specified
+# whether they are inputs or outputs here - that should be specified in the
+# section(s) relating to the I/O modules. (That way, a point can be both an
+# input and an output, or it can be output in several places. Also, some
+# points are just internal coils and don't get input or output at all.)
+#
+# syntax:
+# point name "full name" owner at offset.bit
+#
+# where:
+# point     = 'point' identifier
+# name      = Name used to refer to the point throughout the PLC
+# full name = More extensive description of the point
+#             This might be displayed by various diagnostic tools.
+# owner     = Name of the module with write permission on the point
+# at        = 'at' identifier
+# offset    = location of word in the globalmap that holds the point's state
+# bit       = the bit in the word (0-31), that holds the point's state
+
+point L1	"light 1" Chaser at  0.0
+point L2	"light 2" Chaser at  0.1
+point L3	"light 3" Chaser at  0.2
+point L4	"light 4" Chaser at  0.3
+point left	"<- (key L)" Kbd at  1.4
+point right	"-> (key R)" Kbd at  1.5
+point quit	"quit (key Q)" Kbd at 1.6
+
+# read in the configuration of the display
+# (this might equally well be simply specified here, but for the sake of
+# demonstration it's in a separate file)
+*include vitrine.conf
+
+
+[plcshutdown]
+# configure which point will be used to shutdown the plc
+quit_pt = quit
+# for simplicity sake, we will not synchronize the plcshutdown module
+# with the others, we will simply tell it to run periodically
+# every 100 ms.
+scan_period = 0.1
+
+
+
+#
+#     S A M P L E    S Y N C H R O N I S A T I O N    C O N F I G
+#     -----------------------------------------------------------
+#
+# The synchronisation config to run the chaser and vitrine modules in synch,
+# one after the other. The kbd module runs asynchronously with the other two.
+#
+# The synchronisation system uses a petri net to synchronise the module
+# execution. This petri net may be configured by _one_ of two methods.
+# The first, the simplified method, is merely the definition of the sequence
+# by which the modules should execute.
+# The second, more complete and complicated method, requires the complete
+# definition of the petri net. Although more complex, this method is also
+# more powerfull, and supports some synchronisation sequences that can not be
+# configured by the simple method.
+
+[PLC]
+
+#
+#     THE SIMPLE METHOD
+#     -----------------
+
+# please see/use the matplc.conf.simple file
+
+#
+#     THE COMPLEX METHOD
+#     ------------------
+
+# Each module will use one place (P_chaser, P_vitrine),
+# and two transitions (T_chaser_beg, T_chaser_end, ...).
+#
+# The number of tokens in P_chaser indicates the number of times the
+# chaser module must run its scan loop.
+# At the beginning of the chaser scan this module waits on the T_chaser_beg
+# transition. This transition will remove one token from P_chaser,
+# and let the module start executing.
+# At the end of the scan the chaser module will wait on the T_chaser_end
+# transition. This transition will place a token in the P_vitrine place
+# so the vitrine may then run its scan.
+#
+# The vitrine works in exactly the same way.
+#
+
+place P_chaser   1    # initialise with 1 token.
+place P_vitrine       # 0 is not required, it is the default value.
+
+transition  T_chaser_beg
+transition  T_chaser_end
+transition  T_vitrine_beg
+transition  T_vitrine_end
+
+# Remove a token from P_chaser when firing the T_chaser_beg transition...
+arc P_chaser     -> T_chaser_beg
+
+# Insert a token into P_vitrine when firing the T_chaser_end transition...
+arc T_chaser_end -> P_vitrine
+
+# ...
+arc P_vitrine     -> T_vitrine_beg
+arc T_vitrine_end -> P_chaser
+
+
+
+# The only thing left is to tell each module what transitions to use for the beg
+#  and end of the scan.
+Chaser:  scan_beg = T_chaser_beg
+Chaser:  scan_end = T_chaser_end
+vitrine: scan_beg = T_vitrine_beg
+vitrine: scan_end = T_vitrine_end
+
+
+
+# We don't have to tell the kbd what transitions to use.
+# It will use the NULL transitionss by default, which do not synchronize to anything
+#kbd:     scan_beg = NULL
+#kbd:     scan_end = NULL
+
+# The synchronisation between the modules is now completely configured.
+
+
+# With the above configuration the vitrine -> Chaser -> vitrine -> ...
+# loop will run as fast as it can, taking up almost 100% of cpu time.
+# This is not required, and we can reduce the cpu utilization by stating the
+# scan period, i.e. the inverse of the number of times the cycle should
+# be executed in each second
+# Since the Chaser and the vitrine are running in lock-step, we need
+# only specify the scan_period of one of the above two modules
+#
+# Let's use a scan period of 20 ms (= 50 Hz)
+Chaser: scan_period = 0.02
+
+
+
+# NOTE:
+#
+# By using weights in the arrow, it is also possible to have a
+# module run several scan loops once the first module finishes its scan.
+#
+# For e.g.:
+#
+# arc T_chaser_end --2--> P_vitrine
+#
+# Would tell the vitrine to run its scan twice when the Chaser finishes its
+# own scan.
+# Note that now it would not be a good idea to have
+# arc T_vitrine_end --> P_chaser
+# as the chaser would now run twice, once for each execution of the
+# vitrine. This would result in an ever increasing number of
+# scan loop executions in each cycle!
+# Nevertheless, we would require the following line
+#
+# arc T_chaser_end ---> P_chaser
+#
+# to keep the execution running in an infinite loop.
+# Since the Chaser is limited by its period, the vitrine would most
+# probably have finished executing it's 2 scans before the Chaser gets
+# to execute again.
+#
+#
+# Another option would be to use:
+# arc P_chaser      --2--> T_chaser_beg
+# arc T_chaser_end  --2--> P_vitrine
+# arc P_vitrine     -----> T_vitrine_beg
+# arc T_vitrine_end -----> P_chaser
+#
+# With the above configuration (which is not possible using the
+# simple configuration method), the chaser would only run when the
+# P_chaser place contained two tokens. Both the tokens are
+# removed when the chaser starts executing its scan. The chaser
+# would then place two tokens in the P_vitrine, but since the vitrine
+# requires only one token to execute its scan, it would execute twice.
+# When each execution of the vitrine scan reaches the end, it places a
+# single token in the P_chaser place. Once both the vitrine scans
+# have completed, the P_chaser place will contain two tokens,
+# once again allowing the chaser to execute its scan.
+#
+# If you try the above, don't forget to initialise the P_chaser
+# place with two tokens, otherwise the modules will not run...
+# place P_chaser 2
+#
+#
+# Unlike the simple configuration method, here it is also allowed
+# to have arcs with a weight of 0 (a.k.a. null arcs). These arcs
+# can only go from place --0--> transition, and not the other
+# way around.
+# For e.g.:
+# P1 --0--> T1
+# When used, this arc will only allow the transition T1 to be fired
+# if place P1 is empty (does not have any tokens)! No tokens are
+# removed/inserted into P1 when T1 is fired.
+
+
+
+
+# Please see the sample matplc.conf file in the manual appendix for a
+# complete description of the possible syntax for the arrow with an
+# explicitly defined weight.

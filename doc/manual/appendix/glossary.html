@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>MAT manual - glossary</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../general/contribute/interface.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../appendix/matplc.conf.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Glossary</h1>
+
+
+<dl>
+
+<dt>core<dd>The central part of the MatPLC; virtual backplane. Each
+module plugs into this core.</p>
+
+<dt>custom-made module<dd>A module written in the C language because none
+of the generic or specific modules provided by the MatPLC were
+suitable.</p>
+
+<dt>functional specification<dd>A written statement detailing what a system
+will do.</p>
+
+<dt>generic module<dd>A module that comes with the MatPLC and is used
+without modification.</p>
+
+<dt>HMI module (or MMI module)<dd>A module that interacts with the
+operator.</p>
+
+<dt>I/O module<dd>A module that connects to the "real world", or sometimes
+to a slave PLC over a bus or other connection.</p>
+
+<dt>Linux<dd>The operating system for which the MatPLC is
+designed.</p>
+
+<dt><tt>matplc.conf</tt><dd>The traditional name for the main
+configuration file of the MatPLC.</p>
+
+<dt>logic engine<dd>A module that does the actual logic, decision making
+and calculation.</p>
+
+<dt>modularity<dd>A quality of a system where it consists of various parts
+which separate cleanly and fit together well. High modularity costs some
+design time but pays back well through clarity, elegance, maintainability
+and flexibility.</p>
+
+<dt>module<dd>A component of the MatPLC architecture. Several modules
+running together make a useful MatPLC. Note that other parts of an
+installation may also have modules - the machine itself, I/O hardware, the
+software you write for the MatPLC, the Linux kernel, etc.</p>
+
+<dt>point<dd>The basic unit of storage and communication within the MatPLC.
+Points may be 1-bit, corresponding to discrete inputs, outputs,
+internal/memory coils, flags &amp;c, or multi-bit (up to 32-bit),
+corresponding to analog inputs, outputs, integer or floating point
+registers &amp;c. Each point has a name by which it is known throughout the
+MatPLC.</p>
+
+<dt>scan<dd>Many modules, especially logic engines, work in a cycle. One
+repeat is called a scan. It begins by obtaining a copy of all the points
+from the MatPLC core. It then evaluates all the logic or does all the
+calculations (depending on the module). Finally, all changed points are
+written back to the MatPLC core - this only happens at the end of the
+scan, so if the logic wrote a point several times with different values,
+only the last value is ever seen by any other module.</p>
+
+<dt>specific module<dd>A module that is created for a particular project
+using the tools provided by the MatPLC. Unlike a generic module, it
+does not directly come with the MatPLC.</p>
+
+</dl>
+
+<!--autolink--><a href="../general/contribute/interface.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../appendix/matplc.conf.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:09 $</small>
+
+</html>

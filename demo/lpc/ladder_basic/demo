@@ -1,0 +1,6 @@
+#!/bin/sh
+../../../tools/run/matplc -g
+../../../tools/run/handler -c ladder.cmd & 
+../../../tools/run/handler -c ladder_test.cmd
+../../../tools/run/matplc -s
+reset

@@ -1,0 +1,11 @@
+synch.o Makefile.depend: synch.c ../log/log.h ../conffile/conffile.h \
+ ../conffile/../types.h ../cmm/cmm.h ../cmm/../types.h ../rt/rt.h \
+ ../rt/../types.h ../misc/string_util.h ../misc/../types.h \
+ ../misc/mutex_util.h ../state/state.h ../state/../types.h \
+ ../synch/synch.h ../synch/../types.h synch.h synch_private.h synch_sem.h
+synch_sem.o Makefile.depend: synch_sem.c synch_sem.h
+synch_setup.o Makefile.depend: synch_setup.c synch.h ../types.h synch_private.h \
+ ../misc/mutex_util.h ../synch/synch.h synch_setup.h synch_sem.h \
+ ../misc/string_util.h ../misc/../types.h ../conffile/conffile.h \
+ ../conffile/../types.h ../cmm/cmm.h ../cmm/../types.h ../log/log.h \
+ ../state/state.h ../state/../types.h

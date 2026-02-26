@@ -1,0 +1,34 @@
+README - email
+
+Last Updates Feb, 7, 2003
+
+--------------------------------------------------------
+About:
+
+This is a module that will send email to a remote client
+
+-------------------------------------------------------- 
+Notes:
+
+- This process should only ever be called 'email'. And it should be run as a 'NORMAL' process with low priority because of the slow nature of the internet. email messages are send by sending a realtime message to the process with the format 'destination~subject~filename', where,
+    destination = the email address to send to
+    subject = the subject name for the email
+    filename = the name of a file that contains the text to send in the body of the message. If the file doesn't exist the filename is sent instead.
+Note: be careful not to use any tildes '~' in the message, as these will be interpreted as delimeters and errors will occur.
+
+--------------------------------------------------------
+Bugs:
+
+	- none known
+
+--------------------------------------------------------
+Todo:
+
+	- make robust for other mail server types
+	- the source of the message is left as a dummy source for now. Eventually this should be made an actual source. When the IP address of the source was being sent it was being rejected by the mail servers.
+
+--------------------------------------------------------
+History:
+
+Feb 7, 2003 (Hugh) - changed the email source'
+May 31, 2002 (Hugh Jack) - rewritten so that it would use the process handler

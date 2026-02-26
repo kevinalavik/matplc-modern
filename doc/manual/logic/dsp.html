@@ -1,0 +1,493 @@
+<html>
+<head>
+<title>MAT DSP manual</title>
+</head>
+<body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../logic/classicladder.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../logic/iec/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Digital Signal Processing</h1>
+
+<h2>Introduction</h2>
+
+The DSP module carries out various sorts of floating point operations,
+including arithmetic, speed and acceleration limiting, PID control,
+scaling, alarming and so on. It can also handle integer registers by
+converting them to floating point first.
+
+<p>The operations to be carried out by the DSP module are specified
+directly in the matplc.conf file (or in a separate file, using
+<code>*include <em>filename</em></code>), in the <code>fblock</code> table.
+
+<p>The <code>fblock</code> table has the usual stepladder semantics: at the
+top, register values and contacts are read from the rest of the MatPLC
+(inputs, HMI, or other logic modules). The table is then scanned from top
+to bottom, with the operations being done in order. At the bottom of the
+table, register values and coils are written to the MatPLC core, to be used
+by the rest of the system (outputs, HMI or other logic modules).
+
+<h2>Configuration</h2>
+
+The dsp config has one main parameter, and one table (<code>fblock</code>).
+
+<p>The <code>fblock</code> table is used to configure the function blocks
+the dsp module will execute.
+
+<p>The main parameter is:
+<pre>
+  out_time_pt = &lt;plc_pt&gt;
+where plc_pt is where the dsp will store the current time
+out_time_pt = time
+</pre>
+
+The scan_period parameter is valid for any module, but it will probably be
+used extensively by the dsp module.
+<pre>
+scan_period = x
+  time in seconds
+scan_period = 0.1
+</pre>
+
+<p>The <code>fblock</code> table is used to configure the function blocks
+the dsp module will execute. The function blocks are executed in the same
+order in which they are configured (ie top to bottom). In the usual
+stepladder way, inputs are read once at the top of the table and results
+are not available to other modules until the bottom of the table.
+
+<h3>Supported function block types</h3>
+
+<dl>
+
+<dt>typeconv<dd>copy the value in an input point in one format, to an
+output point in another format. Supported formats are i16 (16 bit int), u16
+(16 bit unsigned int), i32 (32 bit int), u32
+(32 bit unsigned int), and f32 (32 bit float).  All other function blocks
+use input and output points in the f32 format.</p>
+
+<dt>add<dd>Add (with a specified multiplier) a maximum of 10 PLC
+points.</p>
+
+<dt>mult<dd>Multiply a maximum of 10 PLC points.</p>
+
+<dt>pow<dd>Raise a plc point to the power of x (x being a parameter).</p>
+
+<dt>pid<dd>Implements an open loop PID function. For closed loop
+controllers, use an add block to close the loop.</p>
+
+<dt>filter<dd>Filter the input, using an iir (infinite impulse response)
+filter.</p>
+
+<dt>ramp<dd>Limit the maximum speed (dx/dt) and aceleration (d2x/dt2) with
+which the value of a given variable (x) may change.</p>
+
+<dt>nonlinear<dd>Implements a deadband and limiting function.</p>
+
+<dt>alarm<dd>Compares the value of a PLC point to up to a maximum of 10
+limit values, and sets the value of output points accordingly.</p>
+
+<dt>multiplexor<dd>Copy one of the input points to the output point. The
+input point that is copied is dependent on the value of a control
+point.</p>
+
+</dl>
+
+
+<h3>Typeconv block</h3>
+ 
+ <pre>
+#fblock typeconv &lt;in_pt1&gt; &lt;in_pt1_type&gt; &lt;out_pt1&gt; &lt;out_pt1_type&gt;
+               [&lt;in_pt2&gt; &lt;in_pt2_type&gt; &lt;out_pt2&gt; &lt;out_pt2_type&gt;] ...
+
+&lt;in_pt_type&gt;
+&lt;out_pt_type&gt; : How to interpret the bits in the previous point.
+                = {i32 | u32 | f32}
+</pre>
+<h3>Add block</h3>
+<pre>
+#fblock add &lt;out_pt&gt;     &lt;in_pt1&gt; &lt;in_pt1_mult&gt; [&lt;in_pt2&gt; &lt;in_pt2_mult&gt;] ...
+
+ out_pt = (in_pt1 * in_pt1_mult) + (in_pt2 * in_pt2_mult) + ...
+
+ Note: currently a maximum of 10 in_pt are supported.
+</pre>
+
+<h3>Mult block</h3>
+
+<pre>
+#fblock mult &lt;out_pt&gt;     &lt;in_pt1&gt; &lt;in_pt1_ofs&gt; [&lt;in_pt2&gt; &lt;in_pt2_ofs&gt;] ...
+
+ out_pt = (in_pt1 + in_pt1_ofs) * (in_pt2 + in_pt2_ofs) * ...
+
+ Note: currently a maximum of 10 in_pt are supported.
+
+</pre>
+<h3>Pow block</h3>
+
+<pre>
+#fblock pow &lt;out_pt&gt; &lt;in_pt&gt; &lt;in_pt_pow&gt;
+
+where:
+  out_pt    : matplc point to be used as output
+  in_pt     : matplc point to be used as input
+  in_pt_pow : raise in_pt to in_pt_pow (f32 value)
+
+                  in_pt_pow
+  out_pt = (in_pt)
+
+</pre>
+<h3>PID block</h3>
+
+<code>
+fblock pid &lt;in_pt&gt; &lt;out_pt&gt; [&lt;P&gt; [&lt;I&gt; [&lt;D&gt;]]] [max_out &lt;upper_limit&gt;] [min_out &lt;lower_limit&gt;]
+  [man_mode &lt;manual_mode_pt&gt;] [man_out &lt;manual_value_pt&gt;]
+</code>
+<p>This block implements a parallel PID controler.
+<br><code>out_pt = P*in_pt + I*integral(in_pt, dt) + D*din_pt/dt</code>
+
+<p>The output is guaranteed to stay within the configured limits
+  (lower_limit &lt;= output &lt;= upper_limit) in automatic mode.
+ This is achieved by adjusting the integral, which means that the pid will
+ not 'wind up' when the output is saturated.
+
+<p>The man_mode and man_out settings work together to provide bumpless
+manual-to-automatic transfer. See the <a
+href="../general/howto/bumpless.html">bumpless transfer section</a> for
+more details.
+
+<p>When man_mode_pt is ON, the block is in manual mode:
+<br><code>out_pt = manual_value_pt</code>
+<br>In manual mode, the integral is adjusted in such a way that when
+man_mode_pt goes OFF, the PID block will smoothly take over from the
+operator.
+
+<p>Note that manual mode ignores the upper and lower limits; if necessary,
+pass the operator's setting through a nonlinear block to clip it to the
+limits (and perhaps also through the ramp block). This also means that if
+the operator sets the process outside the limits and switches to automatic,
+there will be a bump as the PID immediately jumps to within the limits.</p>
+
+<p>Also note that bumpless transfers are only supported when I is
+non-zero.</p>
+
+<table border>
+<tr><th>setting</th><th>meaning</th><th>default value</th></tr>
+<tr><td>P</td><td>proportional coefficient of PID</td><td>1</td></tr>
+<tr><td>I</td><td>integral coefficient of PID</td><td>0</td></tr>
+<tr><td>D</td><td>derivative coefficient of PID</td><td>0</td></tr>
+<tr><td>upper_limit</td><td>maximum output value for automatic mode</td><td>none</td></tr>
+<tr><td>lower_limit</td><td>minimum output value for automatic mode</td><td>none</td></tr>
+<tr><td>manual_mode_pt</td><td>manual/automatic selection</td><td>none (always automatic)</td></tr>
+<tr><td>manual_value_pt</td><td>value to be output in manual mode</td><td>none (always zero)</td></tr>
+</table>
+
+</pre>
+<h3>Filter block</h3>
+
+<code>fblock filter iir [&lt;C&gt; [&lt;A1&gt; [&lt;A2&gt; [&lt;B1&gt; [&lt;B2&gt;]]]] ...</code>
+<br>or
+<br><code>fblock filter &lt;filter_type&gt; &lt;filter_shape&gt; &lt;gain&gt; &lt;passband_tol&gt; &lt;stopband_tol&gt; &lt;f1&gt; &lt;f2&gt; [&lt;f3&gt; &lt;f4&gt;]</code>
+
+<p>Where:
+<table border>
+
+<tr><td valign="top">C, A1, A2, B1, B2</td><td valign="top">second order
+iir filter parameters directly</td><td valign="top">Please see below for an
+explanation of what an iir filter is. These five parameters completely
+specify the filter, so no further parameters are necessary.</td></tr>
+
+<tr><td valign="top">filter_type</td><td valign="top">{butterworth |
+chebyshev | elliptic}</td> <td valign="top">This method is used to
+configure the filter as an equivalent to an analog filter. At setup these
+parameters are transformed into the equivalent iir filter, which will be
+executed at run-time.</td></tr>
+
+<tr><td valign="top">filter_shape</td><td valign="top">{lowpass | highpass
+| bandpass | bandstop}</td> <td valign="top">NOTE: These transformations
+have not been completely debuged.  lowpass and highpass *should* be working
+correctly.  bandpass and bandstop are known to be buggy.</td></tr>
+
+<tr><td valign="top">gain</td> <td valign="top">the gain of the filter for
+the passband frequencies</td>
+<td valign="top">
+<table border=0>
+
+  <tr><td valign="top">For</td><td valign="top">lowpass,</td><td
+  valign="top">gain = g(0)</td><td valign="top">i.e. gain at f = 0
+  Hz</td></tr>
+
+  <tr><td></td><td valign="top">highpass,</td><td valign="top">gain =
+  g(F/2)</td><td valign="top">i.e. gain at f = F/2 Hz</td></tr>
+
+  <tr><td></td><td valign="top">bandpass,</td><td valign="top">gain =
+  g(fp1/2 + fp2/2)</td><td valign="top">i.e.jgain at f = (fp1 + fp2) / 2
+  Hz</td></tr>
+
+  <tr><td></td><td valign="top">bandstop,</td><td valign="top">gain = sqrt
+  [ g(0)*g(0) + g(F/2)*g(F/2) ]</td></tr>
+
+</table>
+(F is sampling frequency)
+</td></tr>
+
+<tr><td valign="top">passband_tol (stopband_tol)</td><td
+valign="top">max(min) atenuation for pass(stop)band</td> <td
+valign="top">maximum(minimum) atenuation, in positive dB, for the
+passband(stopband) frequencies</td></tr>
+
+<tr><td valign="top">fX</td> <td valign="top">frequency limits in Hz</td>
+<td valign="top">NOTE: The meaning of f1, f2, f3 and f4 depends on the
+filter shape.  The idea is to have valid frequencies always in increasing
+value.
+
+<table border=0>
+
+  <tr><td valign="top">For</td><td valign="top">lowpass</td> <td
+  valign="top"><table border=0>
+
+    <tr><td valign="top">f1</td><td valign="top">:</td><td
+    valign="top">passband frequency limit</td></tr>
+
+    <tr><td valign="top">f2</td><td valign="top">:</td><td
+    valign="top">stopband frequency limit</td></tr>
+
+  </table></td>
+
+  <tr><td></td><td valign="top">highpass</td><td valign="top"><table
+  border=0>
+
+    <tr><td valign="top">f1</td><td valign="top">:</td><td
+    valign="top">stopband frequency limit</td></tr>
+
+    <tr><td valign="top">f2</td><td valign="top">:</td><td
+    valign="top">passband frequency limit</td></tr>
+
+  </table></td>
+
+  <tr><td></td><td valign="top">bandpass</td> <td valign="top"><table
+  border=0>
+
+    <tr><td valign="top">f1</td><td valign="top">:</td><td
+    valign="top">lower stopband frequency limit</td></tr>
+
+    <tr><td valign="top">f2</td><td valign="top">:</td><td
+    valign="top">lower  passband frequency limit</td></tr>
+
+    <tr><td valign="top">f3</td><td valign="top">:</td><td
+    valign="top">higher passband frequency limit</td></tr>
+
+    <tr><td valign="top">f4</td><td valign="top">:</td><td
+    valign="top">higher stopband frequency limit</td></tr>
+
+  </table></td>
+
+  <tr><td></td><td valign="top">bandstop</td> <td valign="top"><table
+  border=0>
+
+    <tr><td valign="top">f1</td><td valign="top">:</td><td
+    valign="top">lower  passband frequency limit</td></tr>
+
+    <tr><td valign="top">f2</td><td valign="top">:</td><td
+    valign="top">lower  stopband frequency limit</td></tr>
+
+    <tr><td valign="top">f3</td><td valign="top">:</td><td
+    valign="top">higher stopband frequency limit</td></tr>
+
+    <tr><td valign="top">f4</td><td valign="top">:</td><td
+    valign="top">higher passband frequency limit</td></tr>
+
+  </table></td>
+</table>
+</td></tr>
+</table>
+
+<p>The filter block implements X second order iir filters in series. A second
+order iir filter:
+
+<table border=0>
+<tr><td><pre>
+         |\
+         | \
+ in &gt;----|C &gt;--&gt;(+)--&gt;(+)-----------------------&gt;(+)--&gt;(+)---&gt; out
+         | /     ^     ^               |          ^     ^
+         |/      |     |               |          |     |
+                 |     |               v          |     |
+                 |     |             (z-1)        |     |
+                 |     |   /|    /|    |    |\    |     |
+                 |     |  / |   / |    |    | \   |     |
+                 |     --&lt;-1|--&lt;B1|&lt;---|---&gt;|A1&gt;---     |
+                 |        \ |   \ |    |    | /         |
+                 |         \|    \|    v    |/          |
+                 |                   (z-1)              |
+                 |         /|    /|    |    |\          |
+                 |        / |   / |    |    | \         |
+                 |-------&lt;-1|--&lt;B2|&lt;---|---&gt;|A2&gt;--------|
+                          \ |   \ |         | /
+                           \|    \|         |/
+</pre></td></tr>
+</table>
+       where (z-1) is a delay block, i.e., in the z transform,
+        z to the power of -1.
+
+<h3>Ramp block</h3>
+
+<code>fblock ramp &lt;in_pt&gt; &lt;out_pt&gt; [dxdt &lt;xx&gt;] [pos_dxdt
+&lt;xx&gt;] [neg_dxdt &lt;xx&gt;] [d2xdt2 &lt;xx&gt;] [pos_d2xdt2
+&lt;xx&gt;] [neg_d2xdt2 &lt;xx&gt;]</code>
+
+<p>Where:
+<table border=0>
+
+<tr><td>in_pt</td><td>:</td><td>the plc_pt where the input value (x) is
+stored</td></tr>
+
+<tr><td>out_pt</td><td>:</td><td>the plc_pt where to store the output
+value</td></tr>
+
+<tr><td>dxdt</td><td>:</td><td>maximum speed with which x may change (both
+positive and negative changes).</td></tr>
+
+<tr><td>pos_dxdt</td><td>:</td><td>maximum speed with which x may rise.
+Defaults to no limit.</td></tr>
+
+<tr><td>neg_dxdt</td><td>:</td><td>maximum speed with which x may fall.
+Defaults to no limit.</td></tr>
+
+<tr><td>d2xdt2</td><td>:</td><td>maximum speed with which dx/dt may change
+(both positive and negative changes).</td></tr>
+
+<tr><td>pos_d2xdt2</td><td>:</td><td>maximum speed with which dx/dt may
+rise. Defaults to no limit.</td></tr>
+
+<tr><td>neg_d2xdt2</td><td>:</td><td>maximum speed with which dx/dt may
+fall. Defaults to no limit.</td></tr>
+
+</table>
+
+<h3>Nonlinear Block</h3>
+
+<code>fblock nonlinear &lt;in_pt&gt; &lt;out_pt&gt; [cutoff_top &lt;xx&gt;]
+[cutoff_bot &lt;xx&gt;] [deadband_top &lt;xx&gt;] [deadband_bot &lt;xx&gt;]
+[deadband_out &lt;xx&gt;] [gain &lt;xx&gt;]</code>
+
+<p>Defaults are:
+<table border=0>
+<tr><td>cutoff_top</td><td>:</td><td>f32_MAX</td></tr>
+<tr><td>cutoff_bot</td><td>:</td><td>-f32_MAX</td></tr>
+<tr><td>deadband_top</td><td>:</td><td>0</td></tr>
+<tr><td>deadband_bot</td><td>:</td><td>0</td></tr>
+<tr><td>deadband_out</td><td>:</td><td>0</td></tr>
+<tr><td>gain</td><td>:</td><td>1</td></tr>
+</table>
+
+This function block implements a nonlinear block supporting both a deadband
+function centered around a configured offset, and a limiter.  In addition,
+it also allows for a linear gain and offset to be applied to the output of
+it's nonlinear function. These last two are essentially to reduce the
+number of function blocks eventually required to implement a specific
+global user function.
+
+
+<p>The nonlinear part, implements the following function:
+
+<pre>
+    out = nl_f(in):
+#			   out
+#			    ^
+#			    |
+#			    |
+#		     co_top |.............................--------
+#			    |                            /
+#			    |                           /
+#			    |                          /
+#			    |                         /
+#			    |                        /
+#			    |                       /
+#			    |                      /
+#			    |                     / inclination = 1
+#			    |                    /
+#			    |                   /
+#		     db_out |...----------------
+#			    |  /.              .
+#			    | / .              .
+#			    |/  .              .
+#			    |   .              .
+#		   	   /|   .              .
+#		          / |   .              .
+#		         /  |   .              .
+#		        /   |   .              .
+ &lt;--------------------------------------------------------------&gt; in
+#		      /     | db_bot         db_top
+#		     /      |
+#		    /       |
+#		   /        |
+ ----------------.........| co_bot
+#			    |
+#			    |
+#			    |
+#			    v
+
+#	(co = cutoff      db = deadband)
+</pre>
+
+
+<p>The linear part implements the following function:
+<pre>out = l_f(in) = in * gain</pre>
+
+
+<p>The output of the complete nonlinear block is:
+<pre>out =  nl_f( in * gain )</pre>
+
+</pre>
+
+<h3>Alarm block</h3>
+
+<pre>
+#fblock alarm &lt;in_pt&gt; {true_val|abs_val} &lt;out_pt1&gt; &lt;comp1&gt; &lt;limit1&gt; [&lt;out_pt2&gt; &lt;comp2&gt; &lt;limit2&gt;] ...
+where:
+  in_pt   : matplc point to be used as input for the alarm block
+  true_val: use the value in in_pt without any changes
+  abs_val : use the absolute value in in_pt for determining the alarms
+  out_pt  : matplc point to be used as output for the alarm block
+  limitl  : f32 value used for the alarm comparison
+  comp    : specifies when the alarm should be set.
+            one of:
+              {less | lt | smaller | st |
+               less_or_equal | le | smaller_or_equal | se |
+               greater | gt | greater_or_equal | ge |
+               equal | eq | not_equal | ne}
+             Note: less, lt, smaller, and st, are all equivalent
+                    greater and gt are equivalent
+                    greater_or_equal and ge are equivalent
+                    etc...
+
+Example:
+fblock alarm in_pt true_val out_1 10 lt out_2 10 gt out_3 20.55 eq
+ (consider in_pt_val the value currently stored in the in_pt PLC point)
+  then the above config line will have the efect of:
+   - out_1 being true (1) when in_pt_val &lt; 10, and (false) 0 otherwise
+   - out_2 being true (1) when in_pt_val &gt; 10, and (false) 0 otherwise
+   - out_1 being true (1) when in_pt_val = 20.55, and (false) 0 otherwise
+</pre>
+
+<h3>Multiplexor block</h3>
+
+<pre>
+#fblock multiplexor &lt;out_pt&gt; &lt;ctrl_pt&gt; &lt;in_pt1&gt; [&lt;limit1&gt; &lt;in_pt2&gt;] ...
+
+where:
+  out_pt : matplc point to be used as output for the multiplexor block
+  ctrl_pt: matplc point used to decide which input to copy to the output
+  in_ptX : matplc point to be used as input for the multiplexor block
+  limitX : limit value at which the output switches from one input to another
+
+  out_pt = in_pt1 -&gt; if (ctrl_pt &lt;  limit1)
+  out_pt = in_pt2 -&gt; if (ctrl_pt &gt;= limit1) AND (ctrl_pt &lt; limit2)
+  out_pt = in_pt3 -&gt; if (ctrl_pt &gt;= limit2) AND (ctrl_pt &lt; limit3)
+  ...
+
+</pre>
+
+<p>
+<!--autolink--><a href="../logic/classicladder.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../logic/iec/intro.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/07/20 16:59:02 $</small>
+</body>
+</html>

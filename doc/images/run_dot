@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# This script generates graphs from the *.dot files. However, the resulting
+# images are in the CVS, so that we don't depend on GraphViz.
+
+dot -Tpng -o gmm.png gmm.dot
+dot -Tpng -o point.png point.dot
+
+# Hmm, comedi_syntax now gets laid out badly, so let's keep the old one.
+# dot -Tgif -o comedi_syntax.gif comedi_syntax.dot
+
+

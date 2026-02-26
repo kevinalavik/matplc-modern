@@ -1,0 +1,28 @@
+README - kbd
+
+Last Updates May 3, 2002
+
+--------------------------------------------------------
+About:
+
+This is a module that controls a TCP/IP connection and bridges it to other handler modules.
+
+-------------------------------------------------------- 
+Notes:
+
+	- changes can be made by changing the source code.
+
+--------------------------------------------------------
+Bugs:
+
+	- none known
+
+--------------------------------------------------------
+Todo:
+
+	- make this versatile to load kay mappings from a file.
+
+--------------------------------------------------------
+History:
+
+May 3, 2002 (Hugh Jack) - rewritten so that it would use the process handler

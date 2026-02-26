@@ -1,0 +1,39 @@
+This is a simple demo of the dsp module. This module reads the value stored
+in plc points, aplies mathematical functions to these values, and stores
+the results in other plc points.
+
+ The dsp module is divided into function blocks. Each function block aplies a
+certain mathematical function to its inputs. Each function block uses one (or
+more) plc points as inputs, and stores it's results in one (or more) plc 
+points. By configuring a function block that uses as its input the output of a
+previous function block one can implement complex mathematical functions. Closed
+loop controllers are also allowed.
+
+ Every function block uses plc points in the f32 (32 bit floating point) format 
+for both input and output. The typeconv function block may be used to convert
+values in other formats to the f32 format, and vice-versa. 
+
+ This demo implements a closed loop PID controller. Use the 0-9 keys to change
+the value of the leader, and watch the follower reach the same value. The alarm
+function block is used to set three alarms, depending on the value of the error.
+A nonlinear block is also used just for demonstartion purposes that applies
+a deadband to the output of the PID controller from 4 to 5, and limits the
+values to the range [2, 7] 
+
+To start:
+	cd demo/basic; make
+
+To quit:
+	press `Q' on the keyboard
+
+The demo terminates when the `quit' point comes on (keyboard Q).
+
+
+Notes:
+	- kbd.c should eventually be replaced by a proper curses-based HMI thing
+	- `demo' itself should be done in a generic fashion, rather than by
+	  hard-coding all the modules; every program will need something to
+	  start up all the modules at the beginning and shut them all down
+	  at the end (perhaps giving them time to shut themselves down if
+	  they want to).
+

@@ -1,0 +1,6 @@
+#!/bin/sh
+../../../tools/run/matplc -g
+../../../tools/run/handler -c clientA.cmd &
+../../../tools/run/handler -c clientB.cmd
+../../../tools/run/matplc -s
+#../../lib/ipcclean > /dev/null

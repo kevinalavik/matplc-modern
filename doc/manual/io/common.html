@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>MAT common IO options manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../scada/hmiViewerServer.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/abel.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Common I/O options</h1>
+
+<h2>Introduction</h2>
+
+Most I/O modules use a common syntax for mapping physical I/O points to MAT
+points. In addition, each I/O module may have additional configuration.
+
+<h2>Mapping</h2>
+
+The mapping between the physical I/O and the plc points is specified using
+the "map" table.
+
+The format of each line is
+
+<br><code>map [inv | invert] {in | out} &lt;io_addr&gt; &lt;matplc
+point&gt;</code>
+
+<dl>
+
+<dt><code>inv</code> or <code>invert</code><dd>invert the value being read
+from/writen to physical IO All the bits are inverted, which is handy for
+physical I/O that uses negative logic (on = 0, off = 1) - whether it's
+simply a wrongly wired switch, or a sensor that's only available N/C where
+previously it was N/O.</p>
+
+<dt><code>in</code><dd>copy the state of the physical Input/Output to the
+matplc point (it is an input)</p>
+
+<dt><code>out</code><dd>copy the state of the matplc point to the physical
+Output (it is an output)</p>
+
+<dt><code>&lt;io_addr&gt;</code><dd>address of physical input/output. The
+acceptable format this address will depend on the type physical I/O we will
+be interfacing with. Each different MatPLC I/O module accepts a different
+io_addr format.</p>
+
+<dt><code>&lt;matplc point&gt;</code><dd>the MAT point to which this
+physical input/output is to be mapped.</p>
+
+</dl>
+
+<h2>Example</h2>
+
+<p>For instance, suppose that we are using the parallel port I/O module. We
+have leds that will light up when the output is low, so we choose to invert
+all the outputs so the leds will light up when the plc point is set to 1.
+
+<p>D.x is the acceptable format for the parallel port I/O module. D
+specifies the D register, and x the bit of that register.
+
+<p>The mapping table might look something like this:
+<pre>
+map inv out D.0 L1
+map inv out D.1 L2
+map inv out D.2 L3
+map inv out D.3 L4
+</pre>
+
+<p>
+<!--autolink--><a href="../scada/hmiViewerServer.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/abel.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</html>

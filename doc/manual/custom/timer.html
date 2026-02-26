@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>MAT manual - custom modules - timer reference</title>
+  </head><body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../custom/synch.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/io.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Custom modules - timer reference</h2>
+<p>The <tt>timer</tt> and <tt>timer_ext</tt> sections aren't part of the
+MatPLC library proper; if you want them, you have to explicitly link to
+them. They can be found in the <tt>mat/lib/logic</tt> directory.
+
+<h3>timer</h3>
+
+Timers are basically floats, with the additional feature that they can be
+enabled to increase at a rate of one per second. They are also
+fixed-precision, storing time as an exact number of microseconds.
+
+<p>Note that most of the functions listed below are actually macros; they
+modify the value of <tt>timer</tt> directly.
+
+<dl>
+  <dt><code>plc_timer_t</code></dt> <dd>The timer type.</p> </dd>
+  <dt><code>plc_timer_clear(timer)</code></dt> <dd>Set to zero and
+  disable. The timer is now zeroed and stopped.</p> </dd>
+  <dt><code>plc_timer_start(timer)</code></dt> <dd>Set to zero and
+  enable. The timer is now zeroed and running.</p> </dd>
+  <dt><code>plc_timer_enable(timer)</code></dt> <dd>Enable the timer.
+  This will make the value increase at a rate of one per second.</p> </dd>
+  <dt><code>plc_timer_disable(timer)</code></dt> <dd>Disable the timer.
+  This will make it keep whatever value it has at the moment without
+  change.</p> </dd>
+  <dt><code>plc_timer_add(timer, value)</code></dt> <dd>Add a number
+  to the timer, effectively winding it forward. This works whether it's
+  enabled or disabled. Use negative values to decrease the timer (wind it
+  back).</p> </dd>
+  <dt><code>plc_timer_set(timer, value)</code></dt> <dd>Set to a particular
+  value. This works whether it's enabled or disabled. However, to avoid
+  loss of precision, prefer to use <code>plc_timer_add()</code> whenever
+  possible.</p> </dd>
+  <dt><code>double plc_timer_get(timer)</code></dt> <dd>Get the current
+  value of the timer. This works whether it's enabled or disabled.</p>
+  </dd>
+  <dt><code>int plc_timer_done(timer, preset)</code></dt> <dd>Check whether
+  timer is at least <code>preset</code> seconds. This works whether it's
+  enabled or disabled.</p> </dd>
+</dl>
+
+<h3>timer_ext</h3>
+
+This is very similar to the above, with two differences: all the
+functions/macros end with <tt>_ext</tt>, and they all take an extra
+argument which they use as the current time instead of obtaining it from
+the operating system. The extra argument should be of type <code>struct
+timeval</code>, as used by the <code>gettimeofday(2)</code> system call.
+
+<p>One might use <tt>timer_ext</tt> if one runs in a conventional scan and
+doesn't want timers to expire mid-loop. To achieve this, call
+<code>gettimeofday(2)</code> once at the start of the loop and then use
+that time as the last argument to all the <tt>timer_ext</tt> calls.
+
+<h3>Real-time considerations</h3>
+FIXME
+</p>
+<!--autolink--><a href="../custom/synch.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../custom/io.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+</p>
+<p><small>$Date: 2005/12/08 09:24:46 $</small>
+</p>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>MAT manual - Program Engineering - Modularity</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../program/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/specs.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Modularity</h2>
+
+<p>The key to solving large problems well is <em>modularity</em>. This
+means dividing the problem into sections (or modules, components, blocks
+etc) and solving each section separately.
+
+<p>A program might be divided along the process flow (infeed, process 1,
+accumulation, process 2, outfeed, palletizer); by mode (manual,
+single-step, automatic, callibration); by levels (single motions, compound
+motions, actions, tactics, strategy); by purpose (control, monitoring, mmi,
+comms); or in some other way that makes sense for the project. It might
+well be divided by some combination of the above.
+
+<p>Often, a section is still too large to be solved in one piece, so it is
+divided into sub-sections in a similar way, and so on for the sub-sections.
+
+<p>The trick with modularity - and the reason why it's so important - is to
+ensure that each section does a single, well-defined job. It should
+interact with other sections sparingly; a sub-section should only interact
+within the section, unless its purpose is specifically interaction (in
+which case it should do little else). Obviously, like all rules, this can
+be broken on occasion. But not often.
+
+<p>
+<!--autolink--><a href="../program/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../program/specs.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:12 $</small>
+</html>

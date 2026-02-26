@@ -1,0 +1,190 @@
+#! /usr/bin/env python
+
+# (c) 2002 Jiri Baum
+
+# Offered to the public under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+# Public License for more details.
+
+# This code is made available on the understanding that it will not be used
+# in safety-critical situations without a full and competent review.
+
+
+# This is the widget naming wizard for hmi_gtk. For more details, see the
+# documentation accessible through http://mat.sf.net
+
+# $Id: widgetnamer,v 1.4 2002/04/22 16:35:03 mjsousa Exp $
+
+from gtk import *
+import string
+
+toplevel = GtkWindow(WINDOW_TOPLEVEL)
+toplevel.connect("destroy", mainquit)
+table = GtkTable(7, 3, homogeneous=FALSE)
+toplevel.add(table)
+
+texts=[("point", "point name from matplc.conf (required)"),
+       ("widget number", "numbered separately for each point"),
+       ("type", ""), # dynamic, viz typesel
+       ("parameter 1", ""), # dynamic, viz typesel
+       ("parameter 2","") # dynamic, viz typesel
+      ]
+lbl=texts
+comment=texts
+i=0
+for a in texts:
+  lbl[i]=GtkLabel(a[0]);
+  table.attach(lbl[i],0,1,i,i+1,xpadding=5,xoptions=0)
+  lbl[i].show()
+
+  comment[i]=GtkLabel(a[1]);
+  table.attach(comment[i],2,3,i,i+1,xpadding=5)
+  comment[i].show()
+
+  i=i+1
+
+result = GtkEntry()
+def select_result(btn):
+  result.select_region(0,-1)
+  if result.get_text()=='':
+    gdk_beep()
+  point.grab_focus()
+result.set_editable(FALSE)
+table.attach(result,0,3,5,6)
+result.show()
+
+def recalculate(w):
+  if (w!=None and
+      w.get_type()==point.get_type() and
+      string.find(w.get_text(),'.')!=-1
+     ):
+    gdk_beep()
+    w.set_text(string.translate(w.get_text(),string.maketrans('.','_')))
+  txt = '_' + point.get_text()
+  if txt=='_':
+    result.set_text('')
+    return
+  prefix = ''
+  i = id.get_text()
+  if i=='0':
+    prefix = '.' + i
+  else:
+    txt = txt + '.' + i
+  if type == 'bool':
+    prefix = prefix + '.' + type
+    for p in (p1, p2):
+      i = p.get_text()
+      if i=='':
+	prefix = prefix + '.' + i
+      else:
+	txt = txt + prefix + '.' + i
+	prefix = ''
+  else:
+    txt = txt + prefix + '.' + type
+    prefix = ''
+  result.set_text(txt)
+
+btnbar = GtkTable(1,4,homogeneous=TRUE)
+table.attach(btnbar,0,3,6,7)
+btnbar.show()
+
+selbtn = GtkButton('Select')
+selbtn.connect("clicked", select_result)
+btnbar.attach(selbtn,0,2,0,1)
+selbtn.show()
+
+def clear(w):
+  for w in (point, p1, p2):
+    w.set_text('')
+  id.set_text('0')
+  typemenu.set_history(0)
+  typesel(None,'bool') #set_history doesn't call this
+  #typesel also updates the comments and result fields
+  point.grab_focus()
+
+clrbtn = GtkButton('Clear')
+clrbtn.connect("clicked", clear)
+btnbar.attach(clrbtn,2,3,0,1)
+clrbtn.show()
+
+quitbtn = GtkButton('Quit')
+quitbtn.connect("clicked", mainquit)
+btnbar.attach(quitbtn,3,4,0,1)
+quitbtn.show()
+
+#now the actual settings
+point = GtkEntry()
+table.attach(point,1,2,0,1,xoptions=0)
+point.connect("changed", recalculate)
+point.show()
+point.grab_focus()
+
+id = GtkEntry()
+id.set_text('0')
+table.attach(id,1,2,1,2,xoptions=0)
+id.connect("changed", recalculate)
+id.show()
+
+typecomments = {
+  'bool': 'on/off',
+  'i32': '32-bit signed integer (+/- 2 billion)',
+  'i16': '16-bit signed integer (-32768 to 32767)',
+  'i8': '8-bit signed integer (-128 to 127)',
+  'u32': '32-bit unsigned integer (0 to 4 billion)',
+  'u16': '16-bit unsigned integer (0 to 65536)',
+  'u8': '8-bit unsigned integer (0 to 255)',
+  'f32': 'floating-point number'
+}
+def typesel(w,t):
+  global type
+  type = t
+  recalculate(w)
+  comment[2].set_text(typecomments[t])
+  if t=='bool':
+    comment[3].set_text('text / image for ON')
+    comment[4].set_text('text / image for OFF')
+  else:
+    comment[3].set_text('-')
+    comment[4].set_text('-')
+
+typebox = GtkHBox()
+table.attach(typebox,1,2,2,3,xoptions=FILL)
+typemenu = GtkOptionMenu()
+typebox.pack_start(typemenu, expand=FALSE, fill=FALSE)
+typemenu2 = GtkMenu()
+types={}
+for t in ('bool', 'f32', 'u32', 'u16', 'u8', 'i32', 'i16', 'i8'):
+  types[t]=GtkMenuItem(t)
+  types[t].show()
+  types[t].connect('select', typesel, t)
+  typemenu2.append(types[t])
+typemenu.set_menu(typemenu2)
+typemenu.show()
+typebox.show()
+
+p1 = GtkEntry()
+table.attach(p1,1,2,3,4,xoptions=0)
+p1.connect("changed", recalculate)
+p1.show()
+
+p2 = GtkEntry()
+table.attach(p2,1,2,4,5,xoptions=0)
+p2.connect("changed", recalculate)
+p2.show()
+
+#this can't be done until p1 and p2 are up
+typesel(None,'bool')
+
+for w in (result, point, id, p1, p2):
+  w.connect('activate', select_result)
+
+table.show()
+toplevel.show()
+
+mainloop()
+

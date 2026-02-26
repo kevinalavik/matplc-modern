@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>MAT manual - points</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../general/concept/modules.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/intro.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Points</h1>
+
+The points are the inputs, outputs, internal coils and registers of the
+MatPLC. Each point has a name by which it is known throughout the MatPLC.
+
+<p>Points may be 1-bit, corresponding to discrete inputs, outputs,
+internal/memory coils, flags etc, or multi-bit (up to 32-bit),
+corresponding to analog inputs, outputs, integer or floating point
+registers etc.
+
+<p>Points are defined in the <a href="../config/plc.html">PLC section of the config</a>.
+
+<h2><img src="../../../images/point.png" align="right">
+Point ownership</h2>
+
+For each point, there is exactly one module which is allowed to change it,
+to ensure that processing takes place in an orderly fashion. 
+
+<p>The diagram on the right shows the situation for one point and three
+modules: the point is owned by module 1. It has a private copy of the
+point, and is allowed to write to it. At the bottom of the scan, the point
+is copied to the global area, from which it is copied to modules 2 and 3 at
+the top of their scans.
+
+<p>This means that while troubleshooting, if the point has an incorrect
+value, we know to check module 1.
+
+<h2>Example</h2>
+
+<p>For instance, in the <a href="../../demo/basic.html">basic demo</a>,
+there are the following points: <dl>
+
+  <dt><code>L1</code>, <code>L2</code>, <code>L3</code>, <code>L4</code>
+  <dd>the four "lights", which are changed by the chaser program;
+
+  <dt><code>left</code>, <code>right</code> <dd>the left and right
+  "buttons", which are changed by the kbd module and used by the chaser
+  program to control the direction of movement; and
+
+  <dt><code>quit</code> <dd>the quit "button", which is also changed by the
+  kbd module; the plcshutdown module reads it so that it knows when to shut
+  everything down. 
+
+</dl>
+
+<p>The declaration in the config file looks like this:
+<pre>
+point L1        "light 1" Chaser
+point L2        "light 2" Chaser
+point L3        "light 3" Chaser
+point L4        "light 4" Chaser
+point left      "&lt;- (key L)" Kbd
+point right     "-&gt; (key R)" Kbd
+point quit      "quit (key Q)" Kbd
+</pre>
+
+<p>All of the points are also displayed on the screen, by the vitrine
+module. No special access configuration needs to be done to allow this -
+any module may read any point it wishes; it's only changing them that's
+restricted.
+
+<p>In the <a href="../../demo/basic_etc.html">modbus demo</a>, the
+<code>L1</code>, <code>L2</code>, <code>L3</code> and <code>L4</code>
+points are also sent to the Modbus slave.
+
+<h2>FAQ</h2>
+
+<b>Q: I'm looking for a solution to share a  point between 2 or more
+modules.</b>
+<p><b>A:</b> In the MatPLC, all modules are written by one module (the
+"owner") and read by all modules. There is no way to have a point that
+could be written by two modules which are both active at the same time.
+
+<p>It's probably better to have a separate point for each module that wants to
+write, anyway, and then have explicit logic deciding between those values.
+That way if the wrong value comes out, you know where to look for the
+problem...
+
+<p>For instance, you might have:
+
+<ul>
+
+<li>automatic logic writes to <code>foo_auto</code></p>
+
+<li>HMI writes to <code>foo_manual</code></p>
+
+<li><pre>if automatic_mode
+    then copy foo_auto to foo_cur
+    else copy foo_manual to foo_cur</pre>
+
+<li>all modules read <code>foo_cur</code>
+
+</ul>
+
+<p>
+<!--autolink--><a href="../../general/concept/modules.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../general/config/intro.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/03/06 04:20:16 $</small>
+</body>
+</html>

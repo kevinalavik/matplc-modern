@@ -1,0 +1,98 @@
+<html>
+<head>
+<title>MAT manual - Custom modules - Python</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../lang/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../lang/tcl.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Custom modules - Python</h1>
+
+<h2>Introduction</h2>
+
+<p>The Python language was designed to be powerful yet have very clear
+syntax. It has modern features like modularity, OO, exceptions, dynamic
+data types, and dynamic typing. For more details, visit its <a
+href="http://www.python.org">homepage</a>.
+
+<p>User interfaces can be easily built for python scripts using tools such
+as <tt>glade</tt>.
+
+<h2>Installing into python</h2>
+
+The python extension must be installed before it can be used.
+<ol>
+<li>change to the <code>lang/python</code> directory
+<li> (optional) ./setup.py build
+<li> <em>as root:</em> ./setup.py install
+</ol>
+
+<p>If you don't have the MatPLC shared library installed in the usual place
+you'll also have to set the environment variable
+<code>LD_LIBRARY_PATH</code> to point to the MatPLC <code>lib/.libs</code>
+directory before starting python or the python script.
+
+<h2>Example</h2>
+
+<pre>
+import matplc
+
+matplc.init("example")
+
+foo = matplc.point("foo")
+bar = matplc.point("bar")
+es_out = matplc.point("es_out")
+
+try:
+	while 1:
+		matplc.scan_beg()
+		matplc.update()
+
+		if foo.get():
+			bar.set(1)
+		else:
+			bar.set(0)
+
+		matplc.update()
+		matplc.scan_end()
+finally:
+	es_out.set(1)
+	matplc.update()
+
+matplc.done()
+</pre>
+
+<h3>Commentary</h3>
+
+<p>The first two and last two lines inside the loop are boiler-plate. Most
+programs will have them, since most programs will want a main loop.
+However, for instance GUI-oriented programs will not, and the interface
+supports that (ignore the scan_beg() and scan_end(), and just do an
+update() before reading points or after setting them).
+
+<p>The logic would presumably be more complicated than that, of course, but
+this is just a small example.
+
+<p>Note the use of the try/finally block - if there's any problem in the
+main body of the program, this will ensure that the module sets the output
+<code>es_out</code> (presumably connected to the ES circuit) before it
+exits.
+
+<h2>Other functionality</h2>
+
+<p>You can use the built-in <code>len(foo)</code> function to get the
+length of the point <code>foo</code> in bits and <code>foo[0]</code> or
+<code>foo[0:3]</code> to get subpoints that access particular bit(s) of the
+point <code>foo</code>.
+
+<p>Instead of <code>foo.set(1)</code> and <code>foo.set(0)</code>, you can
+also use <code>foo.set()</code> and <code>foo.reset()</code> respectively.
+
+<p>Null points can be obtained using <code>matplc.point()</code>
+
+<p>Floating-point points (f32, as used by the <a
+href="../logic/dsp.html">DSP module</a>) can be obtained using
+<code>matplc.point_f(<em>name</em>)</code>
+
+<p>
+<!--autolink--><a href="../lang/intro.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../lang/tcl.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</html>

@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>MAT manual - bumpless transfers</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../io/simple-udp.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../custom/intro.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>How to do bumpless transfers</h2>
+
+Status: this functionality is <strong>partially available</strong>, as
+described below.
+
+<p>When using a PID controller, such as the one in the <a
+href="../../logic/dsp.html">DSP module</a>, it is often useful to be able
+to switch between manual and automatic modes smoothly.
+
+<p>In the MatPLC, the two directions of switching are set up separately, so
+we'll cover each in turn.
+
+<p>By way of example, let's say we have the following points:
+<table border>
+<tr><th>point</th><th>type</th><th>function</th></tr>
+
+<tr><td><code>Output</code><td><code>f32</code></td><td>The output of the PID block,
+used to control the process.</td></tr>
+
+<tr><td><code>ManOutput</code><td><code>f32</code></td><td>The setting selected
+manually.</td></tr>
+
+<tr><td><code>ManMode</code><td>1-bit</td><td>Mode selector: 0=automatic,
+1=manual</td></tr>
+
+</table>
+
+<h3>Manual-to-Automatic transfers</h3>
+
+These have to be configured on the PID block. Simply add the following two
+parameters to the end of the pid block line: <br><code>man_out ManOutput
+man_mode ManMode</code>
+
+<p>Note: bumpless transfers are not supported when the I coefficient is
+zero.
+
+<h3>Automatic-to-Manual transfers</h3>
+
+This depends on which module you use for the manual control, and how manual
+control is done.
+
+<p>Currently, the hmi_gtk module does not support bumpless
+automatic-to-manual transfers.
+
+<p>If you're using some other program for the manual control, you can
+ensure bumpless transfers by copying <code>Output</code> to
+<code>ManOutput</code>, either just before switching to manual mode or
+whenever you're in automatic.
+
+<p>If the manual control is done by "up" and "down" buttons, then it's even
+easier: again, in automatic mode, copy <code>Output</code> to
+<code>ManOutput</code>; in manual mode, just increment and decrement
+<code>ManOutput</code> as normal.
+
+
+
+<p>
+<!--autolink--><a href="../../io/simple-udp.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../custom/intro.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/12/26 13:23:27 $</small>
+</body>
+</html>

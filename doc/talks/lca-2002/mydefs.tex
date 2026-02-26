@@ -1,0 +1,74 @@
+\newcommand{\dsp}{\setlength{\baselineskip}{24truept}}  %double spacing
+\newcommand{\ssp}{\setlength{\baselineskip}{13.6truept}}%single spacing
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bd}{\begin{description}}
+\newcommand{\ed}{\end{description}}
+\newcommand{\ben}{\begin{enumerate}}
+\newcommand{\een}{\end{enumerate}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+\newcommand{\bfig}{\begin{figure}}
+\newcommand{\efig}{\end{figure}}
+\newcommand{\bc}{\begin{center}}
+\newcommand{\ec}{\end{center}}
+\newcommand{\bt}{\begin{table}}
+\newcommand{\et}{\end{table}}
+\newcommand{\btab}{\begin{tabular}}
+\newcommand{\etab}{\end{tabular}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Property}
+\newtheorem{defn}{Definition}
+\newtheorem{result}{Result}
+\newenvironment{proof}[1]{{\bf #1}\em}{\/}
+\newenvironment{prf}{\rm}{}
+\newcommand{\hs}{\hspace{0.2in}}
+\newcommand{\vs}{\vspace{-0.5in}}
+
+% Single sided setup
+\def\singlesidestandardsetup{
+\topmargin 0in
+\textheight 624pt % 637.5pt
+\textwidth 6in
+\oddsidemargin 0.85in  % changed from 0.75 to make lm==1.25in
+\columnwidth \textwidth
+\footskip 24pt
+}
+
+\renewcommand{\floatpagefraction}{0.7}
+
+\newcommand{\cs}[1]{\mbox{c}_{#1}}
+\newcommand{\sn}[1]{\mbox{s}_{#1}}
+\newcommand{\threevec}[3]{
+	\left[ 
+	\begin{array}{c} #1 \\ #2 \\ #3 \end{array}
+	\right]
+}
+\newcommand{\hvec}[4]{
+	\left[ 
+	\begin{array}{c} #1 \\ #2 \\ #3 \\ #4 \end{array}
+	\right]
+}
+\newcommand{\qvec}[1]{
+	\left[
+	\begin{array}{c} 0 \\ #1 \end{array}
+	\right]
+}
+
+\newcommand{\INF}{\mbox{INF}}
+\newcommand{\SUP}{\mbox{SUP}}
+
+\newcommand{\comment}[1]{\marginpar{\raggedright\scriptsize #1}}
+
+\newcommand{\expr}[1]{\langle\mbox{#1}\rangle}
+
+\newcommand{\newspecial}[1]{
+	\ifnum\includefigs>0
+		\special{#1}
+	\fi
+}

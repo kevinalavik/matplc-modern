@@ -1,0 +1,154 @@
+hmi_gtk module
+
+Author:
+Juan Carlos Orozco email: jorozco@acelab.com
+
+Date: 15.08.2001
+
+Changes Made: 
+
+hmi_gtk module created.
+
+Author:
+Staedtler, Stefan e@mail: stefan.staedtler@siemens.com
+Patz, Heiko      e@mail: heiko.patz@siemens.com
+
+Date: 13.02.2003
+
+Changes made: 
+
+- Function: 
+	label_widget()
+	failure detected when label type is u32
+	added snprintf() in switch-case-construct for u32_dt
+	-> o.k.
+
+- New Function for Scale Widgets (HScale, VScale)
+	scale_widget()
+	scale_widget_update()
+	scale_widget_init()
+
+- New Function for SpinButtons
+	spin_button_widget()
+	spin_button_widget_update()
+	spin_button_widget_init()
+
+- Function:
+	parse_connection()
+	added new Widget-Type GtkHScale, GtkVScale and GtkSpinButton
+
+- Function:
+	update_value()
+	added new Widget-Type GtkHScale, GtkVScale and GtkSpinButton
+
+- Function entry_widget rewritten (original is now entry_widget_org)
+
+- New Function entry_widget_init (initialize Entry Widget text)
+
+- Function:
+	parse_connection()
+	new function call entry_widget_init() in GTkEntry-Section
+
+------------------------------------------------------------------------
+Authors:
+Staedtler, Stefan e@mail: stefan.staedtler@siemens.com
+Patz, Heiko       e@mail: heiko.patz@siemens.com
+
+Date: 13.03.2003
+
+Changes made:
+
+- Function: 
+	progress_widget()
+	Range is now limited by the widget settings. This is more
+	flexible and the widget does the job in a better way.
+
+- Function:
+	exit_window()
+	Exit window (== destroy_handler)
+	This handler now only release the focus.
+
+- New Function:
+	delete_event()
+	handler for "delete_events" (from window-manager, e.g. X-Button)
+	This handler free the structures contained in the node
+	and finally destroy the window. 
+	The destroy-handler then calls exit_window().
+
+- New Function:
+	quit_handler()
+	quit-Handler only for window "app1"
+	Window "app1" must connect the signal delete_event with quit_handler.
+	In matplc.conf you have to create the point "quit_app1" and assign it to
+	plcshutdown.
+	The quit-handler sets the point quit_app1 and free the structures
+	contained in the node.
+
+------------------------------------------------------------------------
+Authors:
+Staedtler, Stefan e@mail: stefan.staedtler@siemens.com
+Patz, Heiko       e@mail: heiko.patz@siemens.com
+
+Date: 02.04.2003
+
+Changes made:
+
+- New Widget type GtkPlotCanvas added
+	Documentation: see manual
+
+	
+------------------------------------------------------------------------
+Authors:
+Staedtler, Stefan e@mail: stefan.staedtler@siemens.com
+Patz, Heiko       e@mail: heiko.patz@siemens.com
+
+Date: 07.07.2003
+
+Changes made:
+
+- GtkPlotCanvas:
+	o) scrolling changed from continuous to stepwise.
+	o) automatic scaling improved.
+	o) new settings added.
+
+- GtkLabel:
+	o) more flexible outputformats via formatdefinition in matplc.conf.
+
+- GnomePixmap:
+	o) Multiple Pixmap-Support added.
+
+------------------------------------------------------------------------
+Authors:
+Staedtler, Stefan e@mail: stefan.staedtler@siemens.com
+Patz, Heiko       e@mail: heiko.patz@siemens.com
+
+Date: 19.11.2003
+
+- New Widget type GtkRadioButton
+	Documentation: see manual
+
+- New Widget type GtkCheckButton
+	Documentation: see manual
+
+- New Widget type GtkOptionMenu
+	Documentation: see manual
+
+- New Widget type GtkSocket
+	Documentation: see manual
+
+
+------------------------------------------------------------------------
+Authors:
+Staedtler, Stefan e@mail: stefan.staedtler@siemens.com
+Patz, Heiko       e@mail: heiko.patz@siemens.com
+
+Date: 27.11.2003
+
+- Fixed problem when GtkPlug is destroyed
+	socket_widget_init():
+		added function gtk_widget_realize() before asking for id
+	parse_connection():
+		added verification if actual window is still there and has
+		not been destroyed (GtkSocket can be destroyed from plugged
+		modul)
+

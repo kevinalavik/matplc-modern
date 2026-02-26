@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>MAT manual - Getting Started</title>
+</head>
+<!--autolink--><a href=".."><img src="../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="safety.html"><img src="../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="index.html"><img src="../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="usage/intro.html"><img src="../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Getting started with the MatPLC</h1>
+
+This page will explain how to find one's way around the MatPLC. It is
+rather brief at the moment.
+
+<h2>Running the <a href="demo/basic.html">basic demo</a></h2>
+
+The demo is a very primitive four-light chaser. Its only purpose is to make
+sure that the MatPLC downloaded and compiled OK.
+
+<p>After downloading the tarball and unpacking it in a directory, change to
+the <code>demo/basic</code> subdirectory and run <code>make</code>. Once it
+compiles everything, run the <code>demo</code> script in that directory.
+
+<p>During compilation, a message might come up saying that
+<code>linuxkbd</code> could not be compiled. This is merely a warning; the
+demo can run without it. Just press Enter to continue - an alternate
+keyboard interface will be used.
+
+<p>Once the demo is running, you'll see a star moving across the middle of
+the screen. The direction can be changed using <strong>L</strong> and
+<strong>R</strong> (which may act as toggle buttons, if
+<code>linuxkbd</code> didn't compile). To exit, hit <strong>Q</strong>.
+
+<p>If you have trouble starting up the MatPLC, try running
+<br><code>../../tools/run/matplc -s</code> <br>just in case there's a
+half-started MatPLC around. The <code>-s</code> option stands for
+"shutdown", and makes sure the slate is clean. Then try running the
+<code>demo</code> script again.
+
+<p>Other than that, please ask on the <a
+href="mailto:mat-devel@lists.sf.net">mailing list</a>, giving as much
+information as you can about how far you got and what failed.
+
+<h2>Running the GUI-based <a href="demo/oven.html">oven demo</a></h2>
+
+You will need to be in X for this demo to run (the default on modern Linux
+boxes). Change to the <code>demo/oven_gkt</code> subdirectory, run
+<code>make</code> and then the <code>demo</code> script in that directory.
+
+<p>To see the demo in action, first set the machine to automatic and start
+it, then set the setpoints according the table below, or something similar
+to that:
+<table border>
+<tr><td>FluidTempSP</td><td align="right">200</td><td>&deg;C</td></tr>
+<tr><td>BeltSpeed</td><td align="right">10</td><td>m/min</td></tr>
+<tr><td>AirTempSP Zone1</td><td align="right">100</td><td>&deg;C</td></tr>
+<tr><td>AirTempSP Zone2</td><td align="right">120</td><td>&deg;C</td></tr>
+<tr><td>AirTempSP Zone3</td><td align="right">140</td><td>&deg;C</td></tr>
+</table>
+
+<h2>Creating your own project</h2>
+
+This section not yet written. <strong>FIXME</strong>
+
+<p>
+<!--autolink--><a href="safety.html"><img src="../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="index.html"><img src="../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="usage/intro.html"><img src="../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:31:58 $</small>
+
+</html>

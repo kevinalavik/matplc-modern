@@ -1,0 +1,44 @@
+This is a simple light-chasing demo, similar to the basic demo, but now with
+the chaser and vitrine modules synchronised, which results in _much_ lower CPU
+usage. 
+The synchronisation may be configured using two alternative methods. A sample of
+the more complex, but more complete, method is available in the 
+matplc.conf.complex file. A sample of the simpler, but less powerful, method
+is available in the matplc.conf.cimle file. To use one of them, simple copy
+the file onto another file named matplc.conf (or use a symbolic link instead).
+
+It also allows to stop/run the PLC with ./plc_stop and ./plc_run if the
+complex configuration version is being used.
+
+To start:
+	cd demo/basic; make
+
+To quit:
+	press `Q' on the keyboard
+
+
+It's controlled from the keyboard (module Kbd, kbd.c): the keys L, R and Q
+on the keyboard toggle the three points `left', `right' and `quit'.
+
+The Chaser module (chaser.c) is a primitive `light chasing' program. The
+direction of movement can be changed using the `left' and `right' points;
+these are notionally push-buttons, but in this demo they are controlled by
+the L and R keys. The speed of the chaser can be configured with the
+"delay" setting in the "Chaser" section of matplc.conf
+
+The demo terminates when the `quit' point comes on (keyboard Q).
+
+
+Buglets:
+	- chaser may miss the `left' or `right' button if you press and
+	  quickly release it, because it's badly written.
+	- assumes a linux terminal (hard coded escape codes).
+
+Notes:
+	- kbd.c should eventually be replaced by a proper curses-based HMI thing
+	- `demo' itself should be done in a generic fashion, rather than by
+	  hard-coding all the modules; every program will need something to
+	  start up all the modules at the beginning and shut them all down
+	  at the end (perhaps giving them time to shut themselves down if
+	  they want to).
+

@@ -1,0 +1,86 @@
+#!/usr/bin/perl
+
+# This script links all the pages of the manual with "next", "prev" and
+# "up" buttons.
+
+# It is invoked on SF after each webpage update (8-hourly).
+
+# It uses index.html as the master list, so to change the order of
+# documents, rearrange them in index.html.
+
+# Within each page, it looks for lines with
+#                              <!--autolink-->
+# and replaces whatever else is on that line with the links.
+
+
+#First, read and interpret the index:
+
+open INDEX, "index.html";
+while (<INDEX>) {
+  next unless /<a href="(.*?)">/ and $1 !~ /^\.\./;
+  push @pages, $1;
+}
+close INDEX;
+
+undef $/; #deal with whole files at a time from now on
+
+for $i (1..$#pages+1) {
+  ($prev,$page,$next) = ("index.html",@pages,"index.html")[$i-1..$i+1];
+
+  $linkprefix = "../" x @{[$page =~ /\//g]};
+  $next = $linkprefix.$next;
+  $prev = $linkprefix.$prev;
+  $up = $linkprefix."index.html";
+  $home = $linkprefix."..";
+
+  $imgprefix = $linkprefix."../images";
+
+  $tag = "<!--autolink-->";
+  $endtag = "<!--/autolink-->";
+
+  $logo = "<a href=\"$home\"><img src=\"$imgprefix/MAT-linux-h100.gif\" ".
+          "border=0 WIDTH=\"95\" HEIGHT=\"100\" alt=\"[MAT logo]\" ".
+	  "align=\"right\"></a>";
+
+  $links  = "<a href=\"$prev\"><img src=\"$imgprefix/prev.gif\" ".
+            "alt=\"[Prev]\" width=32 height=32 border=0></a>";
+  $links .= "<a href=\"$up\"><img src=\"$imgprefix/up.gif\" ".
+            "alt=\"[Up]\" width=32 height=32 border=0></a>";
+  $links .= "<a href=\"$next\"><img src=\"$imgprefix/next.gif\" ".
+            "alt=\"[Next]\" width=32 height=32 border=0></a>";
+
+  $linkline = $tag.$links.$endtag;
+  $firstlinkline = $tag.$logo.$links.$endtag;
+
+  if (not -e $page) {
+    print "$page not found - calling make\n";
+    ($path,$name) = $page=~/(.*)\/([^\/]*)/ or ($path,$name)=(".",$page);
+    system "make -C $path $name";
+  }
+  open I, "<$page" or die "can't open $page for reading";
+  $_ = <I> or die "can't read $page";
+  close I or die "can't close $page after reading";
+
+  $orig = $_;
+
+  # s/$tag.*?$endtag/$tag/sgi;
+  # s/.*$tag.*/$linkline/gi;
+  # s/.*$tag.*/$firstlinkline/i;
+
+  @tags = /$tag/gi;
+  @endtags = /$endtag/gi;
+  # check if there's the same number of start and end tags
+  if (@tags == @endtags) {
+    s/$tag.*?$endtag/$linkline/sgi;
+    s/$tag.*?$endtag/$firstlinkline/si;
+  } else {
+    print "Unbalanced autolink comments in $page\n";
+  }
+
+  if ($orig ne $_) {
+    print "Updating $page\n";
+    open O, ">$page" or die "can't open $page for writing";
+    print O $_ or die "can't write to $page";
+    close O or die "can't close $page after writing";
+  }
+}

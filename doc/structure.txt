@@ -1,0 +1,56 @@
+This was originally a post to the mailing list in response to Ken Emmons'
+query on the architecture of the MatPLC. See the archives at 1 Nov 2000. It
+has been edited to clarify some points.
+					     --Jiri Baum <jiri@baum.com.au>
+
+Ah, structure...
+
+
+Each part (module) of the MatPLC runs as a separate process, each linked
+against the libmatplc.so library[1].
+
+Example modules might be: logic (RLL) program, HMI, http-server, I/O [2],
+bus I/O/comm. Any particular installation will run only a few of the
+available modules.
+
+The libmatplc.so library provides various services, perhaps the most
+important being config, data map and synch. In turn:
+
+	- config - provides for the configuration of various MatPLC
+	  parameters from a single file, by default matplc.conf. There
+	  are private sections for each module (there is provision for
+	  several of a given module to run simultaneously), as well as
+	  sections used by all modules, eg [PLC].
+
+	- data map - provides the familiar data points, corresponding to
+	  PLC inputs, outputs and internal coils/registers. Points of 0 to
+	  32 bits are supported, 1-bit points corresponding to simple coils
+	  or relays.
+
+	  As in a standard PLC, the data map is buffered so that changes to
+	  a point do not appear on the outputs (or HMI screen, or to other
+	  modules) until the end of the cycle. The end-of-cycle update is
+	  serialized, so modules can run asynchronously without problems.
+
+	  Unlike a standard PLC, no distinction is made between inputs,
+	  outputs and internal coils. It is recommended that the user adopt
+	  a naming scheme that avoids confusion.
+
+	  Terms other products use for this: "master IO table", "universal
+	  IO table" (keeping in mind that not all points in it are I/O).
+
+	- synch - this provides for (optional) synchronisation between the
+	  cycles of the various modules. By default each module runs free;
+	  synchronisation can lower CPU usage and provide more uniform
+	  latencies.
+
+	  Some modules (eg PID) require that they be synchronised to
+	  certain of their inputs, as they calculate deltas.
+
+
+[1] Previously matplc.a
+
+[2] There is some argument whether there should be one I/O module or many,
+but in practice I think the point is moot as most installations will only
+use one kind of I/O anyway, and hence only one I/O module.
+

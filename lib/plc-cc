@@ -1,0 +1,88 @@
+
+
+#include "plc.h"
+
+
+class Plc_Point_t{
+  private:
+    plc_pt_t       _plc_pt;  // point's reference
+
+  public:
+    Plc_Point_t(const char *name = NULL);  // constructor
+    ~Plc_Point_t(void);                    // destructor
+
+  public:
+    void operator= (u32 value);
+    operator u32(void);
+
+  public:
+    void        update(void);   // calls plc_update_pt(_plc_pt);
+    const char *name(void);     // returns point's name
+    int         length(void);   // returns plc_pt_len(_plc_pt);
+    int         status(void);   // returns plc_pt_rw(_plc_pt);
+
+  public:
+    u32         read_u32 (void);    // returns plc_get(_plc_pt);
+    void        write_u32(u32 val); // returns plc_set(_plc_pt, val);
+
+  protected:
+    f32         read_f32 (void);    // returns plc_get(_plc_pt);
+    void        write_f32(f32 val); // returns plc_set(_plc_pt, val);
+};
+
+
+
+
+
+class Plc_Point_u32: public Plc_Point_t {
+  public:
+     Plc_Point_u32(const char *name = NULL);  // constructor
+     ~Plc_Point_u32(void);                    // destructor
+
+
+  public:
+     u32  read (void);     // returns plc_get(_plc_pt);
+     void write(u32 val); // returns plc_set(_plc_pt, val);
+};
+
+
+
+
+class Plc_Point_f32: public Plc_Point_t {
+  public:
+     Plc_Point_f32(const char *name = NULL);  // constructor
+     ~Plc_Point_f32(void);                    // destructor
+
+
+  public:
+     f32 read (void);     // returns plc_get(_plc_pt);
+     void write(f32 val); // returns plc_set(_plc_pt, val);
+
+    void operator= (f32 value);
+    operator f32(void);
+};
+
+
+
+
+
+class MatPLC_t {
+  private: 
+    const char *_module_name;
+
+  public:
+    MatPLC_t(char const *module_name, int argc, char **argv);
+      // calls plc_init(char const *module_name, int argc, char **argv);
+    ~MatPLC_t(void);
+      // calls plc_done(void);
+
+    int scan_beg(void); // returns plc_scan_beg();
+    int scan_end(void); // returns plc_scan_end();
+
+    const char *module_name(void);  // returns _module_name
+
+    int update(void); // returns plc_update();
+};
+
+
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+
+	<memory>
+		<integer value="5" name="C" />
+		<integer value="3" name="B" />
+		<integer value="2" name="A" />
+
+	</memory>
+
+	<io>
+
+	</io>
+
+	<program>
+		<ladder location="2">
+			<line instruction="SOR"></line>
+			<line instruction="ADD A B C"></line>
+			<line instruction="EOR"></line>
+			<line instruction="SOR"></line>
+			<line instruction="END"></line>
+			<line instruction="EOR"></line>
+		</ladder>
+
+	</program>
+
+</plc>

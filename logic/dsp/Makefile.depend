@@ -1,0 +1,140 @@
+add.o Makefile.depend: add.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h add.h add_t.h dsp_t.h pid_t.h time_util.h \
+ alarm_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h mult_t.h \
+ pow_t.h multiplexor_t.h pid.h alarm.h ramp.h filter.h typeconv.h \
+ nonlinear.h mult.h pow.h multiplexor.h
+alarm.o Makefile.depend: alarm.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h alarm.h alarm_t.h dsp_t.h pid_t.h time_util.h \
+ add_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h mult_t.h pow_t.h \
+ multiplexor_t.h pid.h add.h ramp.h filter.h typeconv.h nonlinear.h \
+ mult.h pow.h multiplexor.h alarm_private.h
+dsp.o Makefile.depend: dsp.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h dsp.h dsp_t.h pid_t.h time_util.h add_t.h \
+ alarm_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h mult_t.h \
+ pow_t.h multiplexor_t.h pid.h add.h alarm.h ramp.h filter.h typeconv.h \
+ nonlinear.h mult.h pow.h multiplexor.h
+filter.o Makefile.depend: filter.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h time_util.h pid.h pid_t.h dsp_t.h add_t.h \
+ alarm_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h mult_t.h \
+ pow_t.h multiplexor_t.h add.h alarm.h ramp.h filter.h typeconv.h \
+ nonlinear.h mult.h pow.h multiplexor.h
+mult.o Makefile.depend: mult.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h mult.h mult_t.h dsp_t.h pid_t.h time_util.h \
+ add_t.h alarm_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h pow_t.h \
+ multiplexor_t.h pid.h add.h alarm.h ramp.h filter.h typeconv.h \
+ nonlinear.h pow.h multiplexor.h
+multiplexor.o Makefile.depend: multiplexor.c ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h \
+ ../../lib/misc/string_util.h ../../lib/misc/../types.h multiplexor.h \
+ multiplexor_t.h dsp_t.h pid_t.h time_util.h add_t.h alarm_t.h ramp_t.h \
+ filter_t.h typeconv_t.h nonlinear_t.h mult_t.h pow_t.h pid.h add.h \
+ alarm.h ramp.h filter.h typeconv.h nonlinear.h mult.h pow.h
+nonlinear.o Makefile.depend: nonlinear.c ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h \
+ ../../lib/misc/string_util.h ../../lib/misc/../types.h typeconv.h \
+ typeconv_t.h dsp_t.h pid_t.h time_util.h add_t.h alarm_t.h ramp_t.h \
+ filter_t.h nonlinear_t.h mult_t.h pow_t.h multiplexor_t.h pid.h add.h \
+ alarm.h ramp.h filter.h nonlinear.h mult.h pow.h multiplexor.h
+pid.o Makefile.depend: pid.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h time_util.h pid.h pid_t.h dsp_t.h add_t.h \
+ alarm_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h mult_t.h \
+ pow_t.h multiplexor_t.h add.h alarm.h ramp.h filter.h typeconv.h \
+ nonlinear.h mult.h pow.h multiplexor.h dsp.h
+pow.o Makefile.depend: pow.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h pow.h pow_t.h dsp_t.h pid_t.h time_util.h \
+ add_t.h alarm_t.h ramp_t.h filter_t.h typeconv_t.h nonlinear_t.h \
+ mult_t.h multiplexor_t.h pid.h add.h alarm.h ramp.h filter.h typeconv.h \
+ nonlinear.h mult.h multiplexor.h
+ramp.o Makefile.depend: ramp.c ../../lib/plc.h ../../lib/types.h ../../lib/log/log.h \
+ ../../lib/conffile/conffile.h ../../lib/conffile/../types.h \
+ ../../lib/cmm/cmm.h ../../lib/cmm/../types.h ../../lib/gmm/gmm.h \
+ ../../lib/gmm/../types.h ../../lib/synch/synch.h \
+ ../../lib/synch/../types.h ../../lib/period/period.h \
+ ../../lib/period/../types.h ../../lib/state/state.h \
+ ../../lib/state/../types.h ../../lib/synch/synch.h ../../lib/rt/rt.h \
+ ../../lib/rt/../types.h ../../lib/misc/string_util.h \
+ ../../lib/misc/../types.h time_util.h ramp.h ramp_t.h dsp_t.h pid_t.h \
+ add_t.h alarm_t.h filter_t.h typeconv_t.h nonlinear_t.h mult_t.h pow_t.h \
+ multiplexor_t.h pid.h add.h alarm.h filter.h typeconv.h nonlinear.h \
+ mult.h pow.h multiplexor.h
+time_util.o Makefile.depend: time_util.c time_util.h ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h
+typeconv.o Makefile.depend: typeconv.c ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h \
+ ../../lib/misc/string_util.h ../../lib/misc/../types.h typeconv.h \
+ typeconv_t.h dsp_t.h pid_t.h time_util.h add_t.h alarm_t.h ramp_t.h \
+ filter_t.h nonlinear_t.h mult_t.h pow_t.h multiplexor_t.h pid.h add.h \
+ alarm.h ramp.h filter.h nonlinear.h mult.h pow.h multiplexor.h

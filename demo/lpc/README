@@ -1,0 +1,25 @@
+README - demos
+
+Last Revised: April 16, 2002
+
+-----------------------------------------------------------------
+About:
+
+These directories provide simple examples of applications that use the dynamic library loader.
+
+  test - this is a simple demo that doesn't even connect to the LPC
+  chaser - the light chaser demo
+
+-----------------------------------------------------------------
+Notes:
+
+-----------------------------------------------------------------
+Todo:
+
+-----------------------------------------------------------------
+Bugs:
+
+-----------------------------------------------------------------
+History:
+
+April 16, 2002 (Hugh Jack) - this directory was created and populated with a couple of simple demos

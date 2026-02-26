@@ -1,0 +1,29 @@
+oven_gtk demo
+
+Author:
+Juan Carlos Orozco email: jorozco@acelab.com
+
+Date: 15.08.2001
+
+Changes Made: 
+
+oven_gtk created.
+
+Author:
+Juan Carlos Orozco email: jorozco@acelab.com
+
+Date: 16.07.2006
+
+Changes Made:
+
+Convert demo to use hmi_gtk2 module.
+
+Author:
+Bruce Lytle email: brucelytle@comcast.net
+
+Date: 29.07.2006
+
+Changes Made:
+
+Fixed glitches in images, added a menu bar on windows.
+

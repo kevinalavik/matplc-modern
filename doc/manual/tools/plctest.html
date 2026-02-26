@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>MAT mattest / plctest manual</title>
+</head>
+<body>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../tools/config/points.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../logic/classicladder.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>mattest / plctest</h1>
+
+This is MatPLC's Swiss Army Knife. It can be used to get and set the
+values of points, wait for a particular point or synch point from a script,
+and a few other miscellaneous debugging things.
+
+<p>Note: this tool has been recently renamed: it used to be called
+"plctest" but is now called "mattest". The functionality is unchanged.
+
+<p>For using it from a script, it's probably a good idea to use the
+<tt>-q</tt> option, which switches it to <em>quiet</em> mode. In quiet
+mode, plctest only outputs the requested data (and any errors).
+
+<h2>Getting and setting points</h2>
+
+To read a point, use the -g option, like this:
+<br><code>plctest -g
+<em>pt_name</em></code>
+
+<p>If the point is a floating-point number, you'll get some strange number.
+To convert it to a float, use the -f option, like this: <br><code>plctest
+-f -g <em>pt_name</em></code>
+
+<p>It's also possible to set points, but note that only the owner of a
+point can set it. You can get plctest to pretend to be the owner, but if
+the real owner is already running, it will overwrite your value in short
+order. So this is only useful in limited circumstances. The syntax is
+similar to the above, though:
+
+<br><code>plctest -s <em>pt_name</em> -v <em>value</em></code>
+<br><code>plctest -f -s <em>pt_name</em> -v <em>value</em></code>
+
+<h2>Display all points</h2>
+
+As a debugging tool, it's often useful to be able to see what's happening
+inside a PLC. While a full-fledged displayer is not yet written, plctest
+contains a quick, simple one.
+
+<h3>On screen</h3>
+
+This simply displays all the points in four
+columns and repeats until you kill it (Ctrl-C). <br><code>plctest -d</code>
+
+<h3>HTML (Web / Intranet)</h3>
+
+<p>This feature is also available via a web browser. If you run
+<br><code>plctest -dh</code><br> it will output a HTML table with the point
+names in the left column and the values in the right column. So you might
+have a CGI script, perhaps a bit like this:
+
+<pre>
+    #!/bin/sh
+    cd .../mat/demo/basic
+    echo Content-type: text/html
+    echo ""
+    ../../tools/run/plctest -dh
+</pre>
+
+Or, more sophisticated:
+<pre>
+    #!/bin/sh
+    cd .../mat/demo/basic
+    echo Content-type: text/html
+    echo Refresh: 10
+    echo Pragma: no-cache
+    echo ""
+    cat preamble
+    ../../tools/run/plctest -dh
+    cat postamble
+</pre>
+
+<h3>XML</h3>
+
+Similarly, the data can be output in the XML format. The command
+<br><code>plctest -dx</code><br> will output simple XML containing the
+points (names and values).
+
+<h2>Waiting...</h2>
+
+plctest can wait for a synch point or until a particular point is on. This
+can be useful in scripts, to avoid looping in the script.
+
+<br><code>plctest -u <em>pt_name</em></code>
+<br><code>plctest -w <em>synchpt_name</em></code>
+
+<h2>Miscellaneous</h2>
+
+plctest can also run an empty scan loop. This can be used to practice
+synch, as it prints out loop counts each time through (unless you use the
+<code>-q</code> option).
+
+<br><code>plctest -l</code>
+
+<p>
+<p>
+<!--autolink--><a href="../tools/config/points.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../logic/classicladder.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/05/07 07:43:45 $</small>
+</body>
+</html>

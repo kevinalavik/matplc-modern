@@ -1,0 +1,18 @@
+logger module logs data to a flat file.
+
+logger_db module logs data to a MYSQL database.
+
+Try these modules using the /mat/demo/basic_logger module
+
+To test the logger_db module you should have a MYSQL connection available with
+the database already created. The table is automaticaly created if it does
+not exist. If a table with the same name exist in the database but the structure
+is not compatible then the logger_db will not log, but if a table with the same
+name exist and the structure is compatible then logger_db module will append 
+rows to this table.
+
+Also there is a commented line in /mat/demo/basic_logger/matplc.conf that
+needs to be uncommented to test the logger_db module. This is because this
+sample uses only the logger module by default.
+
+

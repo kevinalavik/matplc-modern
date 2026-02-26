@@ -1,0 +1,164 @@
+<html><head>
+<title>MatPLC HW compatibility - Twido</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF"
+link="#000088" alink="#880000" vlink="#660066"
+>
+<!-- navbar more-or-less like on the SourceForge page -->
+<HR SIZE="1" NoShade>
+<A href="https://sourceforge.net/projects/mat/">Summary</A> | 
+<A href="https://sourceforge.net/project/admin/?group_id=29758">Admin</A> | 
+<A href="http://mat.sourceforge.net">Home Page</A> | 
+<A href="https://sourceforge.net/forum/?group_id=29758">Forums</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758">Tracker</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397247">Bugs</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397248">Support</A> | 
+<A href="https://sourceforge.net/tracker/?group_id=29758&atid=397249">Patches</A> | 
+<A href="https://sourceforge.net/mail/?group_id=29758">Lists</A> | 
+<A href="https://sourceforge.net/pm/?group_id=29758">Tasks</A> |
+<A href="https://sourceforge.net/docman/?group_id=29758">Docs</A> | 
+<A href="https://sourceforge.net/survey/?group_id=29758">Surveys</A> | 
+<A href="https://sourceforge.net/news/?group_id=29758">News</A> | 
+<A class=tabs href="https://sourceforge.net/cvs/?group_id=29758">CVS</A> | 
+<A class=tabs href="https://sourceforge.net/project/showfiles.php?group_id=29758">Files</A><HR SIZE="1" NoShade>
+
+<img src="view1.jpg" alt="[photo of twido]" align=right>
+
+Back to <a href="..">compatibility list</a><HR SIZE="1" NoShade>
+
+<h2>Twido</h2>
+
+<h3>Summary</h3>
+
+The Twido was tested successfully.
+
+<p>Main downsides:<ul><li>update speed <li>setup has to be done from
+TwidoSoft under MS Windows.</ul>
+
+<h3>Hardware tested</h3>
+
+Telemecanique Twido (6 in / 4 out, model <code>TWDLCAA10DRF</code>)
+connected by the supplied "Multi-Function Communication Cable"
+<code>TSXPCX1031</code> to the serial port. It came with TwidoSoft 0.5.5
+software for MS Windows. The unit was loaned by <a
+href="http://www.schneider-electric.com.au/">Schneider Electric
+(Australia)</a>.
+
+<p>The computer was a Toshiba Satellite Pro 4310 laptop, with Debian woody
+and all security updates up-to-date, dual-booting to MS Windows 98.
+
+<p>Tested November 2002.
+
+<h3>Main comments</h3>
+
+<p>Access was via the <code>modbus_m</code> module in RTU mode, testing
+with the <code>basic_modbus</code> demo. Outputs were observed on the
+status LEDs, inputs were supplied by switches (see photo); no other
+hardware was actually connected.
+
+<p>The Twido only allows acces to the internal memory registers
+(<code>%M</code>), which means that it must have a ladder program to
+transfer these to and from the actual inputs and outputs (at least). This
+program needs to be written using TwidoSoft (or from a field programmer
+unit).
+
+<p>The setup of the Twido must be done from TwidoSoft under MS Windows. To
+our knowledge, it is not available for Linux. We have not tested whether or
+not it works under wine.
+
+<p>Here's the <a href="mat-3.twd">setup we used</a> in the Twido, as saved
+from TwidoSoft. The stepladder and the MatPLC config are also listed below.
+
+<br clear=both>
+<h3>Other notes</h3> <ul>
+
+  <li>The Twido only allocates the <code>%M</code> registers that are
+  mentioned in the ladder program; if you try to access beyond that range,
+  you'll get Modbus error <code>02 ILLEGAL DATA ADDRESS</code> being
+  reported by the MatPLC.
+
+  <li>The addresses are off-by-one: <code>%M0</code> is bit number 1,
+  <code>%M1</code> is bit number 2, and so on.
+
+  <li><img src="cable.jpg" alt="[photo of cable]" align=right>The cable
+  needs to be in the <code>2 - TER DIRECT</code> position for talking to
+  TwidoSoft, but <code>3 - OTHER DIRECT</code> for Modbus, as shown in the
+  photo on the right.
+
+  <li>The port cannot be configured while TwidoSoft is Connected to the
+  PLC. It is necessary to Disconnect (if Connected), configure the port,
+  then Connect, transfer PC-&gt;Controller (when asked), set PLC to Run,
+  and Disconnect. This is somewhat counter-intuitive.
+
+  <li>The manual says it must be in Run mode for Modbus to work; it needs
+  to be running the ladder, anyway.
+
+  <li>Writing directly to the outputs (and reading directly from the
+  inputs) is either not documented or not supported.
+
+  <li>Speeds above 9600 didn't work (19200, 38400).
+
+  <li>It seems to be a little uneven, timing-wise, more so when the inputs
+  are also done. This may simply be a function of the communication speed.
+
+  <li>If MS Windows is not available, unit would have to be supplied with
+  the ladder program already downloaded, the port configured to Modbus 9600
+  and the controller set to go into Run on power-up (in TwidoSoft,
+  right-click on Software, Edit, Scan type, Configure, Automatic Run; as
+  usual, this can only be done while Disconnected from the PLC).
+   
+</ul>
+
+<h3>Stepladder used</h3>
+
+<pre>
+LD    %M0
+ST    %Q0.0.0
+LD    %M1
+ST    %Q0.0.1
+LD    %M2
+ST    %Q0.0.2
+LD    %M3
+ST    %Q0.0.3
+LD    %I0.0.0
+ST    %M4
+LD    %I0.0.1
+ST    %M5
+LD    %I0.0.2
+ST    %M6
+LD    %I0.0.3
+ST    %M7
+LD    %I0.0.4
+ST    %M8
+LD    %I0.0.5
+ST    %M9
+</pre>
+
+<h3><code>matplc.conf</code> fragment</h3>
+
+<pre>
+[PLC]
+module modbus_m "../../io/modbus/modbus_m_rtu"
+
+[modbus_m]
+network rtu_net rtu device /dev/ttyS0 baudrate 9600 parity none data_bits 8 stop_bits 1 ignore_echo false timeout 1.5 send_retries 2
+
+node twido rtu_net 1
+
+map out twido.out_bit.1 L1
+map out twido.out_bit.2 L2
+map out twido.out_bit.3 L3
+map out twido.out_bit.4 L4
+
+map in twido.in_bit.5 sw0
+map in twido.in_bit.6 sw1
+map in twido.in_bit.7 sw2
+map in twido.in_bit.8 sw3
+map in twido.in_bit.9 sw4
+map in twido.in_bit.10 sw5
+</pre>
+
+Jiri Baum <address><a
+href="mailto:jiri@baum.com.au">jiri@baum.com.au</a></address>
+
+<p><small>$Date: 2002/11/30 11:05:00 $</small>

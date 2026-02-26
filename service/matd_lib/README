@@ -1,0 +1,35 @@
+README - matd
+
+Last Updates May 10, 2002
+
+--------------------------------------------------------
+About:
+
+This program allows command line access to the MATPLC.
+It does so by connecting to communications oriented IO.
+It then allows users to login and interact with simple
+commands. The user accounts in the 'passwd' file can be
+administered using the 'admin' program. 
+
+-------------------------------------------------------- 
+Notes:
+
+	- changes can be made by changing the source code.
+
+--------------------------------------------------------
+Bugs:
+
+	- none known
+
+--------------------------------------------------------
+Todo:
+
+- increase the security model, at present plain
+  text passwords are transmitted.
+
+--------------------------------------------------------
+History:
+
+Original - this was a major part of the lpc
+May 10, 2002 (Hugh Jack) - rewritten so that it would use
+    the process handler

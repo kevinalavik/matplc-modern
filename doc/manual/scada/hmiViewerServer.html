@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>MAT manual - hmiViewerServer</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../io/logger.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/common.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>hmiViewerServer</h1>
+
+<p>This module is Copyright &copy; 2001 Juan Carlos Orozco and is
+distributed under the <a href="../appendix/gpl.html">GPL license</a>.
+
+<h2>Introduction</h2>
+
+<p>hmiViewerServer.py is a multithreaded socket server that is used to comunicate MatPLC to one or more hmiViewer applets from the VISUAL (visual.sourceforge.net) project.
+
+<h2>Description</h2>
+
+<p>One of the main advantages of this module is that the points for communication are not defined in this module, it gets the point names dynamically from the hmiViewer applet and then tries to connect them to MATplc. In case there is a point that is not defined in MATplc the server still keeps a local copy of this point with its value so the hmiViewer applet will still be able to read and write this point but it will not be accessible from the rest of the MATplc modules.
+
+<p>
+<!--autolink--><a href="../io/logger.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../io/common.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:12 $</small>
+
+</html>

@@ -1,0 +1,54 @@
+GOT STRING [PARSE vitrine.cmd]
+GOT STRING [MODULE vitrine]
+GOT STRING [LIBRARY ../../lib/vitrine.so]
+(B)0[?1048h[?1047h[1;54r[m[4l[?7hGOT STRING [DELAY 250000]
+GOT STRING [RUN]
+[H[2J[1;32HLight chaser[2;32H============[4;35HLights:[6;33H1  2  3  4[7;33H-  -  -  -[9;35HButtons
+
+[37G<->
+
+
+   This is a simple light-chasing demo, controlled from the keyboard. By
+intention, this demo requires no hardware or setup - not even X or svgalib.
+ That's why it looks the way it does - see the other demo directories for[17;22Hmore impressive demonstrations...[19;24HControls (from the keyboard)[20;24H----------------------------
+[7G- L and R - toggle the `left' and `right' points. Remember to[22;9Htoggle them off again before trying the other direction :-)
+[7G- Q - toggles the `quit' point, which terminates the demo.
+
+GOT STRING [PARSE ladder.cmd]
+GOT STRING [MODULE ladder]
+GOT STRING [LIBRARY ../../lib/ladder.so]
+GOT STRING [DELAY 500000]
+GOT STRING [RUN]
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+MOV-A 
+MOV-B 
+GOT STRING [PARSE kbd.cmd]
+GOT STRING [MODULE kbd]
+GOT STRING [LIBRARY ../../lib/kbd.so]
+GOT STRING [DELAY 200000]
+GOT STRING [RUN]
+SENDING MESSAGE >>kbd<< [QUIT]
+GOT STRING [QUIT]
+SENDING MESSAGE >>vitrine<< [QUIT]
+[11;38HQ[25dGOT STRING [QUIT]

@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>MAT Configuration Editor manual</title>
+</head>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../tools/config/modules.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../tools/plctest.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>CONFIGURATION EDITOR</h1>
+
+<p>This module is Copyright &copy; 2002 Joe Jansen and is distributed under
+the <a href="../../appendix/gpl.html">GPL license</a>.
+
+<h2>Point Definition</h2>
+<p>
+The point table is a central part of the Linux PLC.  This is where all of the tags are defined for communicating betweeen modules,
+ including external I/O.  Every point has exactly one 'owner' that has the ability to set the value of the point.  For example,
+ external inputs are typically owned by the module that controls the I/O device.
+</p>
+<p>
+Points are added by selecting Add -&gt; Points from the menu.
+</p><br><p>
+<b>FIXME</b>: Figure <tt>figure3.png</tt> is missing...<br>
+</p><br><p>
+Mandatory fields are Name, Owner, and Point Type.<br>
+<b>ID (Name):</b> This is the identifier that will be used to access this data point.  This must be a unique name for all data points.  Spaces are not allowed<br>
+<b>Description:</b> This is an informative field for the user.  This can be a multi word descriptor.  Modules such as logic editors can use this
+for documentation.  Spaces <u>are</u> allowed.<br>
+<b>Owner:</b> The owner field is implemented as a drop down menu item.  The menu is populated using the names of the modules that have been
+entered in the module list.  The module that is selected here is the only module that has write access to this point.<br>
+
+
+
+
+</p>
+<!--autolink--><a href="../../tools/config/modules.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../tools/plctest.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2005/10/11 12:34:15 $</small>
+</html>
+

@@ -1,0 +1,70 @@
+README - kbd
+
+Last Updates April 23, 2002
+
+--------------------------------------------------------
+About:
+
+This is a program that will map keystrokes to points in the PLC memory. Right now it is only configured for the chaser demo.
+
+
+ARGUMENTS:
+the argument for this function is a filename containing configuration parameters. The file may contain comments on lines starting with '#', blank lines are also permitted. The contents of the file are shown below.
+
+Bn		- This will set the base address of the card to 'n'
+A0BIP10VOLTS	- define analog output 0 to be -10 to +10V
+A0BIP5VOLTS	- define analog output 0 to be -5 to +5V
+A0BIP2PT5VOLTS	- define analog output 0 to be -2.5 to +2.5V
+A0BIP1PT25VOLTS	- define analog output 0 to be -1.25 to +1.25V
+A0BIPPT625VOLTS	- define analog output 0 to be -0.625 to +0.625V
+A0UNI10VOLTS	- define analog output 0 to be 0 to +10V
+A0UNI5VOLTS	- define analog output 0 to be 0 to +5V
+A0UNI2PT5VOLTS	- define analog output 0 to be 0 to +2.5V
+A0UNI1PT25VOLTS	- define analog output 0 to be 0 to +1.25V
+A1BIP10VOLTS	- define analog output 1 to be -10 to +10V
+A1BIP5VOLTS	- define analog output 1 to be -5 to +5V
+A1BIP2PT5VOLTS	- define analog output 1 to be -2.5 to +2.5V
+A1BIP1PT25VOLTS	- define analog output 1 to be -1.25 to +1.25V
+A1BIPPT625VOLTS	- define analog output 1 to be -0.625 to +0.625V
+A1UNI10VOLTS	- define analog output 1 to be 0 to +10V
+A1UNI5VOLTS	- define analog output 1 to be 0 to +5V
+A1UNI2PT5VOLTS	- define analog output 1 to be 0 to +2.5V
+A1UNI1PT25VOLTS	- define analog output 1 to be 0 to +1.25V
+PAI		- Set port A as input
+PAO		- Set port A as input
+PBI		- Set port B as input
+PB0		- Set port B as input
+PCO		- Set all of port C as output
+PCI		- Set all of port C as input
+PCLI		- Set port C low nibble as input
+PCLO		- Set port C low nibble as output
+PCHI		- Set port C high nibble as input
+PCHO		- Set port C high nibble as output
+
+
+
+-------------------------------------------------------- 
+Notes:
+
+- The counter functions are not available yet, although they are implemented in the code.
+- There is a test program 'testdas08' that can be used to perform some basic commands with the board. The program also loads the configuration file, so it can be used to verify syntax. etc.
+- Right now this must be run as ROOT. This can be fixed by creating a module driver that is properly installed.
+
+--------------------------------------------------------
+Bugs:
+
+- none known
+
+--------------------------------------------------------
+Todo:
+
+
+- the driver is functional and has been tested with the auxilliary ports, and for analog IO.
+- the counter functions have not been tested, and they are not available to the LPC code yet.
+- many of the possible variations for the settings have not been implemented.
+
+
+--------------------------------------------------------
+History:
+
+April 23, 2002 (Hugh Jack) - rewritten so that it would use the process handler

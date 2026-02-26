@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>MAT data logger manual</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../mmi/curses.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../scada/hmiViewerServer.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Data Logger</h1>
+
+<h2>Introduction</h2>
+
+There are two logger modules mat/io/logger/logger and mat/io/logger/logger_db<br>
+<br>
+logger module logs data to a flat file.<br>
+logger_db module logs data to a MYSQL database.<br>
+
+<h2>Logger module configuration</h2>
+
+Configuration options that need to be set to use a logger module:<br>
+<br>
+file = <i>filename</i><br>
+points <i>pointname1 pointname2 ...</i><br>
+scan_period = <i>sec</i><br>
+<br>
+Sample:<br>
+<br>
+[LOGGER]<br>
+file = chaser.log<br>
+points L1 L2<br>
+points L3 L4<br>
+scan_period = 0.25<br>
+<br>
+<h2>Logger_db module configuration</h2>
+
+Configuration options that need to be set to use a logger_db module:<br>
+<br>
+host = <i>host name</i><br>
+user = <i>user name</i><br>
+password = <i>password</i><br>
+#port_num = <i>port#</i><br>
+#socket_name = <i>socket name</i><br>
+db_name = <i>database name</i><br>
+table = <i>table name</i><br>
+points <i>pointname1 pointname2 ...</i><br>
+scan_period = <i>sec</i><br>
+<br>
+Sample:<br>
+<br>
+[LOGGER_DB]<br>
+host = localhost<br>
+user = matuser<br>
+password = mat<br>
+#port_num = 0<br>
+#socket_name =<br>
+db_name = matlog<br>
+table = demolog<br>
+points L1 L2<br>
+points L3 L4<br>
+<br>
+<h2>Data logger demo</h2>
+
+To try these modules use the /mat/demo/basic_logger module
+
+To use the logger_db module you should have a MYSQL connection available with
+the database already created. The table is automaticaly created if it does
+not exist. If a table with the same name exist in the database but the structure
+is not compatible then the logger_db will not log, but if a table with the same
+name exist and the structure is compatible then logger_db module will append
+rows to this table.
+
+Also there is a commented line in /mat/demo/basic_logger/matplc.conf that
+needs to be uncommented to test the logger_db module. This is because this
+sample uses only the logger module by default.
+
+<p>
+<!--autolink--><a href="../mmi/curses.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../scada/hmiViewerServer.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:11 $</small>
+</html>

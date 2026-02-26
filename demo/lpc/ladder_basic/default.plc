@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+
+	<memory>
+		<integer name="A" value="0"/>
+		<integer name="B" value="0"/>
+	</memory>
+
+	<io>
+		<output local="B" remote="B"/>
+		<input local="A" remote="A"/>
+	</io>
+
+	<program>
+		<ladder location="main" comment="This the main program">
+			SOR
+				ADD A 2 B
+			EOR
+			END
+		</ladder>
+	</program>
+
+</plc>

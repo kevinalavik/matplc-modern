@@ -1,0 +1,42 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE plc SYSTEM "plc.dtd">
+
+<plc>
+	<memory>
+		<integer name="state" value="7"/>
+		<integer name="A" value="3"/>
+		<integer name="B" value="5"/>
+		<integer name="C" value="0"/>
+		<real name="delay" value="10"/>
+		<real name="acc" value="0"/>
+		<integer name="T4:0" value="0"/>
+	</memory>
+
+	<io>
+		<input local="state" remote="state"/>
+		<input local="A" remote="A"/>
+		<input local="B" remote="B"/>
+		<output local="C" remote="C"/>
+		<input local="delay" remote="delay"/>
+		<output local="acc" remote="acc"/>
+	</io>
+
+	<program>
+		<ladder location="main" comment="This the main program">
+			SOR
+				XIC BIT state 0
+				ADD A B C
+			EOR
+			SOR
+				XIC BIT state 1
+				TON T4:0 delay acc
+			EOR
+			SOR
+				XIC BIT state 2
+				RES T4:0
+			EOR
+			END
+		</ladder>
+	</program>
+
+</plc>

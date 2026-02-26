@@ -1,0 +1,124 @@
+* -> Done
+
+
+ Postponed for version 0.2
+ -------------------------
+
+ 7) Use a typedef for the type of var returned
+    by plc_get_pt (and how they are stored in the
+    memory maps) instead of explicitly using u32.
+    Every reference to the number of bits in these
+    variables must be changed to sizeof(XXXX)*8
+    instead of assuming 32 bits. This will allow
+    future migration to larger/smaller sized
+    points without having to significantly change
+    the source code.
+
+ 9) ****   U R G E N T   ****
+    Must discuss what semantics to support for online
+    configuration changes!!! How to propagate
+    changes to every module. Maybe have the smm
+    register the pid of the modules that call
+    plc_init() and issue a signal to each module
+    when the configuration changes.
+    This is also related to item no. 17
+
+ 12) Add function plc_pt_name(plc_pt_t p)
+     to gmm.h
+
+*15) Should we go ahead and implement the --PLCremote option?
+     NO!!
+
+ 17) plc_init should check whether the configuration in
+     the confmap is really what has been defined in the
+     matplc.conf file.
+     This is also related to item no. 9
+
+ 24) Remove fflush from the plc_log_xxxmsg() functions. It's only there
+     to guarantee that all messages are logged in the correct order when
+     the three file descriptors point to the same file. Replace this
+     with explicitly checking if the file is the same and then use the
+     same file descriptor. Only do fflush in plc_log_done().
+     NOTE: fflush also guarantees the order of logging for modules
+           running in different processes. Do we still want to do fflush?
+           Probably not. If we want to guarantee order maybe the syslogd
+           does that?
+
+ 31) Write a front-end interface to access the config file parser. This will
+     allow other people to write XML, SQL, and what not parsers to the
+     plc. I (Mario) don't really like the conffile_xxxx() names of the
+     current interface anyway. This will also come in usefull when we
+     store a pre-parsed config file and boot from that (for very small,
+     embeded?, MatPLCs)
+
+ 42) get the logging library to log milliseconds
+
+ 48) Have the cmm use a many readers/one writer locking mechanism to control access
+     to the cmm block memory list. Currently it uses a single semaphore for global
+     access to the memory list.
+
+*49) Use better memory allocation policy in cmm!
+     Currently, free'ing cmm memory blocks simply marks them as
+     free'd. We need to get some algorithms to try an re-use
+     this memory. Most important of all, we must try and join free'd
+     memory blocks into a single larger memory block!
+
+
+ To fix before version 0.1
+ -------------------------
+
+ 4) ****   U R G E N T   ****
+    plc_get() and plc_set() must not exit(1)
+
+ 10) Remove unnecessary #includes from .c files.
+
+*16) Is the command line option --PLCid really required?
+     Since we have every module reading the same matplc.conf
+     file, this PLC_ID could be defined there.
+     NOTE: Yes, currently it is required for --PLCisolate, unless we
+     define a new plc_init() function that allows explicit passing
+     of the plc_id.
+
+ 20) The conffile_done() function does not yet free
+     malloc'ed memory.
+
+ 23) Go through all the smm code and change it so it
+     uses the logging module.
+
+ 30) Make the smm_setup() and smm_shutdown() functions more intelligent.
+     smm_setup() must not give up loading points if no config file is found.
+     (Actually it is the conffile_lib that is exiting exit(1)!! This must be
+     fixed.)
+     smm_shutdown() must also use the parameters in the config file to
+     give out warnings and try to shutdown a partially shutdown plc.
+     (partially done - we still need to store the smm semaphore set key
+     - and not the id - in shm_t to be able to use the key in the config file.)
+
+ 34) Launching of modules produces inconsistent log. This happens because
+     created process closes the log files while parent process keeps them
+     open.
+
+ 35) Synch_setup() must check for duplicates of places, transitions, synchpts,
+     in the config file.
+
+ 38) Move gmm_init(), gmm_done(), synch_init(), synch_loop_beg()... declarations
+     from public interfaces to protected interfaces.
+
+*40) Implement functions to allow modules to get the lenght, bit and offset
+     of a point handle. This will allow fixing the smm-mgr -d list of points.
+       -> see gmm/gmm.h function plc_pt_details()
+
+ 43) allow the logging library to be configured in the config file.
+
+ 44) Move the data structures handling code from the synch library
+     to the misc/ds_util.c file
+
+*45) Remove hardwired references to "matplc.conf" from the *.c files
+
+*46) Finish the period library. Have it use signals to guarantee the
+     periodicity, instead of using sleep()
+
+*47) cmm_free() is working (not the best of implementations, but will do for now).
+     All the code that required this function must now call it! Must review all
+     the code and call this function where required! Note that in most places,
+     the function call is already there, just commented out!

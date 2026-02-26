@@ -1,0 +1,149 @@
+<HTML>
+<HEAD>
+ <TITLE>CVS howto for MatPLC</TITLE>
+</HEAD>
+
+<BODY>
+
+<h1>CVS howto for the MatPLC project</h1>
+
+<p>Many people who are interested in working with MatPLC development find
+their first hurdle is figuring out how to use CVS. This document will be a
+quick tutorial.
+
+<p>CVS is a powerful method of allowing many developers work on the same
+source code. This is possible because each developer checks out a copy of
+the current version of the source code. Then they each independently work
+on their personal copy of the sources. When they have made changes, they
+commit them back to the CVS repository. The CVS server takes care of things
+like trying to merge their changes with those of others. When that doesn't
+work, the developer is notified and they do a hand merge of the conflicts.
+
+<h2>First time</h2>
+
+<p>First you need to login to the server. To do that, make sure you are
+on-line and do the command:
+
+<pre>
+cvs -d :pserver:username@matplc.org:/home/plccvs login
+</pre>
+
+Where you replace "username" appropriately. To get a username, get in touch
+with Dan Pierson <a href="mailto:dan@control.com">dan@control.com</a> who
+is the repository administrator.
+
+<p>If you just want read-only access, use the username "matplc" with the
+password "OpenSource", like this:
+
+<pre>
+cvs -d :pserver:matplc@matplc.org:/home/plccvs login
+</pre>
+
+This only needs to be done only ONCE, not everytime you access CVS.
+
+
+
+<p>Now to get the source code. Create a new directory, change into it, and
+do the command:
+
+<pre>
+cvs -d :pserver:username@matplc.org:/home/plccvs -z3 checkout .
+</pre>
+
+(again replacing username as appropriate; don't forget the dot at the end
+of the command). The -z3 option turns on compression. If you wish, later,
+you can checkout several times into separate directories.
+
+<p>Now you will want to hang up the modem, go through and build and play
+with the program. That is beyond the scope of this review of CVS, however.
+
+<h2>Day-to-day use</h2>
+
+<p>After you have checked the code out, you can use:
+
+<pre>
+cvs -z3 update -Pd
+</pre>
+
+at any time to update your personal copy from the CVS server. You can run
+this command anywhere within the MatPLC source tree and it'll update just
+that directory (anywhere there's a <tt>CVS</tt> subdirectory - the command
+reads <tt>./CVS/Root</tt>). If you have deleted any files or
+subdirectories, the update command will re-create them for you.
+
+<center><hr width="30%"></center>
+
+<p>Eventually, you will make changes to the code. There are three commands
+you need to know for this. The most common one is
+
+<pre>
+cvs -z3 commit
+</pre>
+
+which uploads any files you have changed to the CVS server. Like update, it
+works on the current directory and subdirectories. This command requires
+that you have the latest version of all files; if it says it "failed
+up-to-date check", it means you have to do a CVS update first.
+
+<p>If you've modified some of the files and do a CVS update, it'll merge
+your changes with any changes other people made in the meantime. If it says
+there's a "conflict during merge", it means that you and someone else both
+changed the same part of the same file. CVS doesn't know what to do with
+that, so it puts both versions in the file separated by a row of equals
+signs. You will need to go and figure out how to merge them by hand; if you
+can't, put in an extra comment explaining your modification, CVS commit
+with the conflict markers in, and use e-mail to figure out how it should be
+fixed.
+
+<p>The other two commands are for adding and removing files. They are:
+<pre>
+cvs add filename
+</pre>
+and
+<pre>
+cvs remove filename
+</pre>
+and for both of them you must first create/delete the file in your local
+copy.
+
+<center><hr width="30%"></center>
+
+<p>If you have made changes to the code but have read-only access to the
+repository, you will need to send diffs to one of the regular contributors.
+The best format to use is:
+<pre>
+cvs -z3 diff -u
+</pre>
+
+<p>This command is also useful in combination with "cvs commit", to make a
+final check of the changes before uploading.
+
+<h2>Other commands</h2>
+
+<p>To get rid of the directory tree, you can simply delete it, but if you
+use the CVS release command it'll let you know if you've forgotten to do a
+CVS commit.
+
+<p>There's a CVS import command for managing "outside" software: it helps
+with the merging of any local patches into a new version. Any software for
+which this isn't the primary site should be put in using import.
+
+<p>There are commands for forking and re-merging, using symbolic names for
+versions corresponding to releases or other significant events, and so on.
+No doubt we'll make use of them later, but for now let's forget about them.
+
+<p>I strongly recommend familiarizing yourself with the cvs documentation.
+At the very least, flip through the output of
+
+<pre>
+cvs --help global
+</pre>
+
+
+<hr>This document was initially based on a same-named document from the
+GNOME project. Any errors are mine, though.
+
+<br>Last changed 2001.05.25 by <a href="mailto:jiri@baum.com.au">jiri</a>
+
+</BODY>
+</HTML>

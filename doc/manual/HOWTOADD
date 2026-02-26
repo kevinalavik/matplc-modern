@@ -1,0 +1,31 @@
+Added: April 14, 2003 by Hugh Jack based on an email from Jiri Baum
+Updated by Jiri Baum
+
+Reason: This document explains how to add sections to the manual so that
+they show up officially.
+
+Instructions:
+
+  1. Create the new HTML manual pages as necessary. Use existing pages for
+  templates - this will help maintain consistency. The directory structure
+  should generally reflect the main directory structure.
+
+  2. Add links to the pages in MATPLC/doc/manual/index.html manually.
+
+  3. Use "./autolink" in this directory. It reads through index.html, and
+  changes the links in the individual pages appropriately. For it to work,
+  the links at the top and the bottom of the page must be enclosed between
+  the comments "<!--autolink-->" and "<!--/autolink-->". The links are
+  added between them if they're missing, so all you need to add is
+  "<!--autolink--><!--/autolink-->" and it'll work.
+
+      Note: this was different before 28.12.2004; this way is better for
+      Mozilla Composer (and probably other pretty-formatting editors).
+
+  If you're having trouble with step 3, just check it in as-is and drop an
+  e-mail to Jiri <jiri@baum.com.au>
+
+  4. Update all the files in the directory to the CVS tree.
+
+The changes will show up on the webpage within eight hours (it is
+automatically updated three times a day).

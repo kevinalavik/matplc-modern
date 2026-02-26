@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>MAT manual - RT config</title>
+</head>
+<body>
+<!--autolink--><a href="../../.."><img src="../../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../../general/config/synch_advanced_example.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../tools/matplc.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h2>Configuration of real-time features</h2>
+
+<h3>Introduction</h3>
+
+All applications have requirements on timing, but for most kinds of
+computer programs they are not particularly strict. If a word-processor
+unexpectedly takes several seconds to do some operation, it is not a
+problem. For PLC programs, however, they are often very important. The
+mechanisms used to deal with the timing requirements are collectively
+called "real-time".
+
+<p>MatPLC modules will be able to run in one of two modes: normal, and hard real-time. Different modules can run in different modes at the same time. Hard real-time mode is available on any Oprating System, but will only give the hard real-time guarantees if a hard real-time Operating System is being used. Currently this means the QNX hard real-time operating system, as this is the only hard real-time Operating System under which the MatPLC may be compiled. However, since the MatPLC is completely POSIX compliant, other POSIX compliant hard real-time operating systems may probably be used.
+
+<dl>
+
+<dt><strong>normal</strong><dd>No action taken to guarantee response time.
+This is suitable for demos and low-priority monitoring, but not much else.
+This is the default. Status: <em><strong>available now</strong></em>.
+
+<dt><strong>hard real-time</strong><dd>The module executes under a fixed real-time priority using fixed priority scheduling. This provides timing guarantees (this does not necessarily mean that it's fast; merely that the timing is accurate when it needs to be), but requires a real-time operating system, and some care in writing the module itself. Status: <em><strong>available now under QNX</strong></em>.
+
+</dl>
+
+<h3>Real-time and synch</h3>
+
+There is some interaction between the real-time stuff and synch;
+fortunately, the rule is simple: never make a synch arrow from a low
+priority module to a high priority one.
+
+<p>You can synch between equal-priority modules, and you can make synch
+arrows from high priority modules to lower priority ones; but never the
+other way around.
+
+<h3>Modules</h3>
+
+In general, there's no change to a module regardless of whether it's
+running normal or hard real-time.
+
+<p>However, there are some modules which may not run in hard real-time
+mode, because of the nature of their work. For instance, if a module needs
+to write to a file, it has to be normal. For the generic
+and specific modules, this is noted in the manual where appropriate. For
+custom modules, the module-writer needs to be careful: if any system calls
+are used, the module may not be run in hard real-time mode.
+
+<h3>Swapping</h3>
+
+As you can imagine, being swapped out to disk will give a module a sizeable
+timing glitch. The first step, then, is to make sure it doesn't happen. The
+downside is that only programs that run as root can do this. 
+
+<p>The setting <code>memlock</code> in the <code>[PLC]</code> section
+controls this. When it's 1, all modules will be locked into memory. (Due to
+the way the MatPLC works, it's not really sensible do this on a per-module
+basis.)
+
+<h3>Hard Real-Time</h3>
+
+<p>The setting <code>priority</code> controls this. This is a per-module
+setting, i.e. under the section devoted to each module. When it's
+greater than PRIORITY_MIN, the module is made hard real-time with the given priority. The
+allowable range is from PRIORITY_MIN to PRIORITY_MAX. The values PRIORITY_MIN/MAX differ from operating system to operating system. Under QNX, PRIORITY_MIN = 1, and PRIORITY_MAX = 63.
+
+<p>Only modules started by root will be able to go hard real-time.
+
+
+<h3>Low-latency kernels</h3>
+
+The timing performance of Normal can be improved by using a
+low-latency kernel. Such a kernel switches between processes more often
+than the generic one, thus reducing the latency in any one process. The
+cost is that all this switching does reduce overall performance slightly,
+which is why this tuning parameter is set differently for general purpose
+kernels.
+
+<p>Similarly, different versions of the kernel have different default
+schedulers, which have different features. For instance, see <a
+href="http://www.linuxdevices.com/articles/AT7751365763.html">this article
+on LinuxDevices.com</a> about the linux 2.6 improvements.
+
+<h3>Better than LXRT MatPLC</h3>
+
+MatPLC, like any general purpose product or framework, is a compromise
+between various aspects. If timing accuracy is paramount, one will have to
+skip the niceties and write a (hopefully small) part of the application as
+a kernel-space hard-RT task doing direct I/O. Writing and debugging such
+code is beyond the scope of this manual.
+
+<p>Much tighter results still can be obtained by pushing the
+speed-sensitive parts to FPGA or other hardware; John Storrs's LME
+Craftsman project (<strong>FIXME</strong> - add URL) takes this approach,
+giving nice, clean, jitter-free oscilloscope traces.
+
+<p>As far as the MatPLC is concerned, these would simply be "smart I/O".
+For instance, the MatPLC could command direction, speed and number of
+steps, and the kernel-task or FPGA would generate the stepper motor train.
+
+<p>
+<!--autolink--><a href="../../general/config/synch_advanced_example.html"><img src="../../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../../index.html"><img src="../../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../../tools/matplc.html"><img src="../../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2006/05/02 13:53:54 $</small>
+</body>
+</html>

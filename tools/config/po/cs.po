@@ -1,0 +1,31 @@
+# MatPLC.conf Point Table Editor - http://mat.sf.net
+# Copyright (C) 2002 Joe Jansen <JoeJansen@kemet.com>.
+# Czech translation Copyright (C) 2002 Jiri Baum <jiri@baum.com.au>.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2002-03-19 01:41+1100\n"
+"PO-Revision-Date: 2002-03-19 01:41+1100\n"
+"Last-Translator: Jiri Baum <jiri@baum.com.au>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/interface.c:124
+msgid "_File"
+msgstr "_Soubor"
+
+#: src/interface.c:156
+msgid "_Save"
+msgstr "_Ulo¾it"
+
+#: src/interface.c:265
+msgid "_Help"
+msgstr "_Nápovìda"
+
+#: src/interface.c:285
+msgid "_About"
+msgstr "_O programu"
+

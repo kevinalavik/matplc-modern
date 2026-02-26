@@ -1,0 +1,24 @@
+			       Light chaser
+			       ============
+
+				  Lights:
+
+				1  2  3  4
+
+			      
+				  Buttons
+
+				    <->
+
+
+   This is a simple light-chasing demo, controlled from the keyboard. By
+intention, this demo requires no hardware or setup - not even X or svgalib.
+ That's why it looks the way it does - see the other demo directories for
+		     more impressive demonstrations...
+
+		       Controls (from the keyboard)
+		       ----------------------------
+      - L and R - toggle the `left' and `right' points. Remember to
+	toggle them off again before trying the other direction :-)
+      - Q - toggles the `quit' point, which terminates the demo.
+

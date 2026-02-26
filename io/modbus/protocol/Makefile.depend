@@ -1,0 +1,54 @@
+mb_ascii.o Makefile.depend: mb_ascii.c mb_layer1.h ../../../lib/plc.h \
+ ../../../lib/types.h ../../../lib/log/log.h \
+ ../../../lib/conffile/conffile.h ../../../lib/conffile/../types.h \
+ ../../../lib/cmm/cmm.h ../../../lib/cmm/../types.h \
+ ../../../lib/gmm/gmm.h ../../../lib/gmm/../types.h \
+ ../../../lib/synch/synch.h ../../../lib/synch/../types.h \
+ ../../../lib/period/period.h ../../../lib/period/../types.h \
+ ../../../lib/state/state.h ../../../lib/state/../types.h \
+ ../../../lib/synch/synch.h ../../../lib/rt/rt.h \
+ ../../../lib/rt/../types.h mb_addr.h mb_ascii_private.h mb_util.h \
+ mb_ds_util.h mb_time_util.h
+mb_master.o Makefile.depend: mb_master.c mb_layer1.h ../../../lib/plc.h \
+ ../../../lib/types.h ../../../lib/log/log.h \
+ ../../../lib/conffile/conffile.h ../../../lib/conffile/../types.h \
+ ../../../lib/cmm/cmm.h ../../../lib/cmm/../types.h \
+ ../../../lib/gmm/gmm.h ../../../lib/gmm/../types.h \
+ ../../../lib/synch/synch.h ../../../lib/synch/../types.h \
+ ../../../lib/period/period.h ../../../lib/period/../types.h \
+ ../../../lib/state/state.h ../../../lib/state/../types.h \
+ ../../../lib/synch/synch.h ../../../lib/rt/rt.h \
+ ../../../lib/rt/../types.h mb_addr.h mb_master.h mb_master_private.h \
+ mb_util.h
+mb_rtu.o Makefile.depend: mb_rtu.c ../../../lib/plc.h ../../../lib/types.h \
+ ../../../lib/log/log.h ../../../lib/conffile/conffile.h \
+ ../../../lib/conffile/../types.h ../../../lib/cmm/cmm.h \
+ ../../../lib/cmm/../types.h ../../../lib/gmm/gmm.h \
+ ../../../lib/gmm/../types.h ../../../lib/synch/synch.h \
+ ../../../lib/synch/../types.h ../../../lib/period/period.h \
+ ../../../lib/period/../types.h ../../../lib/state/state.h \
+ ../../../lib/state/../types.h ../../../lib/synch/synch.h \
+ ../../../lib/rt/rt.h ../../../lib/rt/../types.h mb_layer1.h mb_addr.h \
+ mb_rtu_private.h mb_util.h mb_ds_util.h mb_time_util.h
+mb_slave.o Makefile.depend: mb_slave.c mb_layer1.h ../../../lib/plc.h \
+ ../../../lib/types.h ../../../lib/log/log.h \
+ ../../../lib/conffile/conffile.h ../../../lib/conffile/../types.h \
+ ../../../lib/cmm/cmm.h ../../../lib/cmm/../types.h \
+ ../../../lib/gmm/gmm.h ../../../lib/gmm/../types.h \
+ ../../../lib/synch/synch.h ../../../lib/synch/../types.h \
+ ../../../lib/period/period.h ../../../lib/period/../types.h \
+ ../../../lib/state/state.h ../../../lib/state/../types.h \
+ ../../../lib/synch/synch.h ../../../lib/rt/rt.h \
+ ../../../lib/rt/../types.h mb_addr.h mb_master.h mb_master_private.h \
+ mb_util.h
+mb_tcp.o Makefile.depend: mb_tcp.c ../../../lib/plc.h ../../../lib/types.h \
+ ../../../lib/log/log.h ../../../lib/conffile/conffile.h \
+ ../../../lib/conffile/../types.h ../../../lib/cmm/cmm.h \
+ ../../../lib/cmm/../types.h ../../../lib/gmm/gmm.h \
+ ../../../lib/gmm/../types.h ../../../lib/synch/synch.h \
+ ../../../lib/synch/../types.h ../../../lib/period/period.h \
+ ../../../lib/period/../types.h ../../../lib/state/state.h \
+ ../../../lib/state/../types.h ../../../lib/synch/synch.h \
+ ../../../lib/rt/rt.h ../../../lib/rt/../types.h \
+ ../../../lib/misc/sin_util.h mb_layer1.h mb_addr.h mb_tcp_private.h \
+ mb_util.h mb_time_util.h

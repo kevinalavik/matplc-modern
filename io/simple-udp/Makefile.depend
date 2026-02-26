@@ -1,0 +1,24 @@
+common.o Makefile.depend: common.c common.h ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h
+recv.o Makefile.depend: recv.c common.h ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h
+send.o Makefile.depend: send.c common.h ../../lib/plc.h ../../lib/types.h \
+ ../../lib/log/log.h ../../lib/conffile/conffile.h \
+ ../../lib/conffile/../types.h ../../lib/cmm/cmm.h \
+ ../../lib/cmm/../types.h ../../lib/gmm/gmm.h ../../lib/gmm/../types.h \
+ ../../lib/synch/synch.h ../../lib/synch/../types.h \
+ ../../lib/period/period.h ../../lib/period/../types.h \
+ ../../lib/state/state.h ../../lib/state/../types.h \
+ ../../lib/synch/synch.h ../../lib/rt/rt.h ../../lib/rt/../types.h

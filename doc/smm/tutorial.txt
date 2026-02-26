@@ -1,0 +1,55 @@
+Interfacing to the Global Map
+=============================
+
+The public interface to MatPLC lives in lib/plc.h
+
+I'll try to explain how to use it from C in short tutorial form.
+
+
+First, we must initialise the library:
+
+	plc_init("demo",argc,argv); /* also gets initial values from the
+	                             * global map */
+
+Then we get the points we want:
+
+	plc_pt x1,y2,z3;
+
+	x1=plc_pt_by_name("X001");
+	y2=plc_pt_by_name("Y002");
+	z3=plc_pt_by_name("Z003");
+
+Now the main loop:
+	while (1) {
+		/* LD Z003, AND X001, OUT Y002 */
+		plc_set(y2, plc_get(z3) & plc_get(x1));
+		
+		plc_update(); /* do the IO scan */
+	}
+
+Theoretically you should close the library at the end, but the above is an
+infinite loop anyway :-)
+
+	plc_done();
+
+That's it!
+
+
+Note the above idiom for the OUT instruction. In particular, notice the
+difference between 
+
+	/* LD Z003, SET Y002 */
+	if (plc_get(z3))
+		plc_set(y2,1);
+
+and
+
+	/* LD Z003, OUT Y002 */
+	plc_set(y2, plc_get(z3));
+
+The latter will turn off Y002 when Z003 is off.
+
+
+Anyone who has a better way than me with words feel free to improve it.
+
+Jiri, 2000/07/04

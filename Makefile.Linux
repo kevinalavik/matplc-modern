@@ -1,0 +1,55 @@
+##########################################
+#                                        # 
+#  Set the Linux Specific constants...   #
+#                                        #
+##########################################
+
+
+# Installation directories
+# ========================
+
+# Where the static and dynamic libraries are installed
+# If you are going to create your own MatPLC modules/programs, please
+# make sure you add this directory to at least one of the following: 
+#    - the LD_LIBRARY_PATH environment variable
+#    - the /etc/ld.so.conf file
+#    - the LD_RUN_PATH environment variable when linking matplc modules/programs
+#    - use the `-Wl,--rpath -Wl,INSTALL_LIBDIR' linker flag,
+#          when linking matplc modules/programs (valid for gcc and g++).
+#          Remember to replace INSTALL_LIBDIR in the above flags with the
+#          same directory you use for the INSTALL_LIBDIR variable in the next line.
+INSTALL_LIBDIR = /usr/local/lib/
+
+# Where the binaries (executables) go when installed
+INSTALL_BINDIR = /usr/local/bin/
+
+# Where the default IEC61131-3 Function and Function Block library
+# is placed when installed
+IECLIBDIR = /usr/local/libIEC61131-3/
+
+# Used when cross-compiling for a different platform.
+# Will pre-pend all instalation directories with this directory
+#  when a 'make install' command is given, and assumes that the
+#  user will then be copy the 'installed' files to the target platform  
+#  to the directories given in the remaining INSTALL_XXXX directories.
+# Leave empty when not doing any cross-compilation! 
+INSTALL_PREDIR =
+
+
+
+# Compiler/Linker flags
+# =====================
+
+# Use MatPLC code specific for the Linux platform
+#   (eg. use sysV semaphores instead of POSIX semaphores, ...
+PLCSYSTEM_CFLAGS  = -DPLC_HOSTOS_LINUX
+
+# Linker flags
+PLCSYSTEM_LDFLAGS = -lm -lrt
+
+
+# Sepcify which compiler and other tools to use
+CC  = gcc
+CXX = g++
+AR  = ar
+LIBTOOL = libtool

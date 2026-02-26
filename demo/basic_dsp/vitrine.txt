@@ -1,0 +1,23 @@
+			      PID controller
+			      ==============
+
+Leader   (i32):
+Leader   (f32):
+Error    (f32):
+Follower (f32):
+Follower (i32):
+non-linear out:
+Error > 1     :
+Error < 1     :
+Error = 0     :
+Time     (f32):
+
+   This is a simple PID controller demo. It uses several of the blocks of the
+dsp module to implement a closed loop PID controller. Use the 0 to 9 keys to
+change the value of the 'Leader' and whatch the 'Follower', controlled by
+the PID loop, follow the 'Leader'.
+
+		       Controls (from the keyboard)
+		       ----------------------------
+      - 0 to 9 - Change the value of the Leader.
+      - Q - toggles the `quit' point, which terminates the demo.

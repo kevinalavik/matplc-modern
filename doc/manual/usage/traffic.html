@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>MAT manual - usage scenario - Traffic Cop</title>
+</head>
+<!--autolink--><a href="../.."><img src="../../images/MAT-linux-h100.gif" border=0 WIDTH="95" HEIGHT="100" alt="[MAT logo]" align="right"></a><a href="../usage/plc.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../usage/operator.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+<h1>Traffic Cop usage scenario</h1>
+
+<p>In this scenario, the PC will be the hub between two or more disparate
+industrial busses or networks, copying data between them pretty much
+without change and without any actual logic or intelligence.
+
+<p>This scenario contains no logic module, only two (or more) bus or
+network communications modules. The mapping between the various modules is
+specified in the <code>matplc.conf</code> file itself.
+
+<p>In the config, there will be a series of clauses looking pretty much
+like this, one for each point:
+<pre>
+PLC:point L1 "light 1" bus1
+bus1:map in bit.1 L1
+bus2:map out bit.1 L1
+</pre>
+
+<p>A point can also be mapped to more than one output, like this:
+<pre>
+PLC:point L1 "light 1" bus1
+bus1:map in bit.1 L1
+bus2:map out bit.1 L1
+bus3:map out bit.42 L1
+</pre>
+
+<p>An addition to this would be to have one of the logic modules to do some
+massaging of the data. For instance, the <a href="../logic/dsp.html">DSP
+module</a> could convert between units:
+<pre>
+PLC:point distIN "distance in inches" bus1
+PLC:point distMM "distance in mm" dsp
+bus1:map in register.1 distIN
+dsp:fblock add distMM distIN 25.4
+bus2:map out register.1 distMM
+</pre>
+
+
+
+<p>
+<!--autolink--><a href="../usage/plc.html"><img src="../../images/prev.gif" alt="[Prev]" width=32 height=32 border=0></a><a href="../index.html"><img src="../../images/up.gif" alt="[Up]" width=32 height=32 border=0></a><a href="../usage/operator.html"><img src="../../images/next.gif" alt="[Next]" width=32 height=32 border=0></a><!--/autolink-->
+
+<p><small>$Date: 2004/12/28 05:32:13 $</small>
+</html>
